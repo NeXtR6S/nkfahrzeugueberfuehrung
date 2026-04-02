@@ -130,6 +130,8 @@ body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--text);dis
 .nav-item:hover .nav-icon,.nav-item.active .nav-icon{opacity:1}
 .nav-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:20px;text-align:center}
 .nav-badge.admin-only{background:var(--gold)}
+.nav-badge.new-anfragen{background:var(--red);animation:pulse-badge 2s infinite}
+@keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.6}}
 
 .sidebar-footer{margin-top:auto;padding:16px 24px;border-top:1px solid rgba(255,255,255,.06)}
 .logout-btn{
@@ -450,6 +452,11 @@ textarea.form-control{resize:vertical;min-height:80px}
       Dashboard
       <span class="nav-badge" id="badge-count">0</span>
     </button>
+    <button class="nav-item" onclick="navigate('anfragen',this)" id="nav-anfragen">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Anfragen
+      <span class="nav-badge new-anfragen" id="badge-anfragen" style="display:none">0</span>
+    </button>
 
     <div class="nav-group-label">Aufträge</div>
     <button class="nav-item" onclick="navigate('neuer-auftrag',this)" id="nav-neuer-auftrag" style="">
@@ -760,7 +767,40 @@ textarea.form-control{resize:vertical;min-height:80px}
         </div>
       </div>
 
-    </div><!-- /content -->
+  
+    <!-- ── ANFRAGEN ── -->
+    <div class="page" id="page-anfragen">
+      <div class="filter-bar">
+        <input class="search-input" placeholder="Suche Name, Firma, E-Mail..." oninput="filterAnfragen(this.value)" id="anfragen-search">
+        <select class="filter-select" onchange="filterAnfragenStatus(this.value)">
+          <option value="">Alle Status</option>
+          <option value="neu">Neu</option>
+          <option value="in_bearbeitung">In Bearbeitung</option>
+          <option value="angenommen">Angenommen</option>
+          <option value="abgelehnt">Abgelehnt</option>
+        </select>
+        <div style="font-size:12px;color:var(--muted);padding:0 4px" id="anfragen-count"></div>
+      </div>
+      <div class="card" id="anfragen-card">
+        <div class="loading"><div class="spinner"></div> Lade Anfragen...</div>
+      </div>
+    </div>
+
+    <!-- ── ANFRAGE DETAIL MODAL ── -->
+    <div class="modal-overlay" id="anfrage-modal">
+      <div class="modal" style="max-width:620px">
+        <div class="modal-header">
+          <div class="modal-title" id="anfrage-modal-title">Anfrage</div>
+          <button class="modal-close" onclick="closeModal('anfrage-modal')">×</button>
+        </div>
+        <div class="modal-body" style="max-height:70vh;overflow-y:auto">
+          <div id="anfrage-detail"></div>
+        </div>
+        <div class="modal-footer" id="anfrage-modal-footer"></div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
   </div><!-- /main -->
 </div><!-- /app-screen -->
 
@@ -932,6 +972,7 @@ async function initApp(user) {
   }
   await loadSettings();
   await loadAllAuftraege();
+  await loadAnfragenCount();
   if (isAdmin()) await loadUsers();
   addPosition();
   updatePreview();
@@ -955,6 +996,7 @@ function navigate(pageId, btn) {
   if (pageId === 'auftraege')   renderOrderList();
   if (pageId === 'dashboard')   refreshDashboard();
   if (pageId === 'nutzer')      renderUsers();
+  if (pageId === 'anfragen')    loadAnfragen();
   if (pageId === 'einstellungen') loadSettingsForm();
 }
 
@@ -1638,6 +1680,192 @@ document.addEventListener('keydown', e => {
     }
   });
 })();
+// ══════════════════════════════════════════════════
+// ANFRAGEN
+// ══════════════════════════════════════════════════
+let allAnfragen = [];
+let anfragenFilterText = '';
+let anfragenFilterStatus = '';
+
+async function loadAnfragen() {
+  const card = document.getElementById('anfragen-card');
+  card.innerHTML = '<div class="loading"><div class="spinner"></div> Lade Anfragen...</div>';
+  let query = sb.from('anfragen').select('*').order('created_at', { ascending: false });
+  if (anfragenFilterStatus) query = query.eq('status', anfragenFilterStatus);
+  const { data, error } = await query;
+  if (error) { card.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><div class="empty-state-title">Fehler beim Laden</div></div>'; return; }
+  allAnfragen = data || [];
+  renderAnfragen();
+}
+
+async function loadAnfragenCount() {
+  const { data } = await sb.from('anfragen').select('id').eq('status', 'neu');
+  const count = data?.length || 0;
+  const badge = document.getElementById('badge-anfragen');
+  if (count > 0) {
+    badge.textContent = count;
+    badge.style.display = 'inline-flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderAnfragen() {
+  const card = document.getElementById('anfragen-card');
+  let list = allAnfragen;
+  if (anfragenFilterText) list = list.filter(a =>
+    JSON.stringify(a).toLowerCase().includes(anfragenFilterText.toLowerCase())
+  );
+  const countEl = document.getElementById('anfragen-count');
+  if (countEl) countEl.textContent = `${list.length} Anfrage${list.length !== 1 ? 'n' : ''}`;
+
+  if (list.length === 0) {
+    card.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">Keine Anfragen</div><div class="empty-state-sub">Noch keine Kundenanfragen eingegangen.</div></div>';
+    return;
+  }
+
+  const statusBadge = {
+    neu:            '<span class="badge badge-red">🔴 Neu</span>',
+    in_bearbeitung: '<span class="badge badge-gold">🟡 In Bearbeitung</span>',
+    angenommen:     '<span class="badge badge-green">🟢 Angenommen</span>',
+    abgelehnt:      '<span class="badge badge-grey">⚫ Abgelehnt</span>',
+  };
+
+  card.innerHTML = `<table class="data-table">
+    <thead><tr>
+      <th>Datum</th><th>Name / Firma</th><th>E-Mail</th><th>Art der Anfrage</th><th>Status</th><th></th>
+    </tr></thead>
+    <tbody>
+    ${list.map(a => `<tr style="cursor:pointer" onclick="openAnfrage(${a.id})">
+      <td style="color:var(--muted);font-size:12px">${new Date(a.created_at).toLocaleDateString('de-DE')}</td>
+      <td>
+        <div style="font-weight:600">${[a.vorname, a.nachname].filter(Boolean).join(' ') || '—'}</div>
+        ${a.unternehmen ? `<div style="font-size:11px;color:var(--muted)">${a.unternehmen}</div>` : ''}
+      </td>
+      <td style="font-size:12px;color:var(--muted)">${a.email}</td>
+      <td style="font-size:12px">${a.art || '—'}</td>
+      <td>${statusBadge[a.status] || a.status}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openAnfrage(${a.id})">Details →</button></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function filterAnfragen(val) { anfragenFilterText = val; renderAnfragen(); }
+function filterAnfragenStatus(val) { anfragenFilterStatus = val; loadAnfragen(); }
+
+function openAnfrage(id) {
+  const a = allAnfragen.find(x => x.id === id);
+  if (!a) return;
+
+  const statusBadge = {
+    neu:            '<span class="badge badge-red">🔴 Neu</span>',
+    in_bearbeitung: '<span class="badge badge-gold">🟡 In Bearbeitung</span>',
+    angenommen:     '<span class="badge badge-green">🟢 Angenommen</span>',
+    abgelehnt:      '<span class="badge badge-grey">⚫ Abgelehnt</span>',
+  };
+
+  document.getElementById('anfrage-modal-title').textContent =
+    `Anfrage von ${[a.vorname, a.nachname].filter(Boolean).join(' ') || a.email}`;
+
+  document.getElementById('anfrage-detail').innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
+      <div style="background:var(--off);border:1px solid var(--border);border-radius:8px;padding:14px">
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">KONTAKT</div>
+        <div style="font-weight:600;font-size:14px">${[a.vorname, a.nachname].filter(Boolean).join(' ') || '—'}</div>
+        ${a.unternehmen ? `<div style="font-size:12px;color:var(--muted)">${a.unternehmen}</div>` : ''}
+        <div style="font-size:12px;color:var(--blue-b);margin-top:4px">${a.email}</div>
+      </div>
+      <div style="background:var(--off);border:1px solid var(--border);border-radius:8px;padding:14px">
+        <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">DETAILS</div>
+        <div style="font-size:12px"><b>Art:</b> ${a.art || '—'}</div>
+        <div style="font-size:12px;margin-top:4px"><b>Eingegangen:</b> ${new Date(a.created_at).toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
+        <div style="margin-top:8px">${statusBadge[a.status]}</div>
+      </div>
+    </div>
+
+    <div style="background:var(--off);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">NACHRICHT DES KUNDEN</div>
+      <div style="font-size:14px;line-height:1.6;color:var(--text)">${a.nachricht || '—'}</div>
+    </div>
+
+    ${a.antwort ? `
+    <div style="background:var(--blue-pale);border:1px solid var(--blue-b);border-radius:8px;padding:14px;margin-bottom:16px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:8px">EURE ANTWORT</div>
+      <div style="font-size:14px;line-height:1.6;color:var(--text)">${a.antwort}</div>
+    </div>` : ''}
+
+    <div style="margin-bottom:8px">
+      <label style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px">Antwort / Interne Notiz</label>
+      <textarea id="anfrage-antwort" class="form-control" style="min-height:100px" placeholder="Antwort an den Kunden oder interne Notiz...">${a.antwort || ''}</textarea>
+    </div>
+  `;
+
+  const canAct = canEdit();
+  document.getElementById('anfrage-modal-footer').innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;width:100%">
+      <button class="btn btn-secondary" onclick="closeModal('anfrage-modal')">Schließen</button>
+      ${canAct ? `
+        <button class="btn btn-ghost" onclick="updateAnfrageStatus(${a.id},'in_bearbeitung')">🟡 In Bearbeitung</button>
+        <button class="btn btn-danger" onclick="updateAnfrageStatus(${a.id},'abgelehnt')">✕ Ablehnen</button>
+        <button class="btn btn-ghost" onclick="saveAnfrageAntwort(${a.id})" style="margin-left:auto">💾 Antwort speichern</button>
+        <button class="btn btn-primary" onclick="anfrageZuAuftrag(${a.id})">✓ Als Auftrag anlegen</button>
+        <button class="btn btn-primary" style="background:var(--green)" onclick="updateAnfrageStatus(${a.id},'angenommen')">✅ Annehmen</button>
+      ` : ''}
+    </div>
+  `;
+
+  document.getElementById('anfrage-modal').classList.add('open');
+
+  // Mark as in_bearbeitung if neu
+  if (a.status === 'neu' && canAct) {
+    sb.from('anfragen').update({ status: 'in_bearbeitung' }).eq('id', id).then(() => {
+      a.status = 'in_bearbeitung';
+      loadAnfragenCount();
+    });
+  }
+}
+
+async function updateAnfrageStatus(id, status) {
+  const antwort = document.getElementById('anfrage-antwort')?.value || '';
+  const { error } = await sb.from('anfragen').update({
+    status,
+    antwort: antwort || null,
+    bearbeitet_von: currentUser.id
+  }).eq('id', id);
+  if (error) { toast('Fehler: ' + error.message, '❌', 'error'); return; }
+  toast(`Status auf "${status}" gesetzt`, '✅', 'success');
+  closeModal('anfrage-modal');
+  await loadAnfragen();
+  await loadAnfragenCount();
+}
+
+async function saveAnfrageAntwort(id) {
+  const antwort = document.getElementById('anfrage-antwort')?.value || '';
+  const { error } = await sb.from('anfragen').update({ antwort, bearbeitet_von: currentUser.id }).eq('id', id);
+  if (error) { toast('Fehler', '❌', 'error'); return; }
+  toast('Antwort gespeichert', '✅', 'success');
+  await loadAnfragen();
+}
+
+function anfrageZuAuftrag(id) {
+  const a = allAnfragen.find(x => x.id === id);
+  if (!a) return;
+  closeModal('anfrage-modal');
+  // Pre-fill the new order form
+  navigate('neuer-auftrag', document.getElementById('nav-neuer-auftrag'));
+  setTimeout(() => {
+    const set = (eid, val) => { const el = document.getElementById(eid); if(el && val) el.value = val; };
+    set('f-firma', a.unternehmen || [a.vorname, a.nachname].filter(Boolean).join(' '));
+    set('f-ansprech', [a.vorname, a.nachname].filter(Boolean).join(' '));
+    set('f-notiz', `Aus Anfrage vom ${new Date(a.created_at).toLocaleDateString('de-DE')}\nKunden-E-Mail: ${a.email}\nOriginal-Nachricht: ${a.nachricht || ''}`);
+    updatePreview();
+    toast('Anfrage als Auftrag vorausgefüllt', 'ℹ️', 'info');
+  }, 300);
+  // Mark as angenommen
+  sb.from('anfragen').update({ status: 'angenommen', bearbeitet_von: currentUser.id }).eq('id', id);
+}
+
 </script>
 </body>
 </html>
