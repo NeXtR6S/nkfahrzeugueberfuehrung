@@ -1834,7 +1834,17 @@ async function updateAnfrageStatus(id, status) {
     bearbeitet_von: currentUser.id
   }).eq('id', id);
   if (error) { toast('Fehler: ' + error.message, '❌', 'error'); return; }
-  toast(`Status auf "${status}" gesetzt`, '✅', 'success');
+
+  // Send email notification
+  const anfrage = allAnfragen.find(a => a.id === id);
+  if (anfrage?.email) {
+    if (status === 'angenommen')     mailAngenommen(anfrage, antwort);
+    if (status === 'in_bearbeitung') mailInBearbeitung(anfrage, antwort);
+    if (status === 'abgelehnt')      mailAbgelehnt(anfrage, antwort);
+  }
+
+  const statusLabels = { angenommen:'Angenommen', in_bearbeitung:'In Bearbeitung', abgelehnt:'Abgelehnt' };
+  toast(`Status: ${statusLabels[status] || status}`, '✅', 'success');
   closeModal('anfrage-modal');
   await loadAnfragen();
   await loadAnfragenCount();
@@ -1864,6 +1874,215 @@ function anfrageZuAuftrag(id) {
   }, 300);
   // Mark as angenommen
   sb.from('anfragen').update({ status: 'angenommen', bearbeitet_von: currentUser.id }).eq('id', id);
+}
+
+// ══════════════════════════════════════════════════
+// E-MAIL BENACHRICHTIGUNGEN (via Resend)
+// ══════════════════════════════════════════════════
+const RESEND_KEY = 're_FAVxxcih_Dpapu1vqb68BwWsQhxi9JfZe';
+const REPLY_TO   = 'n.knappitsch@gmail.com';
+const FROM_NAME  = 'N & K Fahrzeugüberführung';
+const FROM_EMAIL = 'onboarding@resend.dev';
+
+function emailTemplate({ title, preheader, bodyHtml }) {
+  return `<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title>
+</head>
+<body style="margin:0;padding:0;background:#f0f4f8;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+<div style="display:none;max-height:0;overflow:hidden;color:#f0f4f8">${preheader}</div>
+
+<!-- Wrapper -->
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f8;padding:40px 20px">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%">
+
+  <!-- Header -->
+  <tr><td style="background:#060F1E;border-radius:12px 12px 0 0;padding:28px 36px;text-align:left">
+    <table cellpadding="0" cellspacing="0"><tr>
+      <td style="padding-right:12px">
+        <div style="width:40px;height:40px;background:#0D1F3C;border:1.5px solid #2E7FFF;border-radius:6px;text-align:center;line-height:40px;font-size:18px">🚗</div>
+      </td>
+      <td>
+        <div style="font-size:20px;font-weight:700;color:#ffffff;letter-spacing:1px">N <span style="color:#2E7FFF">&amp;</span> K</div>
+        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#5E84B2;margin-top:1px">Fahrzeugüberführung</div>
+      </td>
+    </tr></table>
+  </td></tr>
+
+  <!-- Body -->
+  <tr><td style="background:#ffffff;padding:36px 36px 28px;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0">
+    ${bodyHtml}
+  </td></tr>
+
+  <!-- Footer -->
+  <tr><td style="background:#f8fafc;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;padding:20px 36px;text-align:center">
+    <p style="margin:0 0 6px;font-size:12px;color:#94a3b8">N &amp; K Fahrzeugüberführung GbR · Deutschland</p>
+    <p style="margin:0;font-size:11px;color:#cbd5e1">Sie können direkt auf diese E-Mail antworten — wir melden uns persönlich.</p>
+  </td></tr>
+
+</table>
+</td></tr></table>
+</body></html>`;
+}
+
+async function sendMail({ to, subject, title, preheader, bodyHtml }) {
+  if (!to || !to.includes('@')) return;
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + RESEND_KEY,
+      },
+      body: JSON.stringify({
+        from: `${FROM_NAME} <${FROM_EMAIL}>`,
+        to: [to],
+        reply_to: REPLY_TO,
+        subject,
+        html: emailTemplate({ title, preheader, bodyHtml }),
+      })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      toast('E-Mail an ' + to + ' gesendet', '📧', 'success');
+    } else {
+      console.error('Resend error:', data);
+    }
+  } catch(e) {
+    console.error('Mail error:', e);
+  }
+}
+
+// ── Mail: Anfrage angenommen ──
+function mailAngenommen(anfrage, antwort) {
+  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
+  sendMail({
+    to: anfrage.email,
+    subject: '✅ Ihre Anfrage wurde angenommen — N & K Fahrzeugüberführung',
+    title: 'Anfrage angenommen',
+    preheader: 'Wir haben Ihre Anfrage angenommen und melden uns in Kürze.',
+    bodyHtml: `
+      <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#0f172a">Gute Neuigkeit, ${name}!</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#64748b">Ihre Anfrage wurde von uns angenommen.</p>
+
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-left:4px solid #16a34a;border-radius:8px;padding:16px 20px;margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#16a34a;margin-bottom:6px">STATUS</div>
+        <div style="font-size:16px;font-weight:700;color:#15803d">✅ Angenommen</div>
+      </div>
+
+      ${anfrage.art ? `<table cellpadding="0" cellspacing="0" style="width:100%;margin-bottom:24px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+        <tr style="background:#f8fafc"><td style="padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8;width:40%">Art der Anfrage</td><td style="padding:10px 16px;font-size:13px;color:#0f172a;font-weight:500">${anfrage.art}</td></tr>
+        ${anfrage.unternehmen ? `<tr style="background:#ffffff"><td style="padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8">Unternehmen</td><td style="padding:10px 16px;font-size:13px;color:#0f172a;font-weight:500">${anfrage.unternehmen}</td></tr>` : ''}
+      </table>` : ''}
+
+      ${antwort ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:18px 20px;margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:10px">Nachricht von uns</div>
+        <p style="margin:0;font-size:14px;color:#1e3a5f;line-height:1.7">${antwort}</p>
+      </div>` : ''}
+
+      <div style="background:#f8fafc;border-radius:8px;padding:18px 20px;margin-bottom:24px">
+        <p style="margin:0;font-size:13px;color:#475569;line-height:1.7">Wir werden uns in Kürze persönlich bei Ihnen melden um alle Details zu besprechen. Sie können auch direkt auf diese E-Mail antworten.</p>
+      </div>
+
+      <div style="text-align:center;margin-top:8px">
+        <div style="display:inline-block;background:#2E7FFF;color:#ffffff;padding:14px 32px;border-radius:6px;font-size:14px;font-weight:600;letter-spacing:0.5px">Wir freuen uns auf die Zusammenarbeit!</div>
+      </div>
+    `
+  });
+}
+
+// ── Mail: Auftrag in Bearbeitung ──
+function mailInBearbeitung(anfrage, antwort) {
+  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
+  sendMail({
+    to: anfrage.email,
+    subject: '🔄 Ihre Anfrage wird bearbeitet — N & K Fahrzeugüberführung',
+    title: 'In Bearbeitung',
+    preheader: 'Wir haben Ihre Anfrage erhalten und bearbeiten diese gerade.',
+    bodyHtml: `
+      <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#0f172a">Hallo ${name},</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#64748b">wir haben Ihre Anfrage erhalten und bearbeiten diese aktuell.</p>
+
+      <div style="background:#fffbeb;border:1px solid #fcd34d;border-left:4px solid #f59e0b;border-radius:8px;padding:16px 20px;margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#d97706;margin-bottom:6px">STATUS</div>
+        <div style="font-size:16px;font-weight:700;color:#b45309">🔄 In Bearbeitung</div>
+      </div>
+
+      ${antwort ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:18px 20px;margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:10px">Nachricht von uns</div>
+        <p style="margin:0;font-size:14px;color:#1e3a5f;line-height:1.7">${antwort}</p>
+      </div>` : ''}
+
+      <div style="background:#f8fafc;border-radius:8px;padding:18px 20px">
+        <p style="margin:0;font-size:13px;color:#475569;line-height:1.7">Wir melden uns baldmöglichst mit einem konkreten Angebot. Bei Fragen können Sie jederzeit direkt auf diese E-Mail antworten.</p>
+      </div>
+    `
+  });
+}
+
+// ── Mail: Anfrage abgelehnt ──
+function mailAbgelehnt(anfrage, antwort) {
+  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
+  sendMail({
+    to: anfrage.email,
+    subject: 'Zu Ihrer Anfrage — N & K Fahrzeugüberführung',
+    title: 'Zu Ihrer Anfrage',
+    preheader: 'Vielen Dank für Ihre Anfrage. Leider können wir diese nicht annehmen.',
+    bodyHtml: `
+      <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#0f172a">Hallo ${name},</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#64748b">vielen Dank für Ihre Anfrage bei N &amp; K Fahrzeugüberführung.</p>
+
+      <div style="background:#fef2f2;border:1px solid #fca5a5;border-left:4px solid #ef4444;border-radius:8px;padding:16px 20px;margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#dc2626;margin-bottom:6px">STATUS</div>
+        <div style="font-size:16px;font-weight:700;color:#b91c1c">Leider können wir Ihre Anfrage aktuell nicht annehmen.</div>
+      </div>
+
+      ${antwort ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:18px 20px;margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:10px">Hinweis</div>
+        <p style="margin:0;font-size:14px;color:#1e3a5f;line-height:1.7">${antwort}</p>
+      </div>` : ''}
+
+      <div style="background:#f8fafc;border-radius:8px;padding:18px 20px">
+        <p style="margin:0;font-size:13px;color:#475569;line-height:1.7">Falls Sie Fragen haben oder eine alternative Lösung besprechen möchten, antworten Sie einfach auf diese E-Mail. Wir helfen gerne weiter.</p>
+      </div>
+    `
+  });
+}
+
+// ── Mail: Auftrag neu angelegt (Bestätigung) ──
+function mailAuftragBestaetigung(email, name, auftragNr, details) {
+  if (!email) return;
+  sendMail({
+    to: email,
+    subject: `Auftragsbestätigung ${auftragNr} — N & K Fahrzeugüberführung`,
+    title: 'Auftragsbestätigung',
+    preheader: `Ihr Auftrag ${auftragNr} wurde erfolgreich angelegt.`,
+    bodyHtml: `
+      <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#0f172a">Auftragsbestätigung</h1>
+      <p style="margin:0 0 24px;font-size:14px;color:#64748b">Sehr geehrte Damen und Herren,<br>vielen Dank für Ihren Auftrag. Hier ist Ihre Bestätigung.</p>
+
+      <div style="background:#eff6ff;border:1px solid #2E7FFF;border-left:4px solid #2E7FFF;border-radius:8px;padding:16px 20px;margin-bottom:24px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:6px">Auftragsnummer</div>
+        <div style="font-size:22px;font-weight:700;color:#1e3a5f;letter-spacing:1px">${auftragNr}</div>
+      </div>
+
+      ${details ? `<table cellpadding="0" cellspacing="0" style="width:100%;margin-bottom:24px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+        ${details}
+      </table>` : ''}
+
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:16px 20px;margin-bottom:24px">
+        <p style="margin:0;font-size:13px;color:#15803d;line-height:1.7">✅ Ihr Auftrag ist bei uns eingegangen. Wir melden uns in Kürze mit weiteren Details.</p>
+      </div>
+
+      <div style="background:#f8fafc;border-radius:8px;padding:16px 20px">
+        <p style="margin:0;font-size:12px;color:#94a3b8;line-height:1.6">Bei Fragen antworten Sie einfach auf diese E-Mail — wir sind persönlich für Sie erreichbar.</p>
+      </div>
+    `
+  });
 }
 
 </script>
