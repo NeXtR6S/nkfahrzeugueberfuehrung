@@ -1929,28 +1929,26 @@ function emailTemplate({ title, preheader, bodyHtml }) {
 </body></html>`;
 }
 
-async function sendMail({ to, subject, title, preheader, bodyHtml }) {
+async function sendMailViaEdge({ to, status, name, art, unternehmen, antwort }) {
   if (!to || !to.includes('@')) return;
   try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + RESEND_KEY,
-      },
-      body: JSON.stringify({
-        from: `${FROM_NAME} <${FROM_EMAIL}>`,
-        to: [to],
-        reply_to: REPLY_TO,
-        subject,
-        html: emailTemplate({ title, preheader, bodyHtml }),
-      })
-    });
+    const res = await fetch(
+      SUPA_URL + '/functions/v1/send-email',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + SUPA_KEY,
+        },
+        body: JSON.stringify({ to, status, name, art, unternehmen, antwort }),
+      }
+    );
     const data = await res.json();
     if (res.ok) {
       toast('E-Mail an ' + to + ' gesendet', '📧', 'success');
     } else {
-      console.error('Resend error:', data);
+      console.error('Mail error:', data);
+      toast('Mail-Fehler: ' + (data.message || 'Unbekannt'), '⚠️', 'error');
     }
   } catch(e) {
     console.error('Mail error:', e);
@@ -1960,7 +1958,14 @@ async function sendMail({ to, subject, title, preheader, bodyHtml }) {
 // ── Mail: Anfrage angenommen ──
 function mailAngenommen(anfrage, antwort) {
   const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
-  sendMail({
+  sendMailViaEdge({
+    to: anfrage.email, status: 'angenommen', name,
+    art: anfrage.art, unternehmen: anfrage.unternehmen, antwort
+  });
+}
+function _oldMailAngenommen_unused(anfrage, antwort) {
+  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
+  sendMail_UNUSED({
     to: anfrage.email,
     subject: '✅ Ihre Anfrage wurde angenommen — N & K Fahrzeugüberführung',
     title: 'Anfrage angenommen',
@@ -1998,7 +2003,14 @@ function mailAngenommen(anfrage, antwort) {
 // ── Mail: Auftrag in Bearbeitung ──
 function mailInBearbeitung(anfrage, antwort) {
   const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
-  sendMail({
+  sendMailViaEdge({
+    to: anfrage.email, status: 'in_bearbeitung', name,
+    art: anfrage.art, unternehmen: anfrage.unternehmen, antwort
+  });
+}
+function _oldMailInBearbeitung_unused(anfrage, antwort) {
+  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
+  sendMail_UNUSED({
     to: anfrage.email,
     subject: '🔄 Ihre Anfrage wird bearbeitet — N & K Fahrzeugüberführung',
     title: 'In Bearbeitung',
@@ -2027,7 +2039,14 @@ function mailInBearbeitung(anfrage, antwort) {
 // ── Mail: Anfrage abgelehnt ──
 function mailAbgelehnt(anfrage, antwort) {
   const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
-  sendMail({
+  sendMailViaEdge({
+    to: anfrage.email, status: 'abgelehnt', name,
+    art: anfrage.art, unternehmen: anfrage.unternehmen, antwort
+  });
+}
+function _oldMailAbgelehnt_unused(anfrage, antwort) {
+  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
+  sendMail_UNUSED({
     to: anfrage.email,
     subject: 'Zu Ihrer Anfrage — N & K Fahrzeugüberführung',
     title: 'Zu Ihrer Anfrage',
