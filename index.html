@@ -828,6 +828,34 @@ textarea.form-control{resize:vertical;min-height:80px}
                   </span>
                   <button onclick="useCalculatedDistance()" class="btn btn-ghost" style="padding:4px 10px;font-size:11px;margin-left:4px">Übernehmen</button>
                 </div>
+                <div class="form-section-title">Anfahrt zu dir</div>
+                <div style="background:var(--off);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:14px">
+                  <div style="font-size:10px;color:var(--muted);margin-bottom:10px">Dein Standort wird gespeichert und für alle zukünftigen Kalkulationen verwendet.</div>
+                  <div class="form-grid" style="margin-bottom:10px">
+                    <div class="form-group">
+                      <label class="form-label">Dein Standort</label>
+                      <div class="addr-wrap">
+                        <input class="form-control" id="c-standort" placeholder="z. B. Dein Wohnort / Büro" autocomplete="off"
+                          oninput="addrSearch('c-standort','dropdown-standort')" onkeydown="addrKey(event,'dropdown-standort')">
+                        <div class="addr-dropdown" id="dropdown-standort"></div>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Kraftstoffkosten (€/100km)</label>
+                      <input class="form-control" id="c-sprit" type="number" value="12" min="0" step="0.5" oninput="kCalc()">
+                      <span style="font-size:10px;color:var(--muted)">Durchschnitt inkl. Verschleiß</span>
+                    </div>
+                  </div>
+                  <div class="addr-distance-badge" id="anfahrt-badge" style="margin-top:0">
+                    <span>🚗</span>
+                    <span style="color:var(--muted);font-size:11px">Anfahrt:</span>
+                    <span style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--blue-b)" id="anfahrt-km-display">—</span>
+                    <span style="color:var(--muted);font-size:11px">km</span>
+                    <span style="margin-left:8px;color:var(--muted);font-size:11px">→ Kosten:</span>
+                    <span style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--gold)" id="anfahrt-kosten-display">—</span>
+                  </div>
+                </div>
+
                 <div class="form-section-title">Kosten & Aufwand</div>
                 <div class="form-grid-3" style="margin-bottom:14px">
                   <div class="form-group"><label class="form-label">Rückfahrt (€)</label><input class="form-control" id="c-rueck" type="number" value="45" min="0" oninput="kCalc()"><span style="font-size:10px;color:var(--muted)">Bahn / ÖPNV</span></div>
@@ -2291,6 +2319,70 @@ function mobileNav(pageId, btn) {
 // Sync mobile badge with anfragen badge
 const origLoadAnfragenCount = loadAnfragenCount;
 
+
+// ══════════════════════════════════════════════════
+// ANFAHRTSKOSTEN
+// ══════════════════════════════════════════════════
+let standortCoords = null;
+
+// Load saved standort from localStorage
+(function loadStandort() {
+  const saved = localStorage.getItem('nk_standort');
+  if (saved) {
+    try {
+      const s = JSON.parse(saved);
+      standortCoords = s.coords;
+      const el = document.getElementById('c-standort');
+      if (el) el.value = s.label;
+    } catch(e) {}
+  }
+})();
+
+// Override addrSelect to handle standort field
+const _origAddrSelect = addrSelect;
+function addrSelect(inputId, dropdownId, lat, lon, main, sub) {
+  _origAddrSelect(inputId, dropdownId, lat, lon, main, sub);
+
+  if (inputId === 'c-standort') {
+    standortCoords = { lat: parseFloat(lat), lon: parseFloat(lon) };
+    const label = main + (sub ? ', ' + sub.split(',')[0] : '');
+    localStorage.setItem('nk_standort', JSON.stringify({ coords: standortCoords, label }));
+    updateAnfahrt();
+    return;
+  }
+
+  // Recalculate anfahrt when Von changes
+  if (inputId === 'c-von') updateAnfahrt();
+}
+
+function updateAnfahrt() {
+  const vonCoords = addrCoords.von;
+  if (!standortCoords || !vonCoords) return;
+
+  const kmLuft = haversineKm(standortCoords.lat, standortCoords.lon, vonCoords.lat, vonCoords.lon);
+  const kmRoad = Math.round(kmLuft * 1.28);
+  const sprit  = parseFloat(document.getElementById('c-sprit')?.value || 12);
+  const kosten = ((kmRoad * 2 * sprit) / 100).toFixed(2); // Hin + Rück Anfahrt
+
+  document.getElementById('anfahrt-km-display').textContent    = kmRoad;
+  document.getElementById('anfahrt-kosten-display').textContent = kosten.replace('.', ',') + ' €';
+  document.getElementById('anfahrt-badge').classList.add('visible');
+
+  // Auto-add anfahrt costs to "extra" field
+  const extraEl = document.getElementById('c-extra');
+  if (extraEl) {
+    extraEl.value = parseFloat(kosten).toFixed(0);
+    kCalc();
+  }
+}
+
+// Recalculate anfahrt when sprit changes
+document.addEventListener('DOMContentLoaded', () => {
+  const spritEl = document.getElementById('c-sprit');
+  if (spritEl) spritEl.addEventListener('input', updateAnfahrt);
+  // Init if standort already loaded
+  if (standortCoords && addrCoords.von) updateAnfahrt();
+});
 
 // ══════════════════════════════════════════════════
 // ADRESS-AUTOCOMPLETE (OpenStreetMap Nominatim)
