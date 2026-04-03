@@ -1316,6 +1316,9 @@ async function initApp(user) {
       if (vonEl  && r.vonLabel)  vonEl.value  = r.vonLabel;
       if (nachEl && r.nachLabel) nachEl.value = r.nachLabel;
       if (kmEl   && r.km)        kmEl.value   = r.km;
+      // Restore coords so distance calculation works
+      if (r.von)  addrCoords.von  = r.von;
+      if (r.nach) addrCoords.nach = r.nach;
     } catch(e){}
   }
 
@@ -2002,10 +2005,14 @@ function smartCalc() {
   const kmHeim = standortCoords && addrCoords.nach ?
     Math.round(haversineKm(addrCoords.nach.lat, addrCoords.nach.lon, standortCoords.lat, standortCoords.lon) * 1.28) : 0;
 
-  if (kmUeber <= 0 && kmAnfahrt <= 0) { kResetResult(); return; }
+  // If no coordinates but km is manually entered, use that
+  const manualKm = parseInt(document.getElementById('c-km')?.value || 0);
+  const effectiveKm = kmUeber > 0 ? kmUeber : manualKm;
+  if (effectiveKm <= 0 && kmAnfahrt <= 0) { kResetResult(); return; }
+  const kmUeberFinal = effectiveKm;
 
   // ── Zeitberechnung ──
-  const stdUeber   = estimateTime(kmUeber, addrCoords.von, addrCoords.nach);
+  const stdUeber   = estimateTime(kmUeberFinal, addrCoords.von, addrCoords.nach);
   const stdAnfahrt = estimateTime(kmAnfahrt, standortCoords, addrCoords.von);
   const stdGesamt  = stdUeber + stdAnfahrt;
 
@@ -2014,12 +2021,12 @@ function smartCalc() {
 
   // ── E-AUTO LADEKOSTEN (nur bei Elektro) ──
   let ladenKosten = kNum('c-laden', 0);
-  if (ftyp === 'elektro' && kmUeber > 0) {
-    const autoLaden = (kmUeber * EAUTO_KWH / 100) * EAUTO_PREIS;
+  if (ftyp === 'elektro' && kmUeberFinal > 0) {
+    const autoLaden = (kmUeberFinal * EAUTO_KWH / 100) * EAUTO_PREIS;
     ladenKosten = Math.max(ladenKosten, autoLaden);
     document.getElementById('c-laden').value = Math.round(autoLaden);
     document.getElementById('laden-hint').textContent =
-      `${kmUeber} km × ${EAUTO_KWH} kWh/100km × ${EAUTO_PREIS}€/kWh`;
+      `${kmUeberFinal} km × ${EAUTO_KWH} kWh/100km × ${EAUTO_PREIS}€/kWh`;
   } else if (ftyp !== 'elektro') {
     document.getElementById('c-laden').value = 0;
     document.getElementById('laden-hint').textContent = 'Nur bei Elektrofahrzeug';
@@ -2028,7 +2035,7 @@ function smartCalc() {
 
   // ── MAUT (auto-berechnet) ──
   let mautKosten = kNum('c-maut', 0);
-  const autoMaut = estimateMaut(kmUeber, addrCoords.von, addrCoords.nach);
+  const autoMaut = estimateMaut(kmUeberFinal, addrCoords.von, addrCoords.nach);
   if (document.getElementById('c-maut')._autoSet !== false) {
     document.getElementById('c-maut').value = autoMaut;
     mautKosten = autoMaut;
@@ -2073,12 +2080,12 @@ function smartCalc() {
   const extraKosten = kNum('c-extra', 0);
 
   // ── ROUTE OVERVIEW ──
-  if (kmAnfahrt > 0 || kmUeber > 0) {
+  if (kmAnfahrt > 0 || kmUeberFinal > 0) {
     document.getElementById('route-overview').style.display = 'block';
     document.getElementById('ro-anfahrt').textContent = kmAnfahrt > 0 ? `${kmAnfahrt} km · ${kFmt(spritAnfahrt)}` : '— (Standort nicht gesetzt)';
-    document.getElementById('ro-ueber').textContent   = kmUeber > 0   ? `${kmUeber} km` : '—';
+    document.getElementById('ro-ueber').textContent   = kmUeberFinal > 0   ? `${kmUeberFinal} km` : '—';
     document.getElementById('ro-heim').textContent    = kmHeim > 0    ? `${kmHeim} km · ca. ${kFmt(heimKosten)}` : '—';
-    document.getElementById('ro-gesamt').textContent  = `${kmAnfahrt + kmUeber + kmHeim} km`;
+    document.getElementById('ro-gesamt').textContent  = `${kmAnfahrt + kmUeberFinal + kmHeim} km`;
   }
 
   // ── GESAMTKOSTEN ──
@@ -2094,7 +2101,7 @@ function smartCalc() {
   // ── UPDATE RESULT PANEL ──
   document.getElementById('k-price').textContent = kFmt(suggested);
   document.getElementById('k-sub').textContent   =
-    `= ${kFmt(suggested * 1.19)} brutto · ${kmUeber > 0 ? (suggested/kmUeber).toFixed(2).replace('.',',') + ' €/km' : ''}`;
+    `= ${kFmt(suggested * 1.19)} brutto · ${kmUeberFinal > 0 ? (suggested/kmUeberFinal).toFixed(2).replace('.',',') + ' €/km' : ''}`;
 
   document.getElementById('k-breakdown').innerHTML = `
     <div style="padding:10px 0;border-bottom:2px solid var(--blue-pale);margin-bottom:4px">
@@ -2133,7 +2140,7 @@ function smartCalc() {
   if (marge >= 40) tags.push(['✅ Gute Marge', 'k-tag-green']);
   else if (marge >= 25) tags.push(['⚠️ Niedrige Marge', 'k-tag-gold']);
   else tags.push(['❌ Unwirtschaftlich', 'k-tag-red']);
-  if (kmUeber > 400) tags.push(['🛣 Langstrecke', 'k-tag-blue']);
+  if (kmUeberFinal > 400) tags.push(['🛣 Langstrecke', 'k-tag-blue']);
   if (ftyp === 'elektro') tags.push(['⚡ Elektro', 'k-tag-blue']);
   if (ftyp === 'tief') tags.push(['🏎 Tieferlegung +Aufpreis', 'k-tag-gold']);
   if (naechte > 0) tags.push([`🏨 ${naechte}× Übernachtung`, 'k-tag-gold']);
