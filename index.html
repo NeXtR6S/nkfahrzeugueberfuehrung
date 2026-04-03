@@ -868,32 +868,80 @@ textarea.form-control{resize:vertical;min-height:80px}
                   </div>
 
                   <!-- Result Badge -->
-                  <div style="background:var(--navy-2);border-radius:8px;padding:14px 16px;display:none" id="anfahrt-badge">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">ANFAHRTSKOSTEN (Hin + Rück)</div>
-                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
-                      <div style="text-align:center">
-                        <div style="font-size:9px;color:var(--muted);margin-bottom:4px">Strecke</div>
-                        <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white)" id="anfahrt-km-display">—</div>
-                        <div style="font-size:9px;color:var(--muted)">km (×2)</div>
+                  <div style="background:var(--navy-2);border-radius:8px;padding:16px;display:none" id="anfahrt-badge">
+                    <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">GESAMTE KRAFTSTOFFKOSTEN</div>
+
+                    <!-- 3 Strecken -->
+                    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
+
+                      <!-- Anfahrt -->
+                      <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px">
+                        <div style="width:8px;height:8px;border-radius:50%;background:#2E7FFF;flex-shrink:0"></div>
+                        <div style="flex:1;min-width:0">
+                          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase">Anfahrt</div>
+                          <div style="font-size:11px;color:var(--white);margin-top:1px" id="anfahrt-route-label">Dein Standort → Abholort</div>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0">
+                          <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white)" id="anfahrt-km-display">— km</div>
+                          <div style="font-size:11px;color:#2E7FFF;font-weight:600" id="anfahrt-eur-display">— €</div>
+                        </div>
                       </div>
-                      <div style="text-align:center">
-                        <div style="font-size:9px;color:var(--muted);margin-bottom:4px">Verbrauch</div>
-                        <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white)" id="anfahrt-liter-display">—</div>
-                        <div style="font-size:9px;color:var(--muted)">Liter</div>
+
+                      <!-- Überführung -->
+                      <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px">
+                        <div style="width:8px;height:8px;border-radius:50%;background:#C89B2A;flex-shrink:0"></div>
+                        <div style="flex:1;min-width:0">
+                          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase">Überführung (Kundenfahrzeug)</div>
+                          <div style="font-size:11px;color:var(--white);margin-top:1px" id="ueberfuehrung-route-label">Abholort → Zielort</div>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0">
+                          <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white)" id="ueberfuehrung-km-display">— km</div>
+                          <div style="font-size:11px;color:#C89B2A;font-weight:600" id="ueberfuehrung-eur-display">— €</div>
+                        </div>
                       </div>
-                      <div style="text-align:center">
-                        <div style="font-size:9px;color:var(--muted);margin-bottom:4px">Spritpreis</div>
-                        <div style="font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--white)" id="anfahrt-preis-display">—</div>
-                        <div style="font-size:9px;color:var(--muted)">€/Liter</div>
-                      </div>
-                      <div style="text-align:center;background:rgba(46,127,255,.1);border-radius:6px;padding:6px">
-                        <div style="font-size:9px;color:var(--blue-b);margin-bottom:4px;font-weight:700">GESAMT</div>
-                        <div style="font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--blue-b)" id="anfahrt-kosten-display">—</div>
-                        <div style="font-size:9px;color:var(--muted)">€</div>
+
+                      <!-- Heimfahrt -->
+                      <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px">
+                        <div style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0"></div>
+                        <div style="flex:1;min-width:0">
+                          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase">Heimfahrt (Öffis / Taxi)</div>
+                          <div style="font-size:11px;color:var(--white);margin-top:1px" id="heimfahrt-route-label">Zielort → Dein Standort</div>
+                        </div>
+                        <div style="text-align:right;flex-shrink:0">
+                          <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white)" id="heimfahrt-km-display">— km</div>
+                          <div style="font-size:11px;color:#16a34a;font-weight:600" id="heimfahrt-eur-display">— €</div>
+                        </div>
                       </div>
                     </div>
+
+                    <!-- Divider -->
+                    <div style="border-top:1px solid rgba(46,127,255,.2);margin-bottom:10px"></div>
+
+                    <!-- Totals row -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+                      <div style="display:flex;gap:16px;flex-wrap:wrap">
+                        <div>
+                          <div style="font-size:9px;color:var(--muted);margin-bottom:2px">Gesamt km</div>
+                          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white)" id="total-km-display">—</div>
+                        </div>
+                        <div>
+                          <div style="font-size:9px;color:var(--muted);margin-bottom:2px">Gesamt Liter</div>
+                          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white)" id="total-liter-display">—</div>
+                        </div>
+                        <div>
+                          <div style="font-size:9px;color:var(--muted);margin-bottom:2px">à <span id="preis-anzeige">—</span> €/L</div>
+                          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white)" id="anfahrt-liter-display">—</div>
+                        </div>
+                      </div>
+                      <div style="background:rgba(46,127,255,.15);border:1px solid rgba(46,127,255,.3);border-radius:8px;padding:10px 18px;text-align:center">
+                        <div style="font-size:9px;color:var(--blue-b);font-weight:700;letter-spacing:1px;margin-bottom:4px">KRAFTSTOFFKOSTEN</div>
+                        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--blue-b)" id="anfahrt-kosten-display">—</div>
+                        <div style="font-size:9px;color:var(--muted)">automatisch eingerechnet</div>
+                      </div>
+                    </div>
+
                     <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">
-                      <span style="font-size:10px;color:var(--muted)">Automatisch zu "Sonstiges" addiert</span>
+                      <span style="font-size:10px;color:var(--muted)">Heimfahrt per Öffis separat im "Rückfahrt"-Feld eintragen</span>
                       <button onclick="updateAnfahrt(true)" class="btn btn-ghost" style="padding:4px 10px;font-size:11px">↻ Neu berechnen</button>
                     </div>
                   </div>
@@ -2475,40 +2523,93 @@ async function fetchSpritpreis() {
 }
 
 function updateAnfahrt(manual = false) {
-  const vonCoords = addrCoords.von;
-  const badge = document.getElementById('anfahrt-badge');
+  const vonCoords  = addrCoords.von;
+  const nachCoords = addrCoords.nach;
+  const badge      = document.getElementById('anfahrt-badge');
 
   if (!standortCoords || !vonCoords) {
     if (badge) badge.style.display = 'none';
     return;
   }
 
-  const kmLuft   = haversineKm(standortCoords.lat, standortCoords.lon, vonCoords.lat, vonCoords.lon);
-  const kmEinfach = Math.round(kmLuft * 1.28);
-  const kmGesamt  = kmEinfach * 2; // Hin + Rück
-
   const verbrauch  = parseFloat(document.getElementById('c-verbrauch')?.value || 7);
   const spritpreis = parseFloat(document.getElementById('c-spritpreis')?.value || 1.79);
 
-  const liter  = (kmGesamt * verbrauch / 100);
-  const kosten = (liter * spritpreis);
+  function kmRoad(lat1, lon1, lat2, lon2) {
+    return Math.round(haversineKm(lat1, lon1, lat2, lon2) * 1.28);
+  }
+  function kostenFuer(km) {
+    return (km * verbrauch / 100) * spritpreis;
+  }
+  function fmtEurK(val) { return val.toFixed(2).replace('.', ',') + ' €'; }
+  function fmtKm(km) { return km + ' km'; }
 
-  // Update display
-  document.getElementById('anfahrt-km-display').textContent    = kmEinfach;
-  document.getElementById('anfahrt-liter-display').textContent = liter.toFixed(1).replace('.', ',');
-  document.getElementById('anfahrt-preis-display').textContent = spritpreis.toFixed(2).replace('.', ',');
-  document.getElementById('anfahrt-kosten-display').textContent = kosten.toFixed(2).replace('.', ',');
+  // ── Leg 1: Anfahrt → Abholort ──
+  const kmAnfahrt = kmRoad(standortCoords.lat, standortCoords.lon, vonCoords.lat, vonCoords.lon);
+  const eurAnfahrt = kostenFuer(kmAnfahrt);
+
+  // ── Leg 2: Überführung → Zielort (Kundenfahrzeug) ──
+  let kmUeberf = 0, eurUeberf = 0;
+  if (nachCoords) {
+    kmUeberf  = kmRoad(vonCoords.lat, vonCoords.lon, nachCoords.lat, nachCoords.lon);
+    eurUeberf = kostenFuer(kmUeberf);
+  } else {
+    // Fallback: use manual km field
+    kmUeberf  = parseInt(document.getElementById('c-km')?.value || 0);
+    eurUeberf = kostenFuer(kmUeberf);
+  }
+
+  // ── Leg 3: Heimfahrt → Dein Standort ──
+  let kmHeim = 0, eurHeim = 0;
+  if (nachCoords) {
+    kmHeim  = kmRoad(nachCoords.lat, nachCoords.lon, standortCoords.lat, standortCoords.lon);
+    eurHeim = kostenFuer(kmHeim);
+  }
+
+  const totalKm    = kmAnfahrt + kmUeberf + kmHeim;
+  const totalLiter = (totalKm * verbrauch / 100);
+  const totalKost  = eurAnfahrt + eurUeberf + eurHeim;
+
+  // ── Update display ──
+  // Leg 1
+  document.getElementById('anfahrt-km-display').textContent  = fmtKm(kmAnfahrt);
+  document.getElementById('anfahrt-eur-display').textContent = fmtEurK(eurAnfahrt);
+
+  // Leg 2
+  document.getElementById('ueberfuehrung-km-display').textContent  = fmtKm(kmUeberf);
+  document.getElementById('ueberfuehrung-eur-display').textContent = fmtEurK(eurUeberf);
+
+  // Leg 3
+  document.getElementById('heimfahrt-km-display').textContent  = fmtKm(kmHeim);
+  document.getElementById('heimfahrt-eur-display').textContent = fmtEurK(eurHeim);
+
+  // Route labels
+  const vonName  = document.getElementById('c-von')?.value?.split(',')[0]  || 'Abholort';
+  const nachName = document.getElementById('c-nach')?.value?.split(',')[0] || 'Zielort';
+  const standortName = document.getElementById('c-standort')?.value?.split(',')[0] || 'Dein Standort';
+  document.getElementById('anfahrt-route-label').textContent       = `${standortName} → ${vonName}`;
+  document.getElementById('ueberfuehrung-route-label').textContent  = `${vonName} → ${nachName}`;
+  document.getElementById('heimfahrt-route-label').textContent     = `${nachName} → ${standortName}`;
+
+  // Totals
+  document.getElementById('total-km-display').textContent    = totalKm + ' km';
+  document.getElementById('total-liter-display').textContent = totalLiter.toFixed(1).replace('.', ',') + ' L';
+  document.getElementById('anfahrt-liter-display').textContent = totalLiter.toFixed(1).replace('.', ',') + ' L';
+  document.getElementById('preis-anzeige').textContent       = spritpreis.toFixed(2).replace('.', ',');
+  document.getElementById('anfahrt-kosten-display').textContent = fmtEurK(totalKost);
+
   if (badge) badge.style.display = 'block';
 
-  // Auto-fill "Sonstiges" with anfahrt costs
+  // Auto-fill "Sonstiges" with total fuel costs (nur Anfahrt, Überführung läuft über Kundenfahrzeug)
   const extraEl = document.getElementById('c-extra');
   if (extraEl) {
-    extraEl.value = kosten.toFixed(0);
+    // Only anfahrt + heimfahrt as OWN costs (überführung is in Kundenfahrzeug)
+    extraEl.value = (eurAnfahrt + eurHeim).toFixed(0);
     kCalc();
   }
 
   saveFahrzeugSettings();
-  if (manual) toast('Anfahrtskosten neu berechnet', '⛽', 'info');
+  if (manual) toast('Kraftstoffkosten neu berechnet', '⛽', 'info');
 }
 
 document.addEventListener('DOMContentLoaded', () => {
