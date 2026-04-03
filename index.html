@@ -905,10 +905,7 @@ const sb = createClient(SUPA_URL, SUPA_KEY);
 // ══════════════════════════════════════════════════
 // SUPABASE INIT
 // ══════════════════════════════════════════════════
-const SUPA_URL = 'https://qgbnsrnbrykcqovmltjq.supabase.co';
-const SUPA_KEY = 'sb_publishable_w8CSXHCPKFCy-75QxdOp6g_Ee_gfcPw';
-const { createClient } = supabase;
-const sb = createClient(SUPA_URL, SUPA_KEY);
+// Supabase already initialized
 
 // ══════════════════════════════════════════════════
 // STATE
@@ -1967,7 +1964,7 @@ async function fetchSpritpreis() {
     document.getElementById('c-spritpreis').value=preis.toFixed(3);
     document.getElementById('c-spritpreis')._livePrice=true;
     if(src) src.textContent=`⛽ ${best.name||'Tankstelle'} · ${preis.toFixed(3)} €/L · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr`;
-    if(typeof toast==='function') toast(`${['benzin':'E10','diesel':'Diesel','e5':'E5'][kraftstoff]||kraftstoff}: ${preis.toFixed(3)} €/L`,'⛽','success');
+    if(typeof toast==='function') toast(`${({benzin:'E10',diesel:'Diesel',e5:'E5'})[kraftstoff]||kraftstoff}: ${preis.toFixed(3)} €/L`,'⛽','success');
   } catch(e) {
     const avg={benzin:1.759,diesel:1.649,e5:1.819};
     document.getElementById('c-spritpreis').value=(avg[kraftstoff]||1.759).toFixed(3);
@@ -2110,10 +2107,7 @@ function onKalkReady() {
 // NK FAHRZEUGÜBERFÜHRUNG — SHARED AUTH MODULE
 // ═══════════════════════════════════════════
 
-const SUPA_URL = 'https://qgbnsrnbrykcqovmltjq.supabase.co';
-const SUPA_KEY = 'sb_publishable_w8CSXHCPKFCy-75QxdOp6g_Ee_gfcPw';
-const { createClient } = supabase;
-const sb = createClient(SUPA_URL, SUPA_KEY);
+// Supabase already initialized
 
 // ── Shared state ──
 
