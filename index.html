@@ -2476,51 +2476,73 @@ function saveFahrzeugSettings() {
 }
 
 async function fetchSpritpreis() {
-  const btn = document.getElementById('sprit-refresh-btn');
-  const src  = document.getElementById('sprit-source');
+  const btn        = document.getElementById('sprit-refresh-btn');
+  const src        = document.getElementById('sprit-source');
   const kraftstoff = document.getElementById('c-kraftstoff')?.value || 'benzin';
+  const fuelMap    = { benzin:'e10', diesel:'diesel', e5:'e5' };
+  const tkField    = fuelMap[kraftstoff] || 'e10';
+
   btn.textContent = '...';
-  btn.disabled = true;
+  btn.disabled    = true;
+  if (src) src.textContent = 'Standort wird ermittelt...';
 
   try {
-    // Tankerkoenig API — kostenlos, kein Key nötig für Durchschnittspreise
-    // Fallback: Bundesnetzagentur-ähnliche Durchschnittswerte
-    const res = await fetch('https://creativecommons.tankerkoenig.de/api/detail.php?id=e8b58f48-9d3e-4f39-80c5-13bff1c7c39f&apikey=00000000-0000-0000-0000-000000000002');
+    // Step 1: Standort ermitteln (Browser GPS oder gespeicherter Standort)
+    const coords = await new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          ()  => standortCoords
+            ? resolve({ lat: standortCoords.lat, lng: standortCoords.lon })
+            : reject(new Error('no location')),
+          { timeout: 6000, maximumAge: 60000 }
+        );
+      } else if (standortCoords) {
+        resolve({ lat: standortCoords.lat, lng: standortCoords.lon });
+      } else {
+        reject(new Error('no location'));
+      }
+    });
+
+    if (src) src.textContent = 'Suche günstigste Tankstelle...';
+
+    // Step 2: Tankerkönig API
+    const tkType = tkField === 'e10' ? 'e10' : tkField;
+    const url = `https://creativecommons.tankerkoenig.de/json/list.php?lat=${coords.lat}&lng=${coords.lng}&rad=10&sort=price&type=${tkType}&apikey=00000000-0000-0000-0000-000000000002`;
+    const res  = await fetch(url);
     const data = await res.json();
 
-    // If API unavailable, use reasonable current average prices (Germany 2025)
-    throw new Error('use fallback');
-  } catch(e) {
-    // Use live scrape via allorigins proxy from ADAC average prices
-    try {
-      const fallbackPrices = {
-        benzin: null,
-        diesel: null,
-        e5: null
-      };
+    if (!data.ok || !data.stations?.length) throw new Error('no stations');
 
-      // Try to get from open API
-      const r2 = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://www.adac.de/tanken/kraftstoffpreise/'));
-      // If this fails too, use hardcoded recent averages
-      throw new Error('use hardcoded');
-    } catch(e2) {
-      // Realistic German average prices (updated manually)
-      const avgPrices = { benzin: 1.759, diesel: 1.649, e5: 1.819 };
-      const preis = avgPrices[kraftstoff] || 1.759;
-      const preiEl = document.getElementById('c-spritpreis');
-      if (preiEl) {
-        preiEl.value = preis.toFixed(3);
-        preiEl.dataset.livePrice = '1';
-      }
-      if (src) src.textContent = 'ADAC Durchschnitt (DE) · ' + new Date().toLocaleDateString('de-DE') + ' · Für Auslandsfahrten ggf. anpassen';
-      saveFahrzeugSettings();
-      updateAnfahrt();
-      toast('Durchschnittspreis geladen', '⛽', 'info');
-    }
+    const stations = data.stations.filter(s => s[tkField] > 0).sort((a,b) => a[tkField] - b[tkField]);
+    if (!stations.length) throw new Error('no prices');
+
+    const best  = stations[0];
+    const preis = best[tkField];
+    const name  = best.name || 'Tankstelle';
+    const dist  = best.dist?.toFixed(1);
+
+    document.getElementById('c-spritpreis').value = preis.toFixed(3);
+    document.getElementById('c-spritpreis').dataset.livePrice = '1';
+
+    const label = { benzin:'E10', diesel:'Diesel', e5:'Super E5' };
+    if (src) src.textContent = `⛽ ${name} · ${dist ? dist+' km · ' : ''}${preis.toFixed(3)} €/L · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr`;
+    toast(`${label[kraftstoff]}: ${preis.toFixed(3)} €/L — ${name}`, '⛽', 'success');
+
+  } catch(e) {
+    // Fallback: aktuelle Bundesdurchschnittspreise
+    const avg = { benzin:1.759, diesel:1.649, e5:1.819 };
+    document.getElementById('c-spritpreis').value = (avg[kraftstoff]||1.759).toFixed(3);
+    if (src) src.textContent = 'Ø Deutschland · Standort nicht verfügbar · ' + new Date().toLocaleDateString('de-DE');
+    toast('Standort nicht verfügbar — Durchschnittspreis', '⚠️', 'info');
   }
+
+  saveFahrzeugSettings();
+  updateAnfahrt();
   btn.textContent = '↻ Live';
-  btn.disabled = false;
+  btn.disabled    = false;
 }
+
 
 function updateAnfahrt(manual = false) {
   const vonCoords  = addrCoords.von;
