@@ -356,8 +356,100 @@ textarea.form-control{resize:vertical;min-height:80px}
 .k-tip-title{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:2px}
 .k-tip-text{font-size:11px;color:var(--muted);line-height:1.5}
 
+
+/* ══ MOBILE BOTTOM NAV ══ */
+.mobile-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;
+  background:var(--navy);border-top:1px solid rgba(46,127,255,.2);
+  z-index:100;padding:0;
+  justify-content:space-around;align-items:stretch;
+}
+.mob-nav-item{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;padding:10px 8px;flex:1;cursor:pointer;
+  background:none;border:none;color:#5A6A85;font-family:'Outfit',sans-serif;
+  font-size:10px;font-weight:500;letter-spacing:.3px;transition:color .2s;
+  text-decoration:none;
+}
+.mob-nav-item.active{color:var(--blue-b)}
+.mob-nav-item svg{width:20px;height:20px;opacity:.7;transition:opacity .2s}
+.mob-nav-item.active svg{opacity:1}
+@media(max-width:700px){
+  .main{padding-bottom:62px}
+}
 @media print{body{display:none!important}}
-@media(max-width:900px){.stats-row{grid-template-columns:1fr 1fr}.form-layout,.kalk-layout{grid-template-columns:1fr}.sidebar{width:200px}}
+/* ══ TABLET ══ */
+@media(max-width:900px){
+  .sidebar{width:220px}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .form-layout,.kalk-layout{grid-template-columns:1fr}
+  .content{padding:20px}
+  .type-selector{grid-template-columns:1fr 1fr 1fr}
+}
+
+/* ══ MOBILE ══ */
+@media(max-width:700px){
+  /* Auth */
+  .auth-card{width:95vw;padding:32px 24px}
+  .auth-brand{font-size:24px}
+
+  /* Layout: hide sidebar, show topbar nav */
+  body{overflow:auto!important}
+  #app-screen{flex-direction:column!important}
+  .sidebar{display:none}
+  .main{height:auto;min-height:100vh}
+  .content{padding:14px;overflow-y:visible}
+  .topbar{padding:0 16px;position:sticky;top:0;z-index:50}
+  .topbar-date{display:none}
+
+  /* Bottom nav bar */
+  .mobile-nav{display:flex!important}
+
+  /* Stats */
+  .stats-row{grid-template-columns:1fr 1fr;gap:10px}
+  .stat-card{padding:14px 12px}
+  .stat-value{font-size:30px}
+  .stat-icon{font-size:20px}
+
+  /* Form */
+  .form-layout{grid-template-columns:1fr}
+  .form-grid,.form-grid-3{grid-template-columns:1fr}
+  .preview-panel{display:none}
+  .type-selector{grid-template-columns:1fr}
+  .type-opt{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 16px}
+  .type-opt-icon{font-size:22px;margin-bottom:0}
+  .form-card-header{padding:12px 16px}
+  .form-body{padding:14px 16px}
+
+  /* Table: horizontal scroll */
+  .card{overflow-x:auto}
+  .data-table{min-width:540px}
+  .filter-bar{flex-direction:column}
+  .search-input,.filter-select{width:100%}
+
+  /* Kalkulation */
+  .kalk-layout{grid-template-columns:1fr}
+
+  /* Users */
+  .user-grid{grid-template-columns:1fr}
+  .user-card{flex-wrap:wrap;gap:10px}
+
+  /* Modal */
+  .modal{width:95vw;margin:10px auto}
+  .modal-body{padding:16px}
+
+  /* Topbar */
+  .topbar-title{font-size:17px}
+  #topbar-role{display:none}
+}
+
+/* ══ VERY SMALL ══ */
+@media(max-width:380px){
+  .auth-card{padding:24px 16px}
+  .stats-row{grid-template-columns:1fr}
+  .stat-value{font-size:36px}
+}
 </style>
 </head>
 <body>
@@ -802,6 +894,31 @@ textarea.form-control{resize:vertical;min-height:80px}
 
   </div><!-- /content -->
   </div><!-- /main -->
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="mobile-nav" id="mobile-nav">
+    <button class="mob-nav-item active" onclick="mobileNav('dashboard',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button class="mob-nav-item" onclick="mobileNav('anfragen',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Anfragen
+      <span id="mob-badge-anfragen" style="display:none;position:absolute;top:6px;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:1px 5px;border-radius:8px;min-width:16px;text-align:center"></span>
+    </button>
+    <button class="mob-nav-item" onclick="mobileNav('neuer-auftrag',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+      Neu
+    </button>
+    <button class="mob-nav-item" onclick="mobileNav('auftraege',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      Aufträge
+    </button>
+    <button class="mob-nav-item" onclick="mobileNav('kalkulation',this)">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
+      Kalkulation
+    </button>
+  </nav>
 </div><!-- /app-screen -->
 
 <!-- TOAST WRAP -->
@@ -2103,6 +2220,21 @@ function mailAuftragBestaetigung(email, name, auftragNr, details) {
     `
   });
 }
+
+
+// Mobile Navigation
+function mobileNav(pageId, btn) {
+  document.querySelectorAll('.mob-nav-item').forEach(b => b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  // Also update sidebar nav
+  const sidebarBtn = document.querySelector(`.nav-item[onclick*="${pageId}"]`);
+  navigate(pageId, sidebarBtn);
+  // Scroll to top
+  window.scrollTo(0, 0);
+}
+
+// Sync mobile badge with anfragen badge
+const origLoadAnfragenCount = loadAnfragenCount;
 
 </script>
 </body>
