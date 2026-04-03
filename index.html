@@ -1706,6 +1706,10 @@ function addrSelect(inputId, dropdownId, lat, lon, main, sub) {
   if (inputId === 'c-standort') {
     standortCoords = { lat:parseFloat(lat), lon:parseFloat(lon) };
     localStorage.setItem('nk_standort', JSON.stringify({ coords:standortCoords, label }));
+    // Reset auto-fields so they recalculate with new standort
+    ['c-maut','c-rueck','c-verpflegung','c-uebernacht'].forEach(id=>{
+      const el=document.getElementById(id); if(el) delete el._manual;
+    });
     smartCalc();
     return;
   }
@@ -1809,20 +1813,33 @@ function smartCalc() {
     document.getElementById('maut-hint').textContent=`Route: ${countries.join(' + ')}`;
   }
 
-  // Heimfahrt
+  // Heimfahrt — gestaffelt nach Distanz
   let heimK = kNum('c-rueck',45);
   if (!document.getElementById('c-rueck')._manual && kmHeim>0) {
-    heimK=Math.max(25,Math.round(kmHeim*HEIM_RATE));
-    document.getElementById('c-rueck').value=heimK;
-    document.getElementById('heim-hint').textContent=`${kmHeim}km Heimfahrt`;
+    let heimRate;
+    if (kmHeim > 800) {
+      heimRate = 0.28; // Flug nötig
+    } else if (kmHeim > 400) {
+      heimRate = 0.20; // Zug Fernstrecke / Flug
+    } else if (kmHeim > 150) {
+      heimRate = 0.14; // Zug Mittelstrecke
+    } else {
+      heimRate = 0.10; // Zug Kurzstrecke
+    }
+    const heimMin = kmHeim > 800 ? 180 : kmHeim > 400 ? 80 : 25;
+    heimK = Math.max(heimMin, Math.round(kmHeim * heimRate));
+    document.getElementById('c-rueck').value = heimK;
+    const heimTyp = kmHeim > 800 ? '✈️ Flug' : kmHeim > 400 ? '🚄 Fernzug' : '🚆 Zug';
+    document.getElementById('heim-hint').textContent = `${kmHeim}km · ${heimTyp} · ${heimRate*100}ct/km`;
   }
 
-  // Verpflegung
+  // Verpflegung — 15€ pro 4h, mind. 15€ ab 2h
   let verpfK = kNum('c-verpflegung',0);
   if (!document.getElementById('c-verpflegung')._manual) {
-    verpfK=Math.floor(stdGes/4)*15;
-    document.getElementById('c-verpflegung').value=verpfK;
-    document.getElementById('verpf-hint').textContent=`${stdGes.toFixed(0)}h → ${Math.floor(stdGes/4)}× 15€`;
+    const mahlzeiten = stdGes >= 2 ? Math.max(1, Math.floor(stdGes/4)) : 0;
+    verpfK = mahlzeiten * 15;
+    document.getElementById('c-verpflegung').value = verpfK;
+    document.getElementById('verpf-hint').textContent = `${stdGes.toFixed(1)}h → ${mahlzeiten}× 15€`;
   }
 
   // Übernachtung
@@ -1840,7 +1857,9 @@ function smartCalc() {
   const roEl = document.getElementById('route-overview');
   if (roEl) {
     roEl.style.display='block';
-    document.getElementById('ro-anfahrt').textContent = kmAnfahrt>0?`${kmAnfahrt} km · ${kFmt(spritAnfahrt)}`:'— (Standort nicht gesetzt)';
+    document.getElementById('ro-anfahrt').textContent = kmAnfahrt>0
+      ? `${kmAnfahrt} km · ${kFmt(spritAnfahrt)}`
+      : standortCoords ? '0 km (Abholung am Standort)' : '— (Standort eingeben)';
     document.getElementById('ro-ueber').textContent   = `${kmUeber} km`;
     document.getElementById('ro-heim').textContent    = kmHeim>0?`${kmHeim} km · ca. ${kFmt(heimK)}`:'—';
     document.getElementById('ro-gesamt').textContent  = `${kmAnfahrt+kmUeber+kmHeim} km`;
@@ -2050,7 +2069,15 @@ function restoreKalkState() {
     const el=document.getElementById(id);
     if(el) el.addEventListener('input',()=>{el._manual=true;},{ once:false });
   });
-  setTimeout(()=>smartCalc(),50);
+  // Small delay to ensure DOM is ready, then calc
+  setTimeout(()=>{
+    // Double-check standort is set
+    if (!standortCoords) {
+      const savedS=localStorage.getItem('nk_standort');
+      if(savedS){try{const s=JSON.parse(savedS);standortCoords=s.coords;}catch(e){}}
+    }
+    smartCalc();
+  }, 200);
 }
 
 // CSS for breakdown rows (injected if not in stylesheet)
