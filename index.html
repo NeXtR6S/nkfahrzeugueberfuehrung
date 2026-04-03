@@ -696,11 +696,11 @@ textarea.form-control{resize:vertical;min-height:80px}
               <div class="form-body">
                 <div style="background:var(--off);border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--muted)">⚡ Wird automatisch berechnet — du kannst jeden Wert überschreiben.</div>
                 <div class="form-grid">
-                  <div class="form-group"><label class="form-label">Maut (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-maut" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="maut-hint">Wird berechnet wenn Route feststeht</span></div>
-                  <div class="form-group"><label class="form-label">Heimfahrt / Öffis (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-rueck" type="number" value="45" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="heim-hint">Zug, Bus oder Flug</span></div>
-                  <div class="form-group"><label class="form-label">Verpflegung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-verpflegung" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="verpf-hint">~15€ pro 4h Fahrzeit</span></div>
-                  <div class="form-group"><label class="form-label">Übernachtung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-uebernacht" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="ueber-hint">~80€/Nacht ab 8h Fahrzeit</span></div>
-                  <div class="form-group"><label class="form-label">E-Auto Laden (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-laden" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="laden-hint">Nur bei Elektrofahrzeug</span></div>
+                  <div class="form-group"><label class="form-label">Maut (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-maut" type="number" value="0" min="0" oninput="this._manual=true;smartCalc()"><span style="font-size:10px;color:var(--muted)" id="maut-hint">Wird berechnet wenn Route feststeht</span></div>
+                  <div class="form-group"><label class="form-label">Heimfahrt / Öffis (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-rueck" type="number" value="45" min="0" oninput="this._manual=true;smartCalc()"><span style="font-size:10px;color:var(--muted)" id="heim-hint">Zug, Bus oder Flug</span></div>
+                  <div class="form-group"><label class="form-label">Verpflegung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-verpflegung" type="number" value="0" min="0" oninput="this._manual=true;smartCalc()"><span style="font-size:10px;color:var(--muted)" id="verpf-hint">~15€ pro 4h Fahrzeit</span></div>
+                  <div class="form-group"><label class="form-label">Übernachtung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-uebernacht" type="number" value="0" min="0" oninput="this._manual=true;smartCalc()"><span style="font-size:10px;color:var(--muted)" id="ueber-hint">~80€/Nacht ab 8h Fahrzeit</span></div>
+                  <div class="form-group"><label class="form-label">E-Auto Laden (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-laden" type="number" value="0" min="0" oninput="this._manual=true;smartCalc()"><span style="font-size:10px;color:var(--muted)" id="laden-hint">Nur bei Elektrofahrzeug</span></div>
                   <div class="form-group"><label class="form-label">Sonstiges (€)</label><input class="form-control" id="c-extra" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)">Parken, Fähre, etc.</span></div>
                 </div>
               </div>
@@ -2064,11 +2064,7 @@ function restoreKalkState() {
     const vEl=document.getElementById('c-verbrauch');  if(vEl&&f.verbrauch)  vEl.value=f.verbrauch;
     const pEl=document.getElementById('c-spritpreis'); if(pEl&&f.preis)      pEl.value=f.preis;
   }catch(e){}}
-  // Mark auto-fields as not manually set
-  ['c-maut','c-rueck','c-verpflegung','c-uebernacht','c-laden'].forEach(id=>{
-    const el=document.getElementById(id);
-    if(el) el.addEventListener('input',()=>{el._manual=true;},{ once:false });
-  });
+  // Auto-fields use inline oninput="this._manual=true" — no listener needed
   // Small delay to ensure DOM is ready, then calc
   setTimeout(()=>{
     // Double-check standort is set
