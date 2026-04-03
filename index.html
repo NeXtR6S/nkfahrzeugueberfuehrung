@@ -384,9 +384,10 @@ textarea.form-control{resize:vertical;min-height:80px}
 .addr-dropdown{
   position:absolute;top:calc(100% + 4px);left:0;right:0;
   background:var(--white);border:1.5px solid var(--blue-b);border-radius:6px;
-  box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:200;max-height:220px;overflow-y:auto;
+  box-shadow:0 16px 40px rgba(0,0,0,.35);z-index:9999;max-height:220px;overflow-y:auto;
   display:none;
 }
+.addr-wrap{position:relative;z-index:9999}
 .addr-dropdown.open{display:block}
 .addr-item{
   padding:10px 14px;font-size:12px;cursor:pointer;
@@ -1177,6 +1178,12 @@ let editingId = null;
 let filterText = '', filterType = '', filterStatus = '';
 let kHistory = JSON.parse(localStorage.getItem('nk_kalk_v2') || '[]');
 
+// Kalkulator state
+let standortCoords = null;
+let addrCoords     = { von: null, nach: null };
+let addrTimers     = {};
+let addrSelected   = { von: false, nach: false };
+
 const isAdmin = () => currentProfile?.role === 'admin';
 const isDisponent = () => currentProfile?.role === 'disponent';
 const isBuchhaltung = () => currentProfile?.role === 'buchhaltung';
@@ -1296,6 +1303,22 @@ async function initApp(user) {
   kRenderHistory();
   refreshDashboard();
 
+  // Restore kalkulator saved state
+  const savedS = localStorage.getItem('nk_standort');
+  if (savedS) { try { const s = JSON.parse(savedS); const el = document.getElementById('c-standort'); if(el) el.value = s.label||''; } catch(e){} }
+  const savedR = localStorage.getItem('nk_route');
+  if (savedR) {
+    try {
+      const r = JSON.parse(savedR);
+      const vonEl  = document.getElementById('c-von');
+      const nachEl = document.getElementById('c-nach');
+      const kmEl   = document.getElementById('c-km');
+      if (vonEl  && r.vonLabel)  vonEl.value  = r.vonLabel;
+      if (nachEl && r.nachLabel) nachEl.value = r.nachLabel;
+      if (kmEl   && r.km)        kmEl.value   = r.km;
+    } catch(e){}
+  }
+
   // Fahrer-select befüllen (nur Admin)
   if (isAdmin()) await loadFahrerSelect();
 }
@@ -1314,6 +1337,7 @@ function navigate(pageId, btn) {
   if (pageId === 'dashboard')   refreshDashboard();
   if (pageId === 'nutzer')      renderUsers();
   if (pageId === 'anfragen')    loadAnfragen();
+  if (pageId === 'kalkulation') { kRenderHistory(); setTimeout(() => smartCalc(), 50); }
   if (pageId === 'einstellungen') loadSettingsForm();
 }
 
@@ -1853,6 +1877,39 @@ ${type!=='rahmen'?`<div class="doc-section-title" style="margin-top:14px">Im Pre
 // SMART KALKULATOR
 // ══════════════════════════════════════════════════
 
+// ── Restore saved kalkulator state ──
+(function restoreKalkState() {
+  // Standort
+  const savedS = localStorage.getItem('nk_standort');
+  if (savedS) { try { const s = JSON.parse(savedS); standortCoords = s.coords; } catch(e){} }
+
+  // Route (Von/Nach)
+  const savedR = localStorage.getItem('nk_route');
+  if (savedR) {
+    try {
+      const r = JSON.parse(savedR);
+      if (r.von)  addrCoords.von  = r.von;
+      if (r.nach) addrCoords.nach = r.nach;
+    } catch(e){}
+  }
+
+  // Fahrzeug settings
+  const savedFz = localStorage.getItem('nk_fahrzeug');
+  if (savedFz) {
+    try {
+      const f = JSON.parse(savedFz);
+      document.addEventListener('DOMContentLoaded', () => {
+        const kEl = document.getElementById('c-kraftstoff');
+        const vEl = document.getElementById('c-verbrauch');
+        const pEl = document.getElementById('c-spritpreis');
+        if (kEl && f.kraftstoff) kEl.value = f.kraftstoff;
+        if (vEl && f.verbrauch)  vEl.value = f.verbrauch;
+        if (pEl && f.preis)      pEl.value = f.preis;
+      });
+    } catch(e){}
+  }
+})();
+
 // Maut-Schätzung nach Land (€ pro 100km)
 const MAUT_RATES = {
   DE: 0,      // Deutschland: keine Maut PKW
@@ -2169,9 +2226,6 @@ function kDelete(id) {
 // ══════════════════════════════════════════════════
 // ADRESS-AUTOCOMPLETE (OpenStreetMap Nominatim)
 // ══════════════════════════════════════════════════
-let addrTimers = {};
-let addrCoords = { von: null, nach: null };
-let addrSelected = { von: false, nach: false };
 
 async function addrSearch(inputId, dropdownId) {
   const input = document.getElementById(inputId);
