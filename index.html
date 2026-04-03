@@ -2512,7 +2512,7 @@ async function fetchSpritpreis() {
         preiEl.value = preis.toFixed(3);
         preiEl.dataset.livePrice = '1';
       }
-      if (src) src.textContent = 'ADAC Durchschnitt (DE) · ' + new Date().toLocaleDateString('de-DE');
+      if (src) src.textContent = 'ADAC Durchschnitt (DE) · ' + new Date().toLocaleDateString('de-DE') + ' · Für Auslandsfahrten ggf. anpassen';
       saveFahrzeugSettings();
       updateAnfahrt();
       toast('Durchschnittspreis geladen', '⛽', 'info');
@@ -2646,7 +2646,7 @@ async function addrSearch(inputId, dropdownId) {
     try {
       const url = `https://nominatim.openstreetmap.org/search?` +
         `q=${encodeURIComponent(val)}&` +
-        `format=json&addressdetails=1&limit=6&countrycodes=de,at,ch&` +
+        `format=json&addressdetails=1&limit=8&` +
         `accept-language=de`;
 
       const res = await fetch(url, {
@@ -2662,10 +2662,14 @@ async function addrSearch(inputId, dropdownId) {
       dropdown.innerHTML = data.map((place, i) => {
         const addr = place.address;
         const main = addr.city || addr.town || addr.village || addr.municipality || place.display_name.split(',')[0];
-        const parts = [addr.road, addr.house_number, addr.postcode, addr.city || addr.town || addr.village, addr.state, addr.country].filter(Boolean);
+        const parts = [addr.road, addr.house_number, addr.postcode, addr.city || addr.town || addr.village, addr.state].filter(Boolean);
         const sub = parts.slice(0, 4).join(', ');
+        const country = addr.country || '';
+        const countryCode = (addr.country_code || '').toUpperCase();
+        const flag = countryCode ? String.fromCodePoint(...[...countryCode].map(c => 0x1F1E6 + c.charCodeAt(0) - 65)) : '';
+        const isAbroad = countryCode && !['DE','AT','CH'].includes(countryCode);
         return `<div class="addr-item" onclick="addrSelect('${inputId}','${dropdownId}',${place.lat},${place.lon},'${main.replace(/'/g,"\'")}','${sub.replace(/'/g,"\'")}')">
-          <span class="addr-item-main">${main}</span>
+          <span class="addr-item-main">${flag ? flag + ' ' : ''}${main}${isAbroad ? ' <span style="font-size:10px;color:var(--gold);font-weight:600">' + country + '</span>' : ''}</span>
           <span class="addr-item-sub">${sub}</span>
         </div>`;
       }).join('');
