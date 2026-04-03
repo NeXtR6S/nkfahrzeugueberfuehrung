@@ -2444,13 +2444,20 @@ let standortCoords = null;
 // Override addrSelect to handle standort + von/nach
 const _origAddrSelect = addrSelect;
 function addrSelect(inputId, dropdownId, lat, lon, main, sub) {
-  _origAddrSelect(inputId, dropdownId, lat, lon, main, sub);
   if (inputId === 'c-standort') {
+    // Handle standort completely separately — never touch addrCoords
+    document.getElementById(inputId).value = main + (sub ? ', ' + sub.split(',')[0] : '');
+    document.getElementById(dropdownId).classList.remove('open');
     standortCoords = { lat: parseFloat(lat), lon: parseFloat(lon) };
     const label = main + (sub ? ', ' + sub.split(',')[0] : '');
     localStorage.setItem('nk_standort', JSON.stringify({ coords: standortCoords, label }));
-    updateAnfahrt();
-  } else if (inputId === 'c-von') {
+    updateAnfahrt(); // recalculate Anfahrt costs — does NOT touch c-km
+    return;
+  }
+  // For c-von and c-nach: call original which sets addrCoords and c-km
+  _origAddrSelect(inputId, dropdownId, lat, lon, main, sub);
+  // After Von is selected, also update Anfahrt costs
+  if (inputId === 'c-von') {
     updateAnfahrt();
   }
 }
@@ -2654,6 +2661,7 @@ async function addrSearch(inputId, dropdownId) {
   const input = document.getElementById(inputId);
   const dropdown = document.getElementById(dropdownId);
   const val = input.value.trim();
+  if (inputId === 'c-standort') { document.getElementById(dropdownId).classList.remove('open'); return; }
   const field = inputId === 'c-von' ? 'von' : 'nach';
 
   addrSelected[field] = false;
@@ -2707,6 +2715,7 @@ async function addrSearch(inputId, dropdownId) {
 }
 
 function addrSelect(inputId, dropdownId, lat, lon, main, sub) {
+  if (inputId === 'c-standort') { document.getElementById(dropdownId).classList.remove('open'); return; }
   const field = inputId === 'c-von' ? 'von' : 'nach';
   document.getElementById(inputId).value = main + (sub ? ', ' + sub.split(',')[0] : '');
   document.getElementById(dropdownId).classList.remove('open');
