@@ -787,178 +787,187 @@ textarea.form-control{resize:vertical;min-height:80px}
       <!-- ── KALKULATION ── -->
       <div class="page" id="page-kalkulation">
         <div class="kalk-layout">
+
+          <!-- LEFT: Eingaben -->
           <div style="display:flex;flex-direction:column;gap:14px">
+
+            <!-- STRECKE -->
             <div class="card">
               <div class="form-card-header" style="background:var(--navy-2);padding:14px 20px;display:flex;align-items:center;gap:10px">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
-                <h3 style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff">Fahrtkalkulation</h3>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+                <h3 style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff">1. Strecke</h3>
               </div>
               <div class="form-body">
-                <div class="form-section-title">Strecke & Fahrzeug</div>
-                <div class="form-grid" style="margin-bottom:14px">
+                <div class="form-grid" style="margin-bottom:12px">
                   <div class="form-group">
-                    <label class="form-label">Von (Startort)</label>
+                    <label class="form-label">Dein Standort (Heimatort)</label>
                     <div class="addr-wrap">
-                      <input class="form-control" id="c-von" placeholder="Stadt oder Adresse eingeben..." autocomplete="off"
+                      <input class="form-control" id="c-standort" placeholder="z.B. Bad Urach" autocomplete="off"
+                        oninput="addrSearch('c-standort','dropdown-standort')" onkeydown="addrKey(event,'dropdown-standort')">
+                      <div class="addr-dropdown" id="dropdown-standort"></div>
+                    </div>
+                    <span style="font-size:10px;color:var(--muted)">Wird gespeichert</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Fahrzeugtyp (Kundenfahrzeug)</label>
+                    <select class="form-control" id="c-ftyp" onchange="smartCalc()">
+                      <option value="pkw">PKW / Kombi</option>
+                      <option value="suv">SUV / Geländewagen</option>
+                      <option value="transporter">Transporter / Van</option>
+                      <option value="elektro">Elektrofahrzeug</option>
+                      <option value="luxus">Luxus / Sportwagen</option>
+                      <option value="tief">Tiefergelegt (+Aufpreis)</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-grid" style="margin-bottom:12px">
+                  <div class="form-group">
+                    <label class="form-label">Abholort (Von) *</label>
+                    <div class="addr-wrap">
+                      <input class="form-control" id="c-von" placeholder="z.B. Hamburg" autocomplete="off"
                         oninput="addrSearch('c-von','dropdown-von')" onkeydown="addrKey(event,'dropdown-von')">
                       <div class="addr-dropdown" id="dropdown-von"></div>
                     </div>
                   </div>
                   <div class="form-group">
-                    <label class="form-label">Nach (Zielort)</label>
+                    <label class="form-label">Zielort (Nach) *</label>
                     <div class="addr-wrap">
-                      <input class="form-control" id="c-nach" placeholder="Stadt oder Adresse eingeben..." autocomplete="off"
+                      <input class="form-control" id="c-nach" placeholder="z.B. Barcelona" autocomplete="off"
                         oninput="addrSearch('c-nach','dropdown-nach')" onkeydown="addrKey(event,'dropdown-nach')">
                       <div class="addr-dropdown" id="dropdown-nach"></div>
-                    </div></div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Distance badges -->
+                <div id="route-overview" style="display:none;background:var(--off);border-radius:8px;padding:12px 14px;font-size:12px">
+                  <div style="display:flex;flex-direction:column;gap:6px">
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                      <span style="color:var(--muted)">🚗 Anfahrt (dein Auto)</span>
+                      <span style="font-weight:600" id="ro-anfahrt">—</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                      <span style="color:var(--muted)">🔑 Überführung (Kundenfahrzeug)</span>
+                      <span style="font-weight:600;color:var(--blue-b)" id="ro-ueber">—</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center">
+                      <span style="color:var(--muted)">🚆 Heimfahrt (Öffis/Flug)</span>
+                      <span style="font-weight:600" id="ro-heim">—</span>
+                    </div>
+                    <div style="border-top:1px solid var(--border);padding-top:6px;display:flex;justify-content:space-between;align-items:center">
+                      <span style="color:var(--muted);font-size:11px">Gesamt</span>
+                      <span style="font-weight:700;font-family:'Rajdhani',sans-serif;font-size:16px;color:var(--text)" id="ro-gesamt">—</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- DEIN FAHRZEUG -->
+            <div class="card">
+              <div class="form-card-header" style="background:var(--navy-2);padding:14px 20px;display:flex;align-items:center;gap:10px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="16" cy="17" r="2"/><circle cx="9" cy="17" r="2"/></svg>
+                <h3 style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff">2. Dein Fahrzeug (Anfahrt)</h3>
+              </div>
+              <div class="form-body">
+                <div class="form-grid-3" style="margin-bottom:10px">
                   <div class="form-group">
-                    <label class="form-label">Strecke (km) *</label>
-                    <input class="form-control" id="c-km" type="number" placeholder="Wird automatisch berechnet" min="0" oninput="kCalc()">
+                    <label class="form-label">Kraftstoffart</label>
+                    <select class="form-control" id="c-kraftstoff" onchange="onKraftstoffChange()">
+                      <option value="benzin">Benzin (E10)</option>
+                      <option value="diesel" selected>Diesel</option>
+                      <option value="e5">Super Plus (E5)</option>
+                    </select>
                   </div>
-                  <div class="form-group"><label class="form-label">Fahrzeugtyp</label><select class="form-control" id="c-ftyp" onchange="kCalc()"><option value="1">PKW / Kombi</option><option value="1.1">SUV / Geländewagen</option><option value="1.2">Transporter / Van</option><option value="1.3">Elektrofahrzeug</option><option value="1.15">Luxus / Sportwagen</option></select></div>
-                </div>
-                <div class="addr-distance-badge" id="addr-distance-badge">
-                  <span>📍</span>
-                  <span id="addr-von-label" style="color:var(--muted);font-size:11px">—</span>
-                  <span style="color:var(--muted)">→</span>
-                  <span id="addr-nach-label" style="color:var(--muted);font-size:11px">—</span>
-                  <span style="margin-left:auto;display:flex;align-items:center;gap:4px">
-                    <span class="addr-distance-km" id="addr-km-display">—</span>
-                    <span style="color:var(--muted);font-size:11px">km (Luftlinie)</span>
-                  </span>
-                  <button onclick="useCalculatedDistance()" class="btn btn-ghost" style="padding:4px 10px;font-size:11px;margin-left:4px">Übernehmen</button>
-                </div>
-                <div class="form-section-title">Anfahrt zu dir</div>
-                <div style="background:var(--off);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:14px">
-                  <div style="font-size:10px;color:var(--muted);margin-bottom:12px">Standort & Fahrzeugdaten werden gespeichert und für alle Kalkulationen verwendet.</div>
-
-                  <!-- Row 1: Standort -->
-                  <div class="form-group" style="margin-bottom:10px">
-                    <label class="form-label">Dein Standort</label>
-                    <div class="addr-wrap">
-                      <input class="form-control" id="c-standort" placeholder="z. B. Dein Wohnort / Büro" autocomplete="off"
-                        oninput="addrSearch('c-standort','dropdown-standort')" onkeydown="addrKey(event,'dropdown-standort')">
-                      <div class="addr-dropdown" id="dropdown-standort"></div>
-                    </div>
+                  <div class="form-group">
+                    <label class="form-label">Verbrauch (L/100km)</label>
+                    <input class="form-control" id="c-verbrauch" type="number" value="7" min="1" max="30" step="0.1" oninput="smartCalc()">
                   </div>
-
-                  <!-- Row 2: Fahrzeug + Verbrauch + Kraftstoff -->
-                  <div class="form-grid-3" style="margin-bottom:12px">
-                    <div class="form-group">
-                      <label class="form-label">Kraftstoffart</label>
-                      <select class="form-control" id="c-kraftstoff" onchange="onKraftstoffChange()">
-                        <option value="benzin">Benzin (E10)</option>
-                        <option value="diesel">Diesel</option>
-                        <option value="e5">Super Plus (E5)</option>
-                      </select>
+                  <div class="form-group">
+                    <label class="form-label">Spritpreis (€/L)</label>
+                    <div style="position:relative">
+                      <input class="form-control" id="c-spritpreis" type="number" value="1.79" min="0.50" max="4.00" step="0.01" oninput="smartCalc()" style="padding-right:58px">
+                      <button onclick="fetchSpritpreis()" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);background:var(--blue-pale);border:1px solid rgba(46,127,255,.3);border-radius:4px;color:var(--blue-b);font-size:10px;font-weight:600;cursor:pointer;padding:3px 7px" id="sprit-refresh-btn">↻ Live</button>
                     </div>
-                    <div class="form-group">
-                      <label class="form-label">Verbrauch (L/100km)</label>
-                      <input class="form-control" id="c-verbrauch" type="number" value="7" min="1" max="30" step="0.1" oninput="updateAnfahrt()">
-                      <span style="font-size:10px;color:var(--muted)">Dein Fahrzeug</span>
-                    </div>
-                    <div class="form-group">
-                      <label class="form-label">Spritpreis (€/L)</label>
-                      <div style="position:relative">
-                        <input class="form-control" id="c-spritpreis" type="number" value="1.79" min="0.50" max="4.00" step="0.01" oninput="updateAnfahrt()" style="padding-right:60px">
-                        <button onclick="fetchSpritpreis()" title="Aktuellen Preis laden" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);background:var(--blue-pale);border:1px solid rgba(46,127,255,.3);border-radius:4px;color:var(--blue-b);font-size:10px;font-weight:600;cursor:pointer;padding:3px 7px;white-space:nowrap" id="sprit-refresh-btn">↻ Live</button>
-                      </div>
-                      <span style="font-size:10px;color:var(--muted)" id="sprit-source">Manuell eingegeben</span>
-                    </div>
-                  </div>
-
-                  <!-- Result Badge -->
-                  <div style="background:var(--navy-2);border-radius:8px;padding:16px;display:none" id="anfahrt-badge">
-                    <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">DEINE ANFAHRTSKOSTEN (eigenes Fahrzeug)</div>
-
-                    <!-- 3 Strecken -->
-                    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
-
-                      <!-- Anfahrt -->
-                      <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px">
-                        <div style="width:8px;height:8px;border-radius:50%;background:#2E7FFF;flex-shrink:0"></div>
-                        <div style="flex:1;min-width:0">
-                          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase">Anfahrt</div>
-                          <div style="font-size:11px;color:var(--white);margin-top:1px" id="anfahrt-route-label">Dein Standort → Abholort</div>
-                        </div>
-                        <div style="text-align:right;flex-shrink:0">
-                          <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white)" id="anfahrt-km-display">— km</div>
-                          <div style="font-size:11px;color:#2E7FFF;font-weight:600" id="anfahrt-eur-display">— €</div>
-                        </div>
-                      </div>
-
-                      <!-- Überführung -->
-                      <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;opacity:.7">
-                        <div style="width:8px;height:8px;border-radius:50%;background:#C89B2A;flex-shrink:0"></div>
-                        <div style="flex:1;min-width:0">
-                          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase">Überführung ✓ Kundenfahrzeug — kein eigener Sprit</div>
-                          <div style="font-size:11px;color:var(--white);margin-top:1px" id="ueberfuehrung-route-label">Abholort → Zielort</div>
-                        </div>
-                        <div style="text-align:right;flex-shrink:0">
-                          <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white)" id="ueberfuehrung-km-display">— km</div>
-                          <div style="font-size:11px;color:#C89B2A;font-weight:600" id="ueberfuehrung-eur-display">— €</div>
-                        </div>
-                      </div>
-
-                      <!-- Heimfahrt -->
-                      <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:10px 14px;display:flex;align-items:center;gap:10px;opacity:.7">
-                        <div style="width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0"></div>
-                        <div style="flex:1;min-width:0">
-                          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:var(--muted);text-transform:uppercase">Heimfahrt 🚆 Zug/Bus/Flug — im Rückfahrt-Feld eintragen</div>
-                          <div style="font-size:11px;color:var(--white);margin-top:1px" id="heimfahrt-route-label">Zielort → Dein Standort</div>
-                        </div>
-                        <div style="text-align:right;flex-shrink:0">
-                          <div style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--white)" id="heimfahrt-km-display">— km</div>
-                          <div style="font-size:11px;color:#16a34a;font-weight:600" id="heimfahrt-eur-display">— €</div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Divider -->
-                    <div style="border-top:1px solid rgba(46,127,255,.2);margin-bottom:10px"></div>
-
-                    <!-- Totals row -->
-                    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
-                      <div style="display:flex;gap:16px;flex-wrap:wrap">
-                        <div>
-                          <div style="font-size:9px;color:var(--muted);margin-bottom:2px">Gesamt km</div>
-                          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white)" id="total-km-display">—</div>
-                        </div>
-                        <div>
-                          <div style="font-size:9px;color:var(--muted);margin-bottom:2px">Gesamt Liter</div>
-                          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white)" id="total-liter-display">—</div>
-                        </div>
-                        <div>
-                          <div style="font-size:9px;color:var(--muted);margin-bottom:2px">à <span id="preis-anzeige">—</span> €/L</div>
-                          <div style="font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--white)" id="anfahrt-liter-display">—</div>
-                        </div>
-                      </div>
-                      <div style="background:rgba(46,127,255,.15);border:1px solid rgba(46,127,255,.3);border-radius:8px;padding:10px 18px;text-align:center">
-                        <div style="font-size:9px;color:var(--blue-b);font-weight:700;letter-spacing:1px;margin-bottom:4px">ANFAHRT-SPRIT</div>
-                        <div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--blue-b)" id="anfahrt-kosten-display">—</div>
-                        <div style="font-size:9px;color:var(--muted)">automatisch eingerechnet</div>
-                      </div>
-                    </div>
-
-                    <div style="margin-top:10px;display:flex;align-items:center;justify-content:space-between">
-                      <span style="font-size:10px;color:var(--muted)">Heimfahrt per Öffis separat im "Rückfahrt"-Feld eintragen</span>
-                      <button onclick="updateAnfahrt(true)" class="btn btn-ghost" style="padding:4px 10px;font-size:11px">↻ Neu berechnen</button>
-                    </div>
+                    <span style="font-size:10px;color:var(--muted)" id="sprit-source">Manuell</span>
                   </div>
                 </div>
+              </div>
+            </div>
 
-                <div class="form-section-title">Kosten & Aufwand</div>
-                <div class="form-grid-3" style="margin-bottom:14px">
-                  <div class="form-group"><label class="form-label">Rückfahrt (€)</label><input class="form-control" id="c-rueck" type="number" value="45" min="0" oninput="kCalc()"><span style="font-size:10px;color:var(--muted)">Bahn / ÖPNV</span></div>
-                  <div class="form-group"><label class="form-label">Sonstiges (€)</label><input class="form-control" id="c-extra" type="number" value="0" min="0" oninput="kCalc()"><span style="font-size:10px;color:var(--muted)">Maut, Betankung</span></div>
-                  <div class="form-group"><label class="form-label">Zeitaufwand (Std.)</label><input class="form-control" id="c-std" type="number" placeholder="auto" min="0" step="0.5" oninput="kCalc()"><span style="font-size:10px;color:var(--muted)">Wird automatisch berechnet</span></div>
+            <!-- ZUSATZKOSTEN -->
+            <div class="card">
+              <div class="form-card-header" style="background:var(--navy-2);padding:14px 20px;display:flex;align-items:center;gap:10px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                <h3 style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff">3. Zusatzkosten (automatisch + manuell)</h3>
+              </div>
+              <div class="form-body">
+                <div style="background:var(--off);border-radius:8px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:var(--muted)">
+                  ⚡ Wird automatisch berechnet — du kannst jeden Wert manuell überschreiben.
                 </div>
-                <div class="form-section-title">Preisgestaltung</div>
+                <div class="form-grid" style="margin-bottom:12px">
+                  <div class="form-group">
+                    <label class="form-label">Maut (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
+                    <input class="form-control" id="c-maut" type="number" value="0" min="0" step="1" oninput="smartCalc()">
+                    <span style="font-size:10px;color:var(--muted)" id="maut-hint">Wird berechnet wenn Route feststeht</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Heimfahrt / Öffis (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
+                    <input class="form-control" id="c-rueck" type="number" value="45" min="0" step="1" oninput="smartCalc()">
+                    <span style="font-size:10px;color:var(--muted)" id="heim-hint">Zug, Bus oder Flug</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Verpflegung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
+                    <input class="form-control" id="c-verpflegung" type="number" value="0" min="0" step="1" oninput="smartCalc()">
+                    <span style="font-size:10px;color:var(--muted)" id="verpf-hint">~15€ pro 4h Fahrzeit</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Übernachtung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
+                    <input class="form-control" id="c-uebernacht" type="number" value="0" min="0" step="1" oninput="smartCalc()">
+                    <span style="font-size:10px;color:var(--muted)" id="ueber-hint">~80€/Nacht ab 8h Fahrzeit</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">E-Auto Ladekosten (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
+                    <input class="form-control" id="c-laden" type="number" value="0" min="0" step="1" oninput="smartCalc()">
+                    <span style="font-size:10px;color:var(--muted)" id="laden-hint">Nur bei Elektrofahrzeug</span>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Sonstiges (€)</label>
+                    <input class="form-control" id="c-extra" type="number" value="0" min="0" step="1" oninput="smartCalc()">
+                    <span style="font-size:10px;color:var(--muted)">Parken, Fähre, etc.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- PREISGESTALTUNG -->
+            <div class="card">
+              <div class="form-card-header" style="background:var(--navy-2);padding:14px 20px;display:flex;align-items:center;gap:10px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
+                <h3 style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff">4. Preisgestaltung</h3>
+              </div>
+              <div class="form-body">
                 <div class="form-grid">
-                  <div class="form-group"><label class="form-label">Stundenansatz (€/Std.)</label><input class="form-control" id="c-stdsatz" type="number" value="25" min="1" oninput="kCalc()"></div>
-                  <div class="form-group"><label class="form-label">Aufschlag (%)</label><input class="form-control" id="c-aufschlag" type="number" value="20" min="0" max="100" oninput="kCalc()"></div>
-                  <div class="form-group"><label class="form-label">Rabatt (%)</label><input class="form-control" id="c-rabatt" type="number" value="0" min="0" max="30" oninput="kCalc()"></div>
-                  <div class="form-group"><label class="form-label">Auftragstyp</label><select class="form-control" id="c-auftyp" onchange="kCalc()"><option value="1">Einzelauftrag</option><option value="0.85">Rahmenvertrag</option><option value="1.2">Express (+20%)</option><option value="1.1">Sonderauftrag</option></select></div>
+                  <div class="form-group">
+                    <label class="form-label">Stundenansatz (€/Std.)</label>
+                    <input class="form-control" id="c-stdsatz" type="number" value="25" min="1" oninput="smartCalc()">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Aufschlag (%)</label>
+                    <input class="form-control" id="c-aufschlag" type="number" value="20" min="0" max="100" oninput="smartCalc()">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Rabatt (%)</label>
+                    <input class="form-control" id="c-rabatt" type="number" value="0" min="0" max="30" oninput="smartCalc()">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Auftragstyp</label>
+                    <select class="form-control" id="c-auftyp" onchange="smartCalc()">
+                      <option value="1">Einzelauftrag</option>
+                      <option value="0.85">Rahmenvertrag (–15%)</option>
+                      <option value="1.2">Express (+20%)</option>
+                      <option value="1.1">Sonderauftrag</option>
+                    </select>
+                  </div>
                 </div>
                 <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
                   <button class="btn btn-primary" onclick="kSaveCalc()">💾 Speichern</button>
@@ -967,11 +976,15 @@ textarea.form-control{resize:vertical;min-height:80px}
                 </div>
               </div>
             </div>
+
+            <!-- VERLAUF -->
             <div class="card">
               <div style="padding:12px 18px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Kalkulationsverlauf</div>
               <div id="k-history-wrap"><div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">Noch keine Kalkulationen gespeichert</div></div>
             </div>
           </div>
+
+          <!-- RIGHT: Live Ergebnis -->
           <div style="position:sticky;top:0">
             <div class="card">
               <div class="result-hero">
@@ -979,15 +992,28 @@ textarea.form-control{resize:vertical;min-height:80px}
                 <div class="result-price" id="k-price">—</div>
                 <div class="result-sub" id="k-sub">Strecke eingeben zum Kalkulieren</div>
               </div>
-              <div class="breakdown" id="k-breakdown"><div style="padding:18px;text-align:center;color:var(--muted);font-size:12px">Fülle das Formular aus.</div></div>
-              <div class="k-margin-bar" id="k-margin-wrap" style="display:none"><div class="k-margin-label"><span>Marge</span><span id="k-margin-pct">—</span></div><div class="k-margin-track"><div class="k-margin-fill" id="k-margin-bar" style="width:0%"></div></div></div>
+
+              <!-- Kostenaufschlüsselung -->
+              <div class="breakdown" id="k-breakdown">
+                <div style="padding:18px;text-align:center;color:var(--muted);font-size:12px">Fülle das Formular aus.</div>
+              </div>
+
+              <!-- Marge -->
+              <div class="k-margin-bar" id="k-margin-wrap" style="display:none">
+                <div class="k-margin-label"><span>Marge</span><span id="k-margin-pct">—</span></div>
+                <div class="k-margin-track"><div class="k-margin-fill" id="k-margin-bar" style="width:0%"></div></div>
+              </div>
+
+              <!-- Tags -->
               <div class="k-tag-row" id="k-tags" style="display:none"></div>
+
               <div class="k-action-strip">
                 <button class="btn btn-primary" style="flex:1" onclick="kSaveCalc()">💾 Speichern</button>
                 <button class="btn btn-ghost" onclick="kCopyPrice()">📋 Kopieren</button>
               </div>
             </div>
           </div>
+
         </div>
       </div>
 
@@ -1824,830 +1850,321 @@ ${type!=='rahmen'?`<div class="doc-section-title" style="margin-top:14px">Im Pre
 }
 
 // ══════════════════════════════════════════════════
-// KALKULATOR
+// SMART KALKULATOR
 // ══════════════════════════════════════════════════
-function kV(id)  { const el=document.getElementById(id); return el?el.value.trim():''; }
-function kNum(id,def=0) { const n=parseFloat(kV(id)); return isNaN(n)?def:n; }
-function kFmt(n) { return n.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
+let kHistory = JSON.parse(localStorage.getItem('nk_kalk_v2') || '[]');
 
-function kCalc() {
-  const km=kNum('c-km'), rueck=kNum('c-rueck',45), extra=kNum('c-extra');
-  const std=kNum('c-std')||(km>0?km/80+1:0);
-  const stdsatz=kNum('c-stdsatz',25), aufschlag=kNum('c-aufschlag',20)/100;
-  const rabatt=kNum('c-rabatt')/100;
-  const ftypFak=parseFloat(kV('c-ftyp')||'1');
-  const aufTypFak=parseFloat(kV('c-auftyp')||'1');
-  if(km<=0){kResetResult();return;}
-  const stdEl=document.getElementById('c-std');
-  if(stdEl&&!stdEl.value) stdEl.value=(km/80+1).toFixed(1);
-  const zeitKosten=std*stdsatz, gesamtKosten=zeitKosten+rueck+extra;
-  const basisPreis=gesamtKosten*(1+aufschlag)*ftypFak*aufTypFak;
-  const nettoPreis=Math.max(basisPreis*(1-rabatt),gesamtKosten*1.1);
-  const suggested=Math.ceil(nettoPreis/5)*5;
-  const marge=gesamtKosten>0?((suggested-gesamtKosten)/suggested)*100:0;
-  document.getElementById('k-price').textContent=kFmt(suggested);
-  document.getElementById('k-sub').textContent=`= ${kFmt(suggested*1.19)} brutto · ${(suggested/km).toFixed(2).replace('.',',')} €/km`;
-  document.getElementById('k-breakdown').innerHTML=`
-    <div class="breakdown-row br-muted"><span class="br-label">📍 Strecke</span><span class="br-val">${km} km</span></div>
-    <div class="breakdown-row br-muted"><span class="br-label">⏱ Zeitaufwand</span><span class="br-val">${std.toFixed(1).replace('.',',')} Std.</span></div>
-    <div class="breakdown-row"><span class="br-label">Zeitkosten</span><span class="br-val">${kFmt(zeitKosten)}</span></div>
-    <div class="breakdown-row"><span class="br-label">Rückfahrt</span><span class="br-val">${kFmt(rueck)}</span></div>
-    ${extra>0?`<div class="breakdown-row"><span class="br-label">Sonstiges</span><span class="br-val">${kFmt(extra)}</span></div>`:''}
+// Maut-Schätzung nach Land (€ pro 100km)
+const MAUT_RATES = {
+  DE: 0,      // Deutschland: keine Maut PKW
+  FR: 9.0,    // Frankreich
+  ES: 4.5,    // Spanien
+  AT: 3.0,    // Österreich (Vignette ~10€ pauschal)
+  IT: 8.0,    // Italien
+  CH: 0,      // Schweiz (Vignette ~40€ pauschal)
+  BE: 0,      // Belgien
+  NL: 0,      // Niederlande
+  PL: 1.0,    // Polen
+  CZ: 1.5,    // Tschechien
+  HU: 2.0,    // Ungarn
+};
+
+// Ø Geschwindigkeit pro Land (km/h) für Zeitberechnung
+const SPEED = {
+  DE: 110, FR: 110, ES: 100, AT: 100, IT: 100,
+  CH: 100, BE: 110, NL: 110, PL: 100, default: 100
+};
+
+// E-Auto Verbrauch kWh/100km + Schnellladepreis €/kWh
+const EAUTO_KWH = 20;        // Ø kWh/100km
+const EAUTO_PREIS = 0.65;    // Ø Schnellladepreis €/kWh
+
+// Heimfahrt-Schätzung €/km (Zug/Bus/Flug-Richtwert)
+const HEIM_RATE = 0.12;
+
+function kV(id)  { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+function kNum(id, def=0) { const n = parseFloat(kV(id)); return isNaN(n) ? def : n; }
+function kFmt(n) { return n.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'; }
+
+// Detected countries on route (from geocoding)
+let routeCountries = { anfahrt:['DE'], ueber:['DE'], heim:['DE'] };
+
+function getCountryCode(coords) {
+  // Rough bounding box detection
+  if (!coords) return 'DE';
+  const { lat, lon } = coords;
+  if (lat > 47.3 && lat < 55.1 && lon > 5.9  && lon < 15.0) return 'DE';
+  if (lat > 41.3 && lat < 51.1 && lon > -5.0 && lon < 9.6)  return 'FR';
+  if (lat > 35.9 && lat < 43.8 && lon > -9.3 && lon < 4.3)  return 'ES';
+  if (lat > 46.4 && lat < 49.0 && lon > 9.5  && lon < 17.2) return 'AT';
+  if (lat > 37.0 && lat < 47.1 && lon > 6.6  && lon < 18.5) return 'IT';
+  if (lat > 45.8 && lat < 47.8 && lon > 5.9  && lon < 10.5) return 'CH';
+  if (lat > 49.5 && lat < 53.6 && lon > 2.5  && lon < 6.4)  return 'NL';
+  if (lat > 49.5 && lat < 51.5 && lon > 2.4  && lon < 6.4)  return 'BE';
+  if (lat > 49.0 && lat < 54.9 && lon > 14.1 && lon < 24.2) return 'PL';
+  return 'DE';
+}
+
+function estimateMaut(km, fromCoords, toCoords) {
+  const countries = new Set();
+  if (fromCoords) countries.add(getCountryCode(fromCoords));
+  if (toCoords)   countries.add(getCountryCode(toCoords));
+  // Assume route passes through countries between start and end
+  let total = 0;
+  countries.forEach(cc => {
+    const rate = MAUT_RATES[cc] ?? 0;
+    total += (km / countries.size) * rate / 100;
+  });
+  // Special flat fees
+  if (countries.has('AT')) total = Math.max(total, 10);
+  if (countries.has('CH')) total += 40;
+  return Math.round(total);
+}
+
+function estimateTime(km, fromCoords, toCoords) {
+  const cc = toCoords ? getCountryCode(toCoords) : 'DE';
+  const speed = SPEED[cc] || SPEED.default;
+  return km / speed;
+}
+
+function smartCalc() {
+  const kmUeber   = parseInt(document.getElementById('c-km')?.value || 0);
+  const ftyp      = kV('c-ftyp');
+  const verbrauch = kNum('c-verbrauch', 7);
+  const sprit     = kNum('c-spritpreis', 1.79);
+  const stdsatz   = kNum('c-stdsatz', 25);
+  const aufschlag = kNum('c-aufschlag', 20) / 100;
+  const rabatt    = kNum('c-rabatt', 0) / 100;
+  const aufTypFak = parseFloat(kV('c-auftyp') || '1');
+
+  // ── Fahrzeugtyp-Faktoren ──
+  const ftypFak = { pkw:1, suv:1.1, transporter:1.15, elektro:1.2, luxus:1.25, tief:1.3 }[ftyp] || 1;
+
+  // ── Streckendaten ──
+  const kmAnfahrt = standortCoords && addrCoords.von ?
+    Math.round(haversineKm(standortCoords.lat, standortCoords.lon, addrCoords.von.lat, addrCoords.von.lon) * 1.28) : 0;
+  const kmHeim = standortCoords && addrCoords.nach ?
+    Math.round(haversineKm(addrCoords.nach.lat, addrCoords.nach.lon, standortCoords.lat, standortCoords.lon) * 1.28) : 0;
+
+  if (kmUeber <= 0 && kmAnfahrt <= 0) { kResetResult(); return; }
+
+  // ── Zeitberechnung ──
+  const stdUeber   = estimateTime(kmUeber, addrCoords.von, addrCoords.nach);
+  const stdAnfahrt = estimateTime(kmAnfahrt, standortCoords, addrCoords.von);
+  const stdGesamt  = stdUeber + stdAnfahrt;
+
+  // ── KRAFTSTOFFKOSTEN ──
+  const spritAnfahrt = (kmAnfahrt * verbrauch / 100) * sprit;
+
+  // ── E-AUTO LADEKOSTEN (nur bei Elektro) ──
+  let ladenKosten = kNum('c-laden', 0);
+  if (ftyp === 'elektro' && kmUeber > 0) {
+    const autoLaden = (kmUeber * EAUTO_KWH / 100) * EAUTO_PREIS;
+    ladenKosten = Math.max(ladenKosten, autoLaden);
+    document.getElementById('c-laden').value = Math.round(autoLaden);
+    document.getElementById('laden-hint').textContent =
+      `${kmUeber} km × ${EAUTO_KWH} kWh/100km × ${EAUTO_PREIS}€/kWh`;
+  } else if (ftyp !== 'elektro') {
+    document.getElementById('c-laden').value = 0;
+    document.getElementById('laden-hint').textContent = 'Nur bei Elektrofahrzeug';
+    ladenKosten = 0;
+  }
+
+  // ── MAUT (auto-berechnet) ──
+  let mautKosten = kNum('c-maut', 0);
+  const autoMaut = estimateMaut(kmUeber, addrCoords.von, addrCoords.nach);
+  if (document.getElementById('c-maut')._autoSet !== false) {
+    document.getElementById('c-maut').value = autoMaut;
+    mautKosten = autoMaut;
+    const ccVon  = addrCoords.von  ? getCountryCode(addrCoords.von)  : 'DE';
+    const ccNach = addrCoords.nach ? getCountryCode(addrCoords.nach) : 'DE';
+    const countries = [...new Set([ccVon, ccNach])].join(', ');
+    document.getElementById('maut-hint').textContent = `Geschätzt für Route durch: ${countries}`;
+  }
+
+  // ── HEIMFAHRT (auto-berechnet) ──
+  let heimKosten = kNum('c-rueck', 45);
+  if (kmHeim > 0 && document.getElementById('c-rueck')._autoSet !== false) {
+    const autoHeim = Math.max(25, Math.round(kmHeim * HEIM_RATE));
+    document.getElementById('c-rueck').value = autoHeim;
+    heimKosten = autoHeim;
+    document.getElementById('heim-hint').textContent =
+      `${kmHeim} km Heimfahrt (${getCountryCode(addrCoords.nach)} → ${getCountryCode(standortCoords) || 'DE'})`;
+  }
+
+  // ── VERPFLEGUNG (auto) ──
+  let verpfKosten = kNum('c-verpflegung', 0);
+  const autoVerpf = Math.floor(stdGesamt / 4) * 15;
+  if (document.getElementById('c-verpflegung')._autoSet !== false) {
+    document.getElementById('c-verpflegung').value = autoVerpf;
+    verpfKosten = autoVerpf;
+    document.getElementById('verpf-hint').textContent =
+      `${stdGesamt.toFixed(0)}h Fahrzeit → ${Math.floor(stdGesamt/4)} Mahlzeiten à 15€`;
+  }
+
+  // ── ÜBERNACHTUNG (auto) ──
+  let uebernachtKosten = kNum('c-uebernacht', 0);
+  const naechte = stdGesamt > 8 ? Math.floor(stdGesamt / 10) : 0;
+  const autoUeber = naechte * 80;
+  if (document.getElementById('c-uebernacht')._autoSet !== false) {
+    document.getElementById('c-uebernacht').value = autoUeber;
+    uebernachtKosten = autoUeber;
+    document.getElementById('ueber-hint').textContent = naechte > 0
+      ? `${naechte} Übernachtung(en) à 80€ bei ${stdGesamt.toFixed(0)}h Gesamtfahrzeit`
+      : `Keine Übernachtung nötig (${stdGesamt.toFixed(0)}h Fahrzeit)`;
+  }
+
+  const extraKosten = kNum('c-extra', 0);
+
+  // ── ROUTE OVERVIEW ──
+  if (kmAnfahrt > 0 || kmUeber > 0) {
+    document.getElementById('route-overview').style.display = 'block';
+    document.getElementById('ro-anfahrt').textContent = kmAnfahrt > 0 ? `${kmAnfahrt} km · ${kFmt(spritAnfahrt)}` : '— (Standort nicht gesetzt)';
+    document.getElementById('ro-ueber').textContent   = kmUeber > 0   ? `${kmUeber} km` : '—';
+    document.getElementById('ro-heim').textContent    = kmHeim > 0    ? `${kmHeim} km · ca. ${kFmt(heimKosten)}` : '—';
+    document.getElementById('ro-gesamt').textContent  = `${kmAnfahrt + kmUeber + kmHeim} km`;
+  }
+
+  // ── GESAMTKOSTEN ──
+  const zeitKosten     = stdGesamt * stdsatz;
+  const gesamtKosten   = zeitKosten + spritAnfahrt + heimKosten + mautKosten + verpfKosten + uebernachtKosten + ladenKosten + extraKosten;
+
+  // ── PREIS BERECHNUNG ──
+  const basisPreis = gesamtKosten * (1 + aufschlag) * ftypFak * aufTypFak;
+  const nettoPreis = Math.max(basisPreis * (1 - rabatt), gesamtKosten * 1.05);
+  const suggested  = Math.ceil(nettoPreis / 5) * 5;
+  const marge      = gesamtKosten > 0 ? ((suggested - gesamtKosten) / suggested) * 100 : 0;
+
+  // ── UPDATE RESULT PANEL ──
+  document.getElementById('k-price').textContent = kFmt(suggested);
+  document.getElementById('k-sub').textContent   =
+    `= ${kFmt(suggested * 1.19)} brutto · ${kmUeber > 0 ? (suggested/kmUeber).toFixed(2).replace('.',',') + ' €/km' : ''}`;
+
+  document.getElementById('k-breakdown').innerHTML = `
+    <div style="padding:10px 0;border-bottom:2px solid var(--blue-pale);margin-bottom:4px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue-b);margin-bottom:8px">DEINE KOSTEN</div>
+      ${spritAnfahrt > 0 ? `<div class="breakdown-row br-muted"><span class="br-label">⛽ Anfahrtssprit (${kmAnfahrt} km)</span><span class="br-val">${kFmt(spritAnfahrt)}</span></div>` : ''}
+      <div class="breakdown-row"><span class="br-label">⏱ Zeitaufwand (${stdGesamt.toFixed(1).replace('.',',')} Std.)</span><span class="br-val">${kFmt(zeitKosten)}</span></div>
+      ${heimKosten > 0 ? `<div class="breakdown-row"><span class="br-label">🚆 Heimfahrt (${kmHeim} km)</span><span class="br-val">${kFmt(heimKosten)}</span></div>` : ''}
+      ${mautKosten > 0 ? `<div class="breakdown-row"><span class="br-label">🛣 Maut</span><span class="br-val">${kFmt(mautKosten)}</span></div>` : ''}
+      ${verpfKosten > 0 ? `<div class="breakdown-row"><span class="br-label">🍔 Verpflegung</span><span class="br-val">${kFmt(verpfKosten)}</span></div>` : ''}
+      ${uebernachtKosten > 0 ? `<div class="breakdown-row"><span class="br-label">🏨 Übernachtung (${naechte}×)</span><span class="br-val">${kFmt(uebernachtKosten)}</span></div>` : ''}
+      ${ladenKosten > 0 ? `<div class="breakdown-row"><span class="br-label">⚡ E-Auto Laden</span><span class="br-val">${kFmt(ladenKosten)}</span></div>` : ''}
+      ${extraKosten > 0 ? `<div class="breakdown-row"><span class="br-label">📌 Sonstiges</span><span class="br-val">${kFmt(extraKosten)}</span></div>` : ''}
+    </div>
     <div class="breakdown-row" style="font-weight:600"><span class="br-label">Gesamtkosten</span><span class="br-val">${kFmt(gesamtKosten)}</span></div>
-    <div class="breakdown-row br-muted"><span class="br-label">+ Aufschlag (${(aufschlag*100).toFixed(0)}%)</span><span class="br-val">+${kFmt(gesamtKosten*aufschlag)}</span></div>
-    ${rabatt>0?`<div class="breakdown-row br-muted"><span class="br-label">Rabatt</span><span class="br-val">−${kFmt(nettoPreis*rabatt)}</span></div>`:''}
+    <div class="breakdown-row br-muted"><span class="br-label">+ Aufschlag (${(aufschlag*100).toFixed(0)}%) × Typ (${ftypFak}×)</span><span class="br-val">+ ${kFmt(gesamtKosten * aufschlag * ftypFak)}</span></div>
+    ${rabatt > 0 ? `<div class="breakdown-row br-muted"><span class="br-label">− Rabatt (${(rabatt*100).toFixed(0)}%)</span><span class="br-val">− ${kFmt(nettoPreis * rabatt)}</span></div>` : ''}
     <div class="breakdown-row"><span class="br-label">Nettopreis</span><span class="br-val">${kFmt(suggested)}</span></div>
-    <div class="breakdown-row br-muted"><span class="br-label">zzgl. 19% MwSt.</span><span class="br-val">+${kFmt(suggested*.19)}</span></div>
-    <div class="breakdown-row br-total"><span class="br-label">Bruttopreis</span><span class="br-val">${kFmt(suggested*1.19)}</span></div>
-    <div class="breakdown-row" style="padding-top:8px"><span class="br-label" style="color:var(--green);font-weight:600">Dein Gewinn</span><span class="br-val" style="color:var(--green);font-weight:700">${kFmt(suggested-gesamtKosten)}</span></div>`;
-  document.getElementById('k-margin-wrap').style.display='block';
-  const pct=Math.min(Math.max(marge,0),100);
-  const col=marge>=40?'#16a34a':marge>=25?'#C89B2A':'#dc2626';
-  document.getElementById('k-margin-bar').style.width=pct+'%';
-  document.getElementById('k-margin-bar').style.background=col;
-  document.getElementById('k-margin-pct').textContent=marge.toFixed(1).replace('.',',')+' %';
-  document.getElementById('k-margin-pct').style.color=col;
-  const tagsEl=document.getElementById('k-tags'); tagsEl.style.display='flex';
-  const tags=[];
-  if(marge>=40) tags.push(['✅ Gute Marge','k-tag-green']);
-  else if(marge>=25) tags.push(['⚠️ Niedrige Marge','k-tag-gold']);
-  else tags.push(['❌ Unwirtschaftlich','k-tag-red']);
-  if(km>400) tags.push(['🛣 Langstrecke','k-tag-blue']);
-  if(rueck>80) tags.push(['🚆 Hohe Rückfahrtkosten','k-tag-gold']);
-  tagsEl.innerHTML=tags.map(([t,cls])=>`<span class="k-tag ${cls}">${t}</span>`).join('');
+    <div class="breakdown-row br-muted"><span class="br-label">zzgl. 19% MwSt.</span><span class="br-val">+ ${kFmt(suggested * .19)}</span></div>
+    <div class="breakdown-row br-total"><span class="br-label">Bruttopreis</span><span class="br-val">${kFmt(suggested * 1.19)}</span></div>
+    <div class="breakdown-row" style="padding-top:8px"><span class="br-label" style="color:var(--green);font-weight:600">Dein Gewinn</span><span class="br-val" style="color:var(--green);font-weight:700">${kFmt(suggested - gesamtKosten)}</span></div>
+  `;
+
+  // Marge
+  document.getElementById('k-margin-wrap').style.display = 'block';
+  const pct = Math.min(Math.max(marge, 0), 100);
+  const col = marge >= 40 ? '#16a34a' : marge >= 25 ? '#C89B2A' : '#dc2626';
+  document.getElementById('k-margin-bar').style.width = pct + '%';
+  document.getElementById('k-margin-bar').style.background = col;
+  document.getElementById('k-margin-pct').textContent = marge.toFixed(1).replace('.',',') + ' %';
+  document.getElementById('k-margin-pct').style.color = col;
+
+  // Tags
+  const tagsEl = document.getElementById('k-tags');
+  tagsEl.style.display = 'flex';
+  const tags = [];
+  if (marge >= 40) tags.push(['✅ Gute Marge', 'k-tag-green']);
+  else if (marge >= 25) tags.push(['⚠️ Niedrige Marge', 'k-tag-gold']);
+  else tags.push(['❌ Unwirtschaftlich', 'k-tag-red']);
+  if (kmUeber > 400) tags.push(['🛣 Langstrecke', 'k-tag-blue']);
+  if (ftyp === 'elektro') tags.push(['⚡ Elektro', 'k-tag-blue']);
+  if (ftyp === 'tief') tags.push(['🏎 Tieferlegung +Aufpreis', 'k-tag-gold']);
+  if (naechte > 0) tags.push([`🏨 ${naechte}× Übernachtung`, 'k-tag-gold']);
+  const ausland = addrCoords.nach ? getCountryCode(addrCoords.nach) : 'DE';
+  if (ausland !== 'DE') tags.push([`🌍 Auslandsfahrt (${ausland})`, 'k-tag-gold']);
+  tagsEl.innerHTML = tags.map(([t,cls]) => `<span class="k-tag ${cls}">${t}</span>`).join('');
 }
 
 function kResetResult() {
-  document.getElementById('k-price').textContent='—';
-  document.getElementById('k-sub').textContent='Strecke eingeben zum Kalkulieren';
-  document.getElementById('k-breakdown').innerHTML='<div style="padding:18px;text-align:center;color:var(--muted);font-size:12px">Fülle das Formular aus.</div>';
-  document.getElementById('k-margin-wrap').style.display='none';
-  document.getElementById('k-tags').style.display='none';
+  document.getElementById('k-price').textContent = '—';
+  document.getElementById('k-sub').textContent   = 'Strecke eingeben zum Kalkulieren';
+  document.getElementById('k-breakdown').innerHTML = '<div style="padding:18px;text-align:center;color:var(--muted);font-size:12px">Fülle das Formular aus.</div>';
+  document.getElementById('k-margin-wrap').style.display = 'none';
+  document.getElementById('k-tags').style.display        = 'none';
+  document.getElementById('route-overview').style.display = 'none';
 }
 
 function kResetCalc() {
-  ['c-von','c-nach','c-km','c-extra','c-std'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  const r=document.getElementById('c-rueck'); if(r) r.value='45';
-  const ss=document.getElementById('c-stdsatz'); if(ss) ss.value='25';
-  const au=document.getElementById('c-aufschlag'); if(au) au.value='20';
-  const ra=document.getElementById('c-rabatt'); if(ra) ra.value='0';
-  const ft=document.getElementById('c-ftyp'); if(ft) ft.selectedIndex=0;
-  const at=document.getElementById('c-auftyp'); if(at) at.selectedIndex=0;
+  addrCoords = { von: null, nach: null };
+  standortCoords = null;
+  ['c-von','c-nach'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+  ['c-maut','c-rueck','c-verpflegung','c-uebernacht','c-laden','c-extra'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = 0; delete el._autoSet; }
+  });
+  document.getElementById('c-stdsatz').value  = 25;
+  document.getElementById('c-aufschlag').value = 20;
+  document.getElementById('c-rabatt').value    = 0;
+  document.getElementById('c-km') && (document.getElementById('c-km').value = '');
   kResetResult();
 }
 
 function kSaveCalc() {
-  const km=kNum('c-km'); if(!km){toast('Strecke eingeben','⚠️');return;}
-  const priceEl=document.getElementById('k-price');
-  if(priceEl.textContent==='—'){toast('Erst kalkulieren','⚠️');return;}
-  const at=document.getElementById('c-auftyp');
-  kHistory.unshift({ id:Date.now(), date:new Date().toLocaleDateString('de-DE'), desc:`${kV('c-von')||'?'} → ${kV('c-nach')||'?'}`, km, price:priceEl.textContent, typ:at?at.options[at.selectedIndex].text:'' });
-  localStorage.setItem('nk_kalk_v2',JSON.stringify(kHistory));
-  kRenderHistory(); toast('Kalkulation gespeichert','✅','success');
+  const price = document.getElementById('k-price').textContent;
+  if (price === '—') { toast('Erst Strecke eingeben', '⚠️'); return; }
+  const von  = kV('c-von')  || '?';
+  const nach = kV('c-nach') || '?';
+  kHistory.unshift({
+    id: Date.now(),
+    date: new Date().toLocaleDateString('de-DE'),
+    desc: `${von.split(',')[0]} → ${nach.split(',')[0]}`,
+    km: document.getElementById('c-km')?.value || '—',
+    price,
+    typ: document.getElementById('c-auftyp')?.options[document.getElementById('c-auftyp')?.selectedIndex]?.text || ''
+  });
+  localStorage.setItem('nk_kalk_v2', JSON.stringify(kHistory));
+  kRenderHistory();
+  toast('Kalkulation gespeichert', '✅', 'success');
 }
 
 function kCopyPrice() {
-  const price=document.getElementById('k-price').textContent;
-  if(price==='—'){toast('Erst kalkulieren','⚠️');return;}
-  navigator.clipboard.writeText(price).then(()=>toast('Preis kopiert: '+price,'📋','info'));
+  const price = document.getElementById('k-price').textContent;
+  if (price === '—') { toast('Erst kalkulieren', '⚠️'); return; }
+  navigator.clipboard.writeText(price).then(() => toast('Preis kopiert: ' + price, '📋', 'info'));
 }
 
 function kRenderHistory() {
-  const wrap=document.getElementById('k-history-wrap'); if(!wrap) return;
-  if(kHistory.length===0){wrap.innerHTML='<div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">Noch keine Kalkulationen</div>';return;}
-  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Datum</th><th>Strecke</th><th>km</th><th>Typ</th><th>Netto</th><th></th></tr></thead><tbody>
-  ${kHistory.map(e=>`<tr><td style="color:var(--muted)">${e.date}</td><td style="font-weight:500">${e.desc}</td><td style="color:var(--muted)">${e.km}</td><td style="font-size:11px;color:var(--muted)">${e.typ}</td><td style="font-weight:700;color:var(--blue-b)">${e.price}</td><td><button class="btn btn-danger btn-sm" onclick="kDelete(${e.id})">×</button></td></tr>`).join('')}
+  const wrap = document.getElementById('k-history-wrap');
+  if (!wrap) return;
+  if (!kHistory.length) {
+    wrap.innerHTML = '<div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">Noch keine Kalkulationen</div>';
+    return;
+  }
+  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Datum</th><th>Strecke</th><th>km</th><th>Typ</th><th>Netto</th><th></th></tr></thead><tbody>
+    ${kHistory.map(e => `<tr>
+      <td style="color:var(--muted)">${e.date}</td>
+      <td style="font-weight:500">${e.desc}</td>
+      <td style="color:var(--muted)">${e.km}</td>
+      <td style="font-size:11px;color:var(--muted)">${e.typ}</td>
+      <td style="font-weight:700;color:var(--blue-b)">${e.price}</td>
+      <td><button class="btn btn-danger btn-sm" onclick="kDelete(${e.id})">×</button></td>
+    </tr>`).join('')}
   </tbody></table>`;
 }
 
 function kDelete(id) {
-  kHistory=kHistory.filter(e=>e.id!==id);
-  localStorage.setItem('nk_kalk_v2',JSON.stringify(kHistory));
+  kHistory = kHistory.filter(e => e.id !== id);
+  localStorage.setItem('nk_kalk_v2', JSON.stringify(kHistory));
   kRenderHistory();
 }
 
-// ══════════════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════════════
-function updateBadge() { document.getElementById('badge-count').textContent = allAuftraege.length; }
-
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-function toast(msg, icon='✅', type='success') {
-  const wrap=document.getElementById('toast-wrap');
-  const el=document.createElement('div');
-  el.className=`toast ${type}`;
-  el.innerHTML=`<span>${icon}</span> ${msg}`;
-  wrap.appendChild(el);
-  setTimeout(()=>el.remove(), 3200);
-}
-
-// Close modals on overlay click
-['delete-modal','user-modal'].forEach(id => {
-  document.getElementById(id).addEventListener('click', function(e) { if(e.target===this) closeModal(id); });
-});
-
-// Keyboard: Enter on login
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && document.getElementById('auth-screen').style.display !== 'none') {
-    const loginVisible = document.getElementById('auth-login-form').style.display !== 'none';
-    if (loginVisible) doLogin(); else doRegister();
-  }
-});
-
-// ══════════════════════════════════════════════════
-// AUTO LOGIN CHECK
-// ══════════════════════════════════════════════════
-(async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (session?.user) {
-    await initApp(session.user);
-  }
-  // Listen for auth changes
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_OUT') {
-      document.getElementById('app-screen').classList.remove('visible');
-      document.getElementById('auth-screen').style.display = 'flex';
-    }
+// Mark auto-set fields so manual input takes priority
+['c-maut','c-rueck','c-verpflegung','c-uebernacht','c-laden'].forEach(id => {
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => { el._autoSet = false; });
   });
-})();
-// ══════════════════════════════════════════════════
-// ANFRAGEN
-// ══════════════════════════════════════════════════
-let allAnfragen = [];
-let anfragenFilterText = '';
-let anfragenFilterStatus = '';
-
-async function loadAnfragen() {
-  const card = document.getElementById('anfragen-card');
-  card.innerHTML = '<div class="loading"><div class="spinner"></div> Lade Anfragen...</div>';
-  let query = sb.from('anfragen').select('*').order('created_at', { ascending: false });
-  if (anfragenFilterStatus) query = query.eq('status', anfragenFilterStatus);
-  const { data, error } = await query;
-  if (error) { card.innerHTML = '<div class="empty-state"><div class="empty-state-icon">❌</div><div class="empty-state-title">Fehler beim Laden</div></div>'; return; }
-  allAnfragen = data || [];
-  renderAnfragen();
-}
-
-async function loadAnfragenCount() {
-  const { data } = await sb.from('anfragen').select('id').eq('status', 'neu');
-  const count = data?.length || 0;
-  const badge = document.getElementById('badge-anfragen');
-  if (count > 0) {
-    badge.textContent = count;
-    badge.style.display = 'inline-flex';
-  } else {
-    badge.style.display = 'none';
-  }
-}
-
-function renderAnfragen() {
-  const card = document.getElementById('anfragen-card');
-  let list = allAnfragen;
-  if (anfragenFilterText) list = list.filter(a =>
-    JSON.stringify(a).toLowerCase().includes(anfragenFilterText.toLowerCase())
-  );
-  const countEl = document.getElementById('anfragen-count');
-  if (countEl) countEl.textContent = `${list.length} Anfrage${list.length !== 1 ? 'n' : ''}`;
-
-  if (list.length === 0) {
-    card.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">Keine Anfragen</div><div class="empty-state-sub">Noch keine Kundenanfragen eingegangen.</div></div>';
-    return;
-  }
-
-  const statusBadge = {
-    neu:            '<span class="badge badge-red">🔴 Neu</span>',
-    in_bearbeitung: '<span class="badge badge-gold">🟡 In Bearbeitung</span>',
-    angenommen:     '<span class="badge badge-green">🟢 Angenommen</span>',
-    abgelehnt:      '<span class="badge badge-grey">⚫ Abgelehnt</span>',
-  };
-
-  card.innerHTML = `<table class="data-table">
-    <thead><tr>
-      <th>Datum</th><th>Name / Firma</th><th>E-Mail</th><th>Art der Anfrage</th><th>Status</th><th></th>
-    </tr></thead>
-    <tbody>
-    ${list.map(a => `<tr style="cursor:pointer" onclick="openAnfrage(${a.id})">
-      <td style="color:var(--muted);font-size:12px">${new Date(a.created_at).toLocaleDateString('de-DE')}</td>
-      <td>
-        <div style="font-weight:600">${[a.vorname, a.nachname].filter(Boolean).join(' ') || '—'}</div>
-        ${a.unternehmen ? `<div style="font-size:11px;color:var(--muted)">${a.unternehmen}</div>` : ''}
-      </td>
-      <td style="font-size:12px;color:var(--muted)">${a.email}</td>
-      <td style="font-size:12px">${a.art || '—'}</td>
-      <td>${statusBadge[a.status] || a.status}</td>
-      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();openAnfrage(${a.id})">Details →</button></td>
-    </tr>`).join('')}
-    </tbody>
-  </table>`;
-}
-
-function filterAnfragen(val) { anfragenFilterText = val; renderAnfragen(); }
-function filterAnfragenStatus(val) { anfragenFilterStatus = val; loadAnfragen(); }
-
-function openAnfrage(id) {
-  const a = allAnfragen.find(x => x.id === id);
-  if (!a) return;
-
-  const statusBadge = {
-    neu:            '<span class="badge badge-red">🔴 Neu</span>',
-    in_bearbeitung: '<span class="badge badge-gold">🟡 In Bearbeitung</span>',
-    angenommen:     '<span class="badge badge-green">🟢 Angenommen</span>',
-    abgelehnt:      '<span class="badge badge-grey">⚫ Abgelehnt</span>',
-  };
-
-  document.getElementById('anfrage-modal-title').textContent =
-    `Anfrage von ${[a.vorname, a.nachname].filter(Boolean).join(' ') || a.email}`;
-
-  document.getElementById('anfrage-detail').innerHTML = `
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px">
-      <div style="background:var(--off);border:1px solid var(--border);border-radius:8px;padding:14px">
-        <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">KONTAKT</div>
-        <div style="font-weight:600;font-size:14px">${[a.vorname, a.nachname].filter(Boolean).join(' ') || '—'}</div>
-        ${a.unternehmen ? `<div style="font-size:12px;color:var(--muted)">${a.unternehmen}</div>` : ''}
-        <div style="font-size:12px;color:var(--blue-b);margin-top:4px">${a.email}</div>
-      </div>
-      <div style="background:var(--off);border:1px solid var(--border);border-radius:8px;padding:14px">
-        <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">DETAILS</div>
-        <div style="font-size:12px"><b>Art:</b> ${a.art || '—'}</div>
-        <div style="font-size:12px;margin-top:4px"><b>Eingegangen:</b> ${new Date(a.created_at).toLocaleDateString('de-DE', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div>
-        <div style="margin-top:8px">${statusBadge[a.status]}</div>
-      </div>
-    </div>
-
-    <div style="background:var(--off);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:16px">
-      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px">NACHRICHT DES KUNDEN</div>
-      <div style="font-size:14px;line-height:1.6;color:var(--text)">${a.nachricht || '—'}</div>
-    </div>
-
-    ${a.antwort ? `
-    <div style="background:var(--blue-pale);border:1px solid var(--blue-b);border-radius:8px;padding:14px;margin-bottom:16px">
-      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue);margin-bottom:8px">EURE ANTWORT</div>
-      <div style="font-size:14px;line-height:1.6;color:var(--text)">${a.antwort}</div>
-    </div>` : ''}
-
-    <div style="margin-bottom:8px">
-      <label style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px">Antwort / Interne Notiz</label>
-      <textarea id="anfrage-antwort" class="form-control" style="min-height:100px" placeholder="Antwort an den Kunden oder interne Notiz...">${a.antwort || ''}</textarea>
-    </div>
-  `;
-
-  const canAct = canEdit();
-  document.getElementById('anfrage-modal-footer').innerHTML = `
-    <div style="display:flex;gap:8px;flex-wrap:wrap;width:100%">
-      <button class="btn btn-secondary" onclick="closeModal('anfrage-modal')">Schließen</button>
-      ${canAct ? `
-        <button class="btn btn-ghost" onclick="updateAnfrageStatus(${a.id},'in_bearbeitung')">🟡 In Bearbeitung</button>
-        <button class="btn btn-danger" onclick="updateAnfrageStatus(${a.id},'abgelehnt')">✕ Ablehnen</button>
-        <button class="btn btn-ghost" onclick="saveAnfrageAntwort(${a.id})" style="margin-left:auto">💾 Antwort speichern</button>
-        <button class="btn btn-primary" onclick="anfrageZuAuftrag(${a.id})">✓ Als Auftrag anlegen</button>
-        <button class="btn btn-primary" style="background:var(--green)" onclick="updateAnfrageStatus(${a.id},'angenommen')">✅ Annehmen</button>
-      ` : ''}
-    </div>
-  `;
-
-  document.getElementById('anfrage-modal').classList.add('open');
-
-  // Mark as in_bearbeitung if neu
-  if (a.status === 'neu' && canAct) {
-    sb.from('anfragen').update({ status: 'in_bearbeitung' }).eq('id', id).then(() => {
-      a.status = 'in_bearbeitung';
-      loadAnfragenCount();
-    });
-  }
-}
-
-async function updateAnfrageStatus(id, status) {
-  const antwort = document.getElementById('anfrage-antwort')?.value || '';
-  const { error } = await sb.from('anfragen').update({
-    status,
-    antwort: antwort || null,
-    bearbeitet_von: currentUser.id
-  }).eq('id', id);
-  if (error) { toast('Fehler: ' + error.message, '❌', 'error'); return; }
-
-  // Send email notification
-  const anfrage = allAnfragen.find(a => a.id === id);
-  if (anfrage?.email) {
-    if (status === 'angenommen')     mailAngenommen(anfrage, antwort);
-    if (status === 'in_bearbeitung') mailInBearbeitung(anfrage, antwort);
-    if (status === 'abgelehnt')      mailAbgelehnt(anfrage, antwort);
-  }
-
-  const statusLabels = { angenommen:'Angenommen', in_bearbeitung:'In Bearbeitung', abgelehnt:'Abgelehnt' };
-  toast(`Status: ${statusLabels[status] || status}`, '✅', 'success');
-  closeModal('anfrage-modal');
-  await loadAnfragen();
-  await loadAnfragenCount();
-}
-
-async function saveAnfrageAntwort(id) {
-  const antwort = document.getElementById('anfrage-antwort')?.value || '';
-  const { error } = await sb.from('anfragen').update({ antwort, bearbeitet_von: currentUser.id }).eq('id', id);
-  if (error) { toast('Fehler', '❌', 'error'); return; }
-  toast('Antwort gespeichert', '✅', 'success');
-  await loadAnfragen();
-}
-
-function anfrageZuAuftrag(id) {
-  const a = allAnfragen.find(x => x.id === id);
-  if (!a) return;
-  closeModal('anfrage-modal');
-  // Pre-fill the new order form
-  navigate('neuer-auftrag', document.getElementById('nav-neuer-auftrag'));
-  setTimeout(() => {
-    const set = (eid, val) => { const el = document.getElementById(eid); if(el && val) el.value = val; };
-    set('f-firma', a.unternehmen || [a.vorname, a.nachname].filter(Boolean).join(' '));
-    set('f-ansprech', [a.vorname, a.nachname].filter(Boolean).join(' '));
-    set('f-notiz', `Aus Anfrage vom ${new Date(a.created_at).toLocaleDateString('de-DE')}\nKunden-E-Mail: ${a.email}\nOriginal-Nachricht: ${a.nachricht || ''}`);
-    updatePreview();
-    toast('Anfrage als Auftrag vorausgefüllt', 'ℹ️', 'info');
-  }, 300);
-  // Mark as angenommen
-  sb.from('anfragen').update({ status: 'angenommen', bearbeitet_von: currentUser.id }).eq('id', id);
-}
-
-// ══════════════════════════════════════════════════
-// E-MAIL BENACHRICHTIGUNGEN (via Resend)
-// ══════════════════════════════════════════════════
-const RESEND_KEY = 're_FAVxxcih_Dpapu1vqb68BwWsQhxi9JfZe';
-const REPLY_TO   = 'n.knappitsch@gmail.com';
-const FROM_NAME  = 'N & K Fahrzeugüberführung';
-const FROM_EMAIL = 'onboarding@resend.dev';
-
-function emailTemplate({ title, preheader, bodyHtml }) {
-  return `<!DOCTYPE html>
-<html lang="de">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${title}</title>
-</head>
-<body style="margin:0;padding:0;background:#f0f4f8;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
-<div style="display:none;max-height:0;overflow:hidden;color:#f0f4f8">${preheader}</div>
-
-<!-- Wrapper -->
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f8;padding:40px 20px">
-<tr><td align="center">
-<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%">
-
-  <!-- Header -->
-  <tr><td style="background:#060F1E;border-radius:12px 12px 0 0;padding:28px 36px;text-align:left">
-    <table cellpadding="0" cellspacing="0"><tr>
-      <td style="padding-right:12px">
-        <div style="width:40px;height:40px;background:#0D1F3C;border:1.5px solid #2E7FFF;border-radius:6px;text-align:center;line-height:40px;font-size:18px">🚗</div>
-      </td>
-      <td>
-        <div style="font-size:20px;font-weight:700;color:#ffffff;letter-spacing:1px">N <span style="color:#2E7FFF">&amp;</span> K</div>
-        <div style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#5E84B2;margin-top:1px">Fahrzeugüberführung</div>
-      </td>
-    </tr></table>
-  </td></tr>
-
-  <!-- Body -->
-  <tr><td style="background:#ffffff;padding:36px 36px 28px;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0">
-    ${bodyHtml}
-  </td></tr>
-
-  <!-- Footer -->
-  <tr><td style="background:#f8fafc;border:1px solid #e2e8f0;border-top:none;border-radius:0 0 12px 12px;padding:20px 36px;text-align:center">
-    <p style="margin:0 0 6px;font-size:12px;color:#94a3b8">N &amp; K Fahrzeugüberführung GbR · Deutschland</p>
-    <p style="margin:0;font-size:11px;color:#cbd5e1">Sie können direkt auf diese E-Mail antworten — wir melden uns persönlich.</p>
-  </td></tr>
-
-</table>
-</td></tr></table>
-</body></html>`;
-}
-
-async function sendMailViaEdge({ to, status, name, art, unternehmen, antwort }) {
-  if (!to || !to.includes('@')) return;
-  try {
-    const res = await fetch(
-      SUPA_URL + '/functions/v1/send-email',
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer ' + SUPA_KEY,
-        },
-        body: JSON.stringify({ to, status, name, art, unternehmen, antwort }),
-      }
-    );
-    const data = await res.json();
-    if (res.ok) {
-      toast('E-Mail an ' + to + ' gesendet', '📧', 'success');
-    } else {
-      console.error('Mail error:', data);
-      toast('Mail-Fehler: ' + (data.message || 'Unbekannt'), '⚠️', 'error');
-    }
-  } catch(e) {
-    console.error('Mail error:', e);
-  }
-}
-
-// ── Mail: Anfrage angenommen ──
-function mailAngenommen(anfrage, antwort) {
-  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
-  sendMailViaEdge({
-    to: anfrage.email, status: 'angenommen', name,
-    art: anfrage.art, unternehmen: anfrage.unternehmen, antwort
-  });
-}
-function _oldMailAngenommen_unused(anfrage, antwort) {
-  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
-  sendMail_UNUSED({
-    to: anfrage.email,
-    subject: '✅ Ihre Anfrage wurde angenommen — N & K Fahrzeugüberführung',
-    title: 'Anfrage angenommen',
-    preheader: 'Wir haben Ihre Anfrage angenommen und melden uns in Kürze.',
-    bodyHtml: `
-      <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#0f172a">Gute Neuigkeit, ${name}!</h1>
-      <p style="margin:0 0 24px;font-size:14px;color:#64748b">Ihre Anfrage wurde von uns angenommen.</p>
-
-      <div style="background:#f0fdf4;border:1px solid #86efac;border-left:4px solid #16a34a;border-radius:8px;padding:16px 20px;margin-bottom:24px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#16a34a;margin-bottom:6px">STATUS</div>
-        <div style="font-size:16px;font-weight:700;color:#15803d">✅ Angenommen</div>
-      </div>
-
-      ${anfrage.art ? `<table cellpadding="0" cellspacing="0" style="width:100%;margin-bottom:24px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
-        <tr style="background:#f8fafc"><td style="padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8;width:40%">Art der Anfrage</td><td style="padding:10px 16px;font-size:13px;color:#0f172a;font-weight:500">${anfrage.art}</td></tr>
-        ${anfrage.unternehmen ? `<tr style="background:#ffffff"><td style="padding:10px 16px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#94a3b8">Unternehmen</td><td style="padding:10px 16px;font-size:13px;color:#0f172a;font-weight:500">${anfrage.unternehmen}</td></tr>` : ''}
-      </table>` : ''}
-
-      ${antwort ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:18px 20px;margin-bottom:24px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:10px">Nachricht von uns</div>
-        <p style="margin:0;font-size:14px;color:#1e3a5f;line-height:1.7">${antwort}</p>
-      </div>` : ''}
-
-      <div style="background:#f8fafc;border-radius:8px;padding:18px 20px;margin-bottom:24px">
-        <p style="margin:0;font-size:13px;color:#475569;line-height:1.7">Wir werden uns in Kürze persönlich bei Ihnen melden um alle Details zu besprechen. Sie können auch direkt auf diese E-Mail antworten.</p>
-      </div>
-
-      <div style="text-align:center;margin-top:8px">
-        <div style="display:inline-block;background:#2E7FFF;color:#ffffff;padding:14px 32px;border-radius:6px;font-size:14px;font-weight:600;letter-spacing:0.5px">Wir freuen uns auf die Zusammenarbeit!</div>
-      </div>
-    `
-  });
-}
-
-// ── Mail: Auftrag in Bearbeitung ──
-function mailInBearbeitung(anfrage, antwort) {
-  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
-  sendMailViaEdge({
-    to: anfrage.email, status: 'in_bearbeitung', name,
-    art: anfrage.art, unternehmen: anfrage.unternehmen, antwort
-  });
-}
-function _oldMailInBearbeitung_unused(anfrage, antwort) {
-  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
-  sendMail_UNUSED({
-    to: anfrage.email,
-    subject: '🔄 Ihre Anfrage wird bearbeitet — N & K Fahrzeugüberführung',
-    title: 'In Bearbeitung',
-    preheader: 'Wir haben Ihre Anfrage erhalten und bearbeiten diese gerade.',
-    bodyHtml: `
-      <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#0f172a">Hallo ${name},</h1>
-      <p style="margin:0 0 24px;font-size:14px;color:#64748b">wir haben Ihre Anfrage erhalten und bearbeiten diese aktuell.</p>
-
-      <div style="background:#fffbeb;border:1px solid #fcd34d;border-left:4px solid #f59e0b;border-radius:8px;padding:16px 20px;margin-bottom:24px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#d97706;margin-bottom:6px">STATUS</div>
-        <div style="font-size:16px;font-weight:700;color:#b45309">🔄 In Bearbeitung</div>
-      </div>
-
-      ${antwort ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:18px 20px;margin-bottom:24px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:10px">Nachricht von uns</div>
-        <p style="margin:0;font-size:14px;color:#1e3a5f;line-height:1.7">${antwort}</p>
-      </div>` : ''}
-
-      <div style="background:#f8fafc;border-radius:8px;padding:18px 20px">
-        <p style="margin:0;font-size:13px;color:#475569;line-height:1.7">Wir melden uns baldmöglichst mit einem konkreten Angebot. Bei Fragen können Sie jederzeit direkt auf diese E-Mail antworten.</p>
-      </div>
-    `
-  });
-}
-
-// ── Mail: Anfrage abgelehnt ──
-function mailAbgelehnt(anfrage, antwort) {
-  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
-  sendMailViaEdge({
-    to: anfrage.email, status: 'abgelehnt', name,
-    art: anfrage.art, unternehmen: anfrage.unternehmen, antwort
-  });
-}
-function _oldMailAbgelehnt_unused(anfrage, antwort) {
-  const name = [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' ') || 'Interessent';
-  sendMail_UNUSED({
-    to: anfrage.email,
-    subject: 'Zu Ihrer Anfrage — N & K Fahrzeugüberführung',
-    title: 'Zu Ihrer Anfrage',
-    preheader: 'Vielen Dank für Ihre Anfrage. Leider können wir diese nicht annehmen.',
-    bodyHtml: `
-      <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#0f172a">Hallo ${name},</h1>
-      <p style="margin:0 0 24px;font-size:14px;color:#64748b">vielen Dank für Ihre Anfrage bei N &amp; K Fahrzeugüberführung.</p>
-
-      <div style="background:#fef2f2;border:1px solid #fca5a5;border-left:4px solid #ef4444;border-radius:8px;padding:16px 20px;margin-bottom:24px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#dc2626;margin-bottom:6px">STATUS</div>
-        <div style="font-size:16px;font-weight:700;color:#b91c1c">Leider können wir Ihre Anfrage aktuell nicht annehmen.</div>
-      </div>
-
-      ${antwort ? `<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:18px 20px;margin-bottom:24px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:10px">Hinweis</div>
-        <p style="margin:0;font-size:14px;color:#1e3a5f;line-height:1.7">${antwort}</p>
-      </div>` : ''}
-
-      <div style="background:#f8fafc;border-radius:8px;padding:18px 20px">
-        <p style="margin:0;font-size:13px;color:#475569;line-height:1.7">Falls Sie Fragen haben oder eine alternative Lösung besprechen möchten, antworten Sie einfach auf diese E-Mail. Wir helfen gerne weiter.</p>
-      </div>
-    `
-  });
-}
-
-// ── Mail: Auftrag neu angelegt (Bestätigung) ──
-function mailAuftragBestaetigung(email, name, auftragNr, details) {
-  if (!email) return;
-  sendMail({
-    to: email,
-    subject: `Auftragsbestätigung ${auftragNr} — N & K Fahrzeugüberführung`,
-    title: 'Auftragsbestätigung',
-    preheader: `Ihr Auftrag ${auftragNr} wurde erfolgreich angelegt.`,
-    bodyHtml: `
-      <h1 style="margin:0 0 8px;font-size:26px;font-weight:700;color:#0f172a">Auftragsbestätigung</h1>
-      <p style="margin:0 0 24px;font-size:14px;color:#64748b">Sehr geehrte Damen und Herren,<br>vielen Dank für Ihren Auftrag. Hier ist Ihre Bestätigung.</p>
-
-      <div style="background:#eff6ff;border:1px solid #2E7FFF;border-left:4px solid #2E7FFF;border-radius:8px;padding:16px 20px;margin-bottom:24px">
-        <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2563eb;margin-bottom:6px">Auftragsnummer</div>
-        <div style="font-size:22px;font-weight:700;color:#1e3a5f;letter-spacing:1px">${auftragNr}</div>
-      </div>
-
-      ${details ? `<table cellpadding="0" cellspacing="0" style="width:100%;margin-bottom:24px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
-        ${details}
-      </table>` : ''}
-
-      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:16px 20px;margin-bottom:24px">
-        <p style="margin:0;font-size:13px;color:#15803d;line-height:1.7">✅ Ihr Auftrag ist bei uns eingegangen. Wir melden uns in Kürze mit weiteren Details.</p>
-      </div>
-
-      <div style="background:#f8fafc;border-radius:8px;padding:16px 20px">
-        <p style="margin:0;font-size:12px;color:#94a3b8;line-height:1.6">Bei Fragen antworten Sie einfach auf diese E-Mail — wir sind persönlich für Sie erreichbar.</p>
-      </div>
-    `
-  });
-}
-
-
-// Mobile Navigation
-function mobileNav(pageId, btn) {
-  document.querySelectorAll('.mob-nav-item').forEach(b => b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  // Also update sidebar nav
-  const sidebarBtn = document.querySelector(`.nav-item[onclick*="${pageId}"]`);
-  navigate(pageId, sidebarBtn);
-  // Scroll to top
-  window.scrollTo(0, 0);
-}
-
-// Sync mobile badge with anfragen badge
-const origLoadAnfragenCount = loadAnfragenCount;
-
-
-// ══════════════════════════════════════════════════
-// ANFAHRTSKOSTEN (Kraftstoffbasiert)
-// ══════════════════════════════════════════════════
-let standortCoords = null;
-
-// Laden gespeicherter Einstellungen
-(function loadStandort() {
-  const saved = localStorage.getItem('nk_standort');
-  if (saved) {
-    try {
-      const s = JSON.parse(saved);
-      standortCoords = s.coords;
-      const el = document.getElementById('c-standort');
-      if (el) el.value = s.label;
-    } catch(e) {}
-  }
-  const savedFz = localStorage.getItem('nk_fahrzeug');
-  if (savedFz) {
-    try {
-      const f = JSON.parse(savedFz);
-      const kEl = document.getElementById('c-kraftstoff');
-      const vEl = document.getElementById('c-verbrauch');
-      const pEl = document.getElementById('c-spritpreis');
-      if (kEl && f.kraftstoff) kEl.value = f.kraftstoff;
-      if (vEl && f.verbrauch)  vEl.value = f.verbrauch;
-      if (pEl && f.preis)      pEl.value = f.preis;
-    } catch(e) {}
-  }
-})();
-
-// Override addrSelect to handle standort + von/nach
-const _origAddrSelect = addrSelect;
-function addrSelect(inputId, dropdownId, lat, lon, main, sub) {
-  if (inputId === 'c-standort') {
-    // Handle standort completely separately — never touch addrCoords
-    document.getElementById(inputId).value = main + (sub ? ', ' + sub.split(',')[0] : '');
-    document.getElementById(dropdownId).classList.remove('open');
-    standortCoords = { lat: parseFloat(lat), lon: parseFloat(lon) };
-    const label = main + (sub ? ', ' + sub.split(',')[0] : '');
-    localStorage.setItem('nk_standort', JSON.stringify({ coords: standortCoords, label }));
-    updateAnfahrt(); // recalculate Anfahrt costs — does NOT touch c-km
-    return;
-  }
-  // For c-von and c-nach: call original which sets addrCoords and c-km
-  _origAddrSelect(inputId, dropdownId, lat, lon, main, sub);
-  // After Von is selected, also update Anfahrt costs
-  if (inputId === 'c-von') {
-    updateAnfahrt();
-  }
-}
-
-function onKraftstoffChange() {
-  saveFahrzeugSettings();
-  // Update placeholder price based on fuel type
-  const defaults = { benzin: 1.79, diesel: 1.65, e5: 1.89 };
-  const kfz = document.getElementById('c-kraftstoff')?.value;
-  if (kfz && defaults[kfz]) {
-    const pEl = document.getElementById('c-spritpreis');
-    if (pEl && !pEl.dataset.livePrice) pEl.value = defaults[kfz];
-  }
-  updateAnfahrt();
-}
-
-function saveFahrzeugSettings() {
-  localStorage.setItem('nk_fahrzeug', JSON.stringify({
-    kraftstoff: document.getElementById('c-kraftstoff')?.value,
-    verbrauch:  document.getElementById('c-verbrauch')?.value,
-    preis:      document.getElementById('c-spritpreis')?.value,
-  }));
-}
-
-async function fetchSpritpreis() {
-  const btn        = document.getElementById('sprit-refresh-btn');
-  const src        = document.getElementById('sprit-source');
-  const kraftstoff = document.getElementById('c-kraftstoff')?.value || 'benzin';
-  const fuelMap    = { benzin:'e10', diesel:'diesel', e5:'e5' };
-  const tkField    = fuelMap[kraftstoff] || 'e10';
-
-  btn.textContent = '...';
-  btn.disabled    = true;
-  if (src) src.textContent = 'Standort wird ermittelt...';
-
-  try {
-    // Step 1: Standort ermitteln (Browser GPS oder gespeicherter Standort)
-    const coords = await new Promise((resolve, reject) => {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          pos => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-          ()  => standortCoords
-            ? resolve({ lat: standortCoords.lat, lng: standortCoords.lon })
-            : reject(new Error('no location')),
-          { timeout: 6000, maximumAge: 60000 }
-        );
-      } else if (standortCoords) {
-        resolve({ lat: standortCoords.lat, lng: standortCoords.lon });
-      } else {
-        reject(new Error('no location'));
-      }
-    });
-
-    if (src) src.textContent = 'Suche günstigste Tankstelle...';
-
-    // Step 2: Tankerkönig API
-    const tkType = tkField === 'e10' ? 'e10' : tkField;
-    const url = `https://creativecommons.tankerkoenig.de/json/list.php?lat=${coords.lat}&lng=${coords.lng}&rad=10&sort=price&type=${tkType}&apikey=00000000-0000-0000-0000-000000000002`;
-    const res  = await fetch(url);
-    const data = await res.json();
-
-    if (!data.ok || !data.stations?.length) throw new Error('no stations');
-
-    const stations = data.stations.filter(s => s[tkField] > 0).sort((a,b) => a[tkField] - b[tkField]);
-    if (!stations.length) throw new Error('no prices');
-
-    const best  = stations[0];
-    const preis = best[tkField];
-    const name  = best.name || 'Tankstelle';
-    const dist  = best.dist?.toFixed(1);
-
-    document.getElementById('c-spritpreis').value = preis.toFixed(3);
-    document.getElementById('c-spritpreis').dataset.livePrice = '1';
-
-    const label = { benzin:'E10', diesel:'Diesel', e5:'Super E5' };
-    if (src) src.textContent = `⛽ ${name} · ${dist ? dist+' km · ' : ''}${preis.toFixed(3)} €/L · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr`;
-    toast(`${label[kraftstoff]}: ${preis.toFixed(3)} €/L — ${name}`, '⛽', 'success');
-
-  } catch(e) {
-    // Fallback: aktuelle Bundesdurchschnittspreise
-    const avg = { benzin:1.759, diesel:1.649, e5:1.819 };
-    document.getElementById('c-spritpreis').value = (avg[kraftstoff]||1.759).toFixed(3);
-    if (src) src.textContent = 'Ø Deutschland · Standort nicht verfügbar · ' + new Date().toLocaleDateString('de-DE');
-    toast('Standort nicht verfügbar — Durchschnittspreis', '⚠️', 'info');
-  }
-
-  saveFahrzeugSettings();
-  updateAnfahrt();
-  btn.textContent = '↻ Live';
-  btn.disabled    = false;
-}
-
-
-function updateAnfahrt(manual = false) {
-  const vonCoords  = addrCoords.von;
-  const nachCoords = addrCoords.nach;
-  const badge      = document.getElementById('anfahrt-badge');
-
-  if (!standortCoords || !vonCoords) {
-    if (badge) badge.style.display = 'none';
-    return;
-  }
-
-  const verbrauch  = parseFloat(document.getElementById('c-verbrauch')?.value || 7);
-  const spritpreis = parseFloat(document.getElementById('c-spritpreis')?.value || 1.79);
-
-  function kmRoad(lat1, lon1, lat2, lon2) {
-    return Math.round(haversineKm(lat1, lon1, lat2, lon2) * 1.28);
-  }
-  function spritKosten(km) {
-    return (km * verbrauch / 100) * spritpreis;
-  }
-  function fmtEur(val) { return val.toFixed(2).replace('.', ',') + ' €'; }
-  function fmtKm(km)   { return km + ' km'; }
-
-  const vonName      = document.getElementById('c-von')?.value?.split(',')[0]      || 'Abholort';
-  const nachName     = document.getElementById('c-nach')?.value?.split(',')[0]     || 'Zielort';
-  const standortName = document.getElementById('c-standort')?.value?.split(',')[0] || 'Dein Standort';
-
-  // ── Leg 1: Dein Standort → Abholort (DEIN Auto, Spritkosten = deine Kosten) ──
-  const kmAnfahrt  = kmRoad(standortCoords.lat, standortCoords.lon, vonCoords.lat, vonCoords.lon);
-  const eurAnfahrt = spritKosten(kmAnfahrt);
-  const litAnfahrt = (kmAnfahrt * verbrauch / 100);
-
-  // ── Leg 2: Abholort → Zielort (KUNDENFAHRZEUG — dein Sprit zählt NICHT) ──
-  let kmUeberf = 0;
-  if (nachCoords) {
-    kmUeberf = kmRoad(vonCoords.lat, vonCoords.lon, nachCoords.lat, nachCoords.lon);
-  } else {
-    kmUeberf = parseInt(document.getElementById('c-km')?.value || 0);
-  }
-  // Keine Spritkosten für die Überführung — läuft auf Rechnung des Kunden
-
-  // ── Leg 3: Zielort → Dein Standort (ÖFFIS/ZUG/FLUG — kein Sprit) ──
-  let kmHeim = 0;
-  if (nachCoords) {
-    kmHeim = kmRoad(nachCoords.lat, nachCoords.lon, standortCoords.lat, standortCoords.lon);
-  }
-  // Heimfahrt per Öffis → wird im "Rückfahrt"-Feld separat eingetragen
-
-  // ── Deine eigenen Spritkosten = NUR Anfahrt ──
-  const totalMeineKm    = kmAnfahrt; // Nur Anfahrt mit eigenem Auto
-  const totalMeineLiter = litAnfahrt;
-  const totalMeineKost  = eurAnfahrt;
-
-  // ── Update display ──
-  document.getElementById('anfahrt-km-display').textContent  = fmtKm(kmAnfahrt);
-  document.getElementById('anfahrt-eur-display').textContent = fmtEur(eurAnfahrt);
-  document.getElementById('anfahrt-route-label').textContent = `${standortName} → ${vonName}`;
-
-  document.getElementById('ueberfuehrung-km-display').textContent  = fmtKm(kmUeberf);
-  document.getElementById('ueberfuehrung-eur-display').textContent = '— (Kundenfahrzeug)';
-  document.getElementById('ueberfuehrung-route-label').textContent  = `${vonName} → ${nachName}`;
-
-  document.getElementById('heimfahrt-km-display').textContent  = fmtKm(kmHeim);
-  document.getElementById('heimfahrt-eur-display').textContent = '→ im Rückfahrt-Feld';
-  document.getElementById('heimfahrt-route-label').textContent = `${nachName} → ${standortName}`;
-
-  document.getElementById('total-km-display').textContent      = totalMeineKm + ' km';
-  document.getElementById('total-liter-display').textContent   = totalMeineLiter.toFixed(1).replace('.', ',') + ' L';
-  document.getElementById('anfahrt-liter-display').textContent = totalMeineLiter.toFixed(1).replace('.', ',') + ' L';
-  document.getElementById('preis-anzeige').textContent         = spritpreis.toFixed(2).replace('.', ',');
-  document.getElementById('anfahrt-kosten-display').textContent = fmtEur(totalMeineKost);
-
-  if (badge) badge.style.display = 'block';
-
-  // Auto-fill "Sonstiges" mit Anfahrts-Spritkosten
-  const extraEl = document.getElementById('c-extra');
-  if (extraEl) {
-    extraEl.value = eurAnfahrt.toFixed(0);
-    kCalc();
-  }
-
-  // Hint: Heimfahrt km in Rückfahrt-Feld vorschlagen
-  const rueckEl = document.getElementById('c-rueck');
-  if (rueckEl && nachCoords && kmHeim > 0 && rueckEl.value === '45') {
-    // Schätze Öffis-Kosten: ~0.10€/km als Richtwert (Zug/Bus)
-    const heimKosten = Math.max(25, Math.round(kmHeim * 0.10));
-    rueckEl.value = heimKosten;
-    kCalc();
-    toast(`Heimfahrt ${nachName} → ${standortName}: ca. ${kmHeim} km — Rückfahrtskosten angepasst`, '🚆', 'info');
-  }
-
-  saveFahrzeugSettings();
-  if (manual) toast('Kraftstoffkosten neu berechnet', '⛽', 'info');
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  // Trigger update if standort already saved
-  if (standortCoords && addrCoords.von) updateAnfahrt();
 });
 
 // ══════════════════════════════════════════════════
