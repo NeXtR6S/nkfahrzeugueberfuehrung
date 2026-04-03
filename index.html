@@ -24,129 +24,67 @@ html,body{height:100%;overflow:hidden}
 
 body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--text);display:flex}
 
-/* ══ AUTH SCREEN ══ */
-#auth-screen{
-  display:flex; align-items:center; justify-content:center;
-  width:100vw; height:100vh; background:var(--navy);
-  position:fixed; inset:0; z-index:1000;
-  background-image:
-    linear-gradient(rgba(46,127,255,0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(46,127,255,0.06) 1px, transparent 1px);
-  background-size:50px 50px;
-}
-
-.auth-card{
-  background:var(--navy-2); border:1px solid rgba(46,127,255,0.2);
-  border-radius:16px; padding:48px 44px; width:420px;
-  box-shadow:0 32px 80px rgba(0,0,0,0.5);
-}
-
+/* ══ AUTH ══ */
+#auth-screen{display:flex;align-items:center;justify-content:center;width:100vw;height:100vh;background:var(--navy);position:fixed;inset:0;z-index:1000;background-image:linear-gradient(rgba(46,127,255,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(46,127,255,0.06) 1px,transparent 1px);background-size:50px 50px}
+.auth-card{background:var(--navy-2);border:1px solid rgba(46,127,255,0.2);border-radius:16px;padding:48px 44px;width:420px;box-shadow:0 32px 80px rgba(0,0,0,0.5)}
 .auth-logo{text-align:center;margin-bottom:36px}
 .auth-logo-mark{display:inline-flex;align-items:center;gap:14px;margin-bottom:10px}
 .auth-brand{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:#fff;letter-spacing:2px}
 .auth-brand .amp{color:var(--blue-b)}
 .auth-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#5E84B2}
 .auth-tagline{font-size:13px;color:#5E84B2;margin-top:6px}
-
 .auth-tabs{display:flex;background:rgba(0,0,0,0.3);border-radius:8px;padding:3px;margin-bottom:28px;gap:3px}
 .auth-tab{flex:1;padding:9px;border:none;background:transparent;color:#7A91B8;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px;transition:all .2s;font-family:'Outfit',sans-serif}
 .auth-tab.active{background:var(--blue-b);color:#fff;box-shadow:0 2px 8px rgba(46,127,255,.4)}
-
 .auth-form{display:flex;flex-direction:column;gap:16px}
 .auth-group{display:flex;flex-direction:column;gap:6px}
 .auth-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#5E84B2}
-.auth-input{
-  padding:12px 16px; background:rgba(0,0,0,0.4); border:1.5px solid rgba(46,127,255,0.2);
-  border-radius:8px; font-size:14px; font-family:'Outfit',sans-serif; color:#fff; outline:none;
-  transition:border-color .2s, box-shadow .2s;
-}
+.auth-input{padding:12px 16px;background:rgba(0,0,0,0.4);border:1.5px solid rgba(46,127,255,0.2);border-radius:8px;font-size:14px;font-family:'Outfit',sans-serif;color:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
 .auth-input:focus{border-color:var(--blue-b);box-shadow:0 0 0 3px rgba(46,127,255,.15)}
 .auth-input::placeholder{color:#3A5A8C}
-
-.auth-btn{
-  padding:13px; background:var(--blue-b); color:#fff; border:none; border-radius:8px;
-  font-size:14px; font-weight:700; cursor:pointer; font-family:'Outfit',sans-serif;
-  letter-spacing:.5px; transition:all .2s; box-shadow:0 4px 20px rgba(46,127,255,.35);
-  margin-top:4px;
-}
+.auth-btn{padding:13px;background:var(--blue-b);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:.5px;transition:all .2s;box-shadow:0 4px 20px rgba(46,127,255,.35);margin-top:4px}
 .auth-btn:hover{background:var(--blue);transform:translateY(-1px)}
 .auth-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.auth-error{background:var(--red-pale);border:1px solid #fca5a5;border-radius:6px;padding:10px 14px;font-size:13px;color:var(--red);display:none}
 
-.auth-error{
-  background:var(--red-pale); border:1px solid #fca5a5; border-radius:6px;
-  padding:10px 14px; font-size:13px; color:var(--red); display:none;
-}
-
-.auth-divider{text-align:center;font-size:11px;color:#3A5A8C;position:relative}
-.auth-divider::before,.auth-divider::after{content:'';position:absolute;top:50%;width:40%;height:1px;background:rgba(46,127,255,.15)}
-.auth-divider::before{left:0} .auth-divider::after{right:0}
-
-/* ══ APP LAYOUT ══ */
+/* ══ LAYOUT ══ */
 #app-screen{display:none;width:100%;height:100vh;overflow:hidden;flex-direction:row}
 #app-screen.visible{display:flex}
 
 /* ══ SIDEBAR ══ */
-.sidebar{
-  width:var(--sidebar-w); background:var(--navy); display:flex;
-  flex-direction:column; height:100vh; flex-shrink:0; position:relative; z-index:10;
-}
-.sidebar::after{
-  content:''; position:absolute; top:0; right:0; width:1px; height:100%;
-  background:linear-gradient(to bottom,rgba(46,127,255,.4),transparent 60%);
-}
+.sidebar{width:var(--sidebar-w);background:var(--navy);display:flex;flex-direction:column;height:100vh;flex-shrink:0;position:relative;z-index:10}
+.sidebar::after{content:'';position:absolute;top:0;right:0;width:1px;height:100%;background:linear-gradient(to bottom,rgba(46,127,255,.4),transparent 60%)}
 .sidebar-logo{padding:24px 24px 20px;border-bottom:1px solid rgba(255,255,255,.06)}
 .logo-mark{display:flex;align-items:center;gap:12px;margin-bottom:6px}
 .logo-hex{width:36px;height:36px;flex-shrink:0}
 .logo-name{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:#fff;line-height:1}
 .logo-name .amp{color:var(--blue-b)}
 .logo-sub{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:#5E84B2;font-weight:500}
-
-.user-chip{
-  margin:12px 16px 4px; background:rgba(46,127,255,.08); border:1px solid rgba(46,127,255,.15);
-  border-radius:8px; padding:10px 14px; display:flex; align-items:center; gap:10px;
-}
-.user-chip-avatar{
-  width:30px;height:30px;border-radius:50%;background:var(--blue-b);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#fff;flex-shrink:0;
-}
+.user-chip{margin:12px 16px 4px;background:rgba(46,127,255,.08);border:1px solid rgba(46,127,255,.15);border-radius:8px;padding:10px 14px;display:flex;align-items:center;gap:10px}
+.user-chip-avatar{width:30px;height:30px;border-radius:50%;background:var(--blue-b);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
 .user-chip-info{flex:1;min-width:0}
 .user-chip-name{font-size:12px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .user-chip-role{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--blue-b)}
 .user-chip-role.fahrer{color:var(--gold)}
 .user-chip-role.disponent{color:var(--green)}
 .user-chip-role.buchhaltung{color:#7c3aed}
-
 .nav-group-label{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#3A5A8C;font-weight:600;padding:16px 24px 6px}
-.nav-item{
-  display:flex;align-items:center;gap:12px;padding:10px 24px;cursor:pointer;
-  color:#7A91B8;font-size:13px;font-weight:500;transition:all .2s;
-  position:relative;border:none;background:none;width:100%;text-align:left;font-family:'Outfit',sans-serif;
-}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 24px;cursor:pointer;color:#7A91B8;font-size:13px;font-weight:500;transition:all .2s;position:relative;border:none;background:none;width:100%;text-align:left;font-family:'Outfit',sans-serif}
 .nav-item:hover{color:#fff;background:rgba(255,255,255,.04)}
 .nav-item.active{color:#fff;background:rgba(46,127,255,.12)}
 .nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--blue-b);border-radius:0 2px 2px 0}
 .nav-icon{width:17px;height:17px;opacity:.65;flex-shrink:0;transition:opacity .2s}
 .nav-item:hover .nav-icon,.nav-item.active .nav-icon{opacity:1}
 .nav-badge{margin-left:auto;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;min-width:20px;text-align:center}
-.nav-badge.admin-only{background:var(--gold)}
 .nav-badge.new-anfragen{background:var(--red);animation:pulse-badge 2s infinite}
 @keyframes pulse-badge{0%,100%{opacity:1}50%{opacity:.6}}
-
 .sidebar-footer{margin-top:auto;padding:16px 24px;border-top:1px solid rgba(255,255,255,.06)}
-.logout-btn{
-  width:100%;padding:9px 14px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);
-  border-radius:6px;color:#f87171;font-size:12px;font-weight:600;cursor:pointer;
-  font-family:'Outfit',sans-serif;transition:all .2s;text-align:left;display:flex;align-items:center;gap:8px;
-}
+.logout-btn{width:100%;padding:9px 14px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);border-radius:6px;color:#f87171;font-size:12px;font-weight:600;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;text-align:left;display:flex;align-items:center;gap:8px}
 .logout-btn:hover{background:rgba(220,38,38,.15);border-color:rgba(220,38,38,.4)}
 
 /* ══ MAIN ══ */
 .main{flex:1;display:flex;flex-direction:column;height:100vh;overflow:hidden;min-width:0}
-.topbar{
-  background:var(--white);border-bottom:1px solid var(--border);
-  padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
-}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .topbar-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--navy-2);letter-spacing:.5px}
 .topbar-right{display:flex;align-items:center;gap:14px}
 .topbar-date{font-size:12px;color:var(--muted)}
@@ -155,7 +93,6 @@ body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--text);dis
 .role-badge.fahrer{background:var(--gold-pale);color:var(--gold)}
 .role-badge.disponent{background:var(--green-pale);color:var(--green)}
 .role-badge.buchhaltung{background:#f3e8ff;color:#7c3aed}
-
 .content{flex:1;overflow-y:auto;padding:28px 32px}
 .content::-webkit-scrollbar{width:5px}
 .content::-webkit-scrollbar-track{background:transparent}
@@ -171,18 +108,17 @@ body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--text);dis
 .stat-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px 22px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
 .stat-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.07)}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0}
-.stat-card.blue::before{background:var(--blue-b)} .stat-card.gold::before{background:var(--gold)}
-.stat-card.green::before{background:var(--green)} .stat-card.navy::before{background:var(--navy-2)}
+.stat-card.blue::before{background:var(--blue-b)}.stat-card.gold::before{background:var(--gold)}
+.stat-card.green::before{background:var(--green)}.stat-card.navy::before{background:var(--navy-2)}
 .stat-label{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
 .stat-value{font-family:'Rajdhani',sans-serif;font-size:40px;font-weight:700;color:var(--navy-2);line-height:1}
 .stat-sub{font-size:11px;color:var(--muted);margin-top:4px}
 .stat-icon{position:absolute;right:18px;top:18px;font-size:26px;opacity:.12}
-
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
 .section-title{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--navy-2);letter-spacing:.5px}
-
 .card{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
 
+/* ══ BUTTONS ══ */
 .btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:6px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s;font-family:'Outfit',sans-serif}
 .btn-primary{background:var(--blue-b);color:#fff;box-shadow:0 2px 10px rgba(46,127,255,.25)}
 .btn-primary:hover{background:var(--blue);transform:translateY(-1px)}
@@ -201,7 +137,6 @@ body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--text);dis
 .data-table td{padding:13px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
 .data-table tr:last-child td{border-bottom:none}
 .data-table tbody tr:hover{background:var(--off)}
-
 .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
 .badge-blue{background:var(--blue-pale);color:var(--blue)}
 .badge-gold{background:var(--gold-pale);color:var(--gold)}
@@ -209,7 +144,6 @@ body{font-family:'Outfit',sans-serif;background:var(--off);color:var(--text);dis
 .badge-grey{background:var(--grey);color:var(--muted)}
 .badge-navy{background:#e0e8f5;color:var(--navy-2)}
 .badge-red{background:var(--red-pale);color:var(--red)}
-.badge-orange{background:var(--orange-pale);color:var(--orange)}
 
 /* ══ FORM ══ */
 .form-card{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:14px}
@@ -231,29 +165,48 @@ textarea.form-control{resize:vertical;min-height:80px}
 .form-section-title{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--blue-b);margin:16px 0 10px;display:flex;align-items:center;gap:8px}
 .form-section-title::after{content:'';flex:1;height:1px;background:var(--blue-pale)}
 
-/* ══ TYPE SELECTOR ══ */
-.type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
-.type-opt{border:2px solid var(--border);border-radius:8px;padding:13px 10px;cursor:pointer;transition:all .2s;text-align:center;background:var(--white)}
-.type-opt:hover{border-color:var(--blue-b);background:var(--blue-pale)}
-.type-opt.selected{border-color:var(--blue-b);background:var(--blue-pale);box-shadow:0 0 0 3px rgba(46,127,255,.1)}
-.type-opt-icon{font-size:20px;margin-bottom:5px}
-.type-opt-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--navy-2)}
-.type-opt-sub{font-size:10px;color:var(--muted);margin-top:2px}
+/* ══ MODAL ══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(6,15,30,.75);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:12px;width:90%;max-width:480px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.3);animation:popIn .2s ease}
+@keyframes popIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.modal-header{background:var(--navy-2);padding:18px 22px;display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:#fff}
+.modal-close{background:none;border:none;color:#7A91B8;font-size:22px;cursor:pointer;padding:4px;line-height:1;transition:color .2s}
+.modal-close:hover{color:#fff}
+.modal-body{padding:22px}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
 
-/* ══ POSITIONS TABLE ══ */
-.pos-table{width:100%;border-collapse:collapse;margin-bottom:8px}
-.pos-table th{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:7px 8px;background:var(--off);border-bottom:1px solid var(--border);text-align:left}
-.pos-table td{padding:5px 5px;vertical-align:middle;border-bottom:1px solid var(--border)}
-.pos-table tr:last-child td{border-bottom:none}
-.pos-input{padding:7px 9px;border:1.5px solid var(--border);border-radius:5px;font-size:12px;font-family:'Outfit',sans-serif;width:100%;outline:none;transition:border-color .2s;background:var(--white);color:var(--text)}
-.pos-input:focus{border-color:var(--blue-b)}
-.pos-input.right{text-align:right}
-.btn-add-pos{font-size:12px;color:var(--blue-b);background:none;border:1px dashed var(--blue-pale);border-radius:6px;padding:8px;width:100%;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;transition:all .2s}
-.btn-add-pos:hover{background:var(--blue-pale);border-style:solid}
-.btn-remove-pos{background:none;border:none;color:var(--red);cursor:pointer;padding:3px 6px;border-radius:4px;font-size:14px;transition:background .2s}
-.btn-remove-pos:hover{background:var(--red-pale)}
+/* ══ TOAST ══ */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--navy-2);color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:500;box-shadow:0 8px 28px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;animation:slideIn .3s ease;max-width:300px}
+.toast.success{border-left:4px solid var(--green)}
+.toast.error{border-left:4px solid var(--red)}
+.toast.info{border-left:4px solid var(--blue-b)}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
 
-/* ══ PREVIEW ══ */
+/* ══ EMPTY ══ */
+.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
+.empty-state-icon{font-size:44px;margin-bottom:12px;opacity:.35}
+.empty-state-title{font-family:'Rajdhani',sans-serif;font-size:21px;font-weight:700;color:var(--navy-2);margin-bottom:6px}
+.empty-state-sub{font-size:13px}
+.loading{display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;color:var(--muted);font-size:14px}
+.spinner{width:22px;height:22px;border:2.5px solid var(--border);border-top-color:var(--blue-b);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ══ USER CARDS ══ */
+.user-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;align-items:center;gap:16px;transition:all .2s}
+.user-card:hover{border-color:var(--blue-b);box-shadow:0 4px 16px rgba(46,127,255,.1)}
+.user-avatar-lg{width:44px;height:44px;border-radius:50%;background:var(--navy-2);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--blue-b);flex-shrink:0}
+.user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+
+/* ══ ANFRAGEN ══ */
+.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.search-input{flex:1;min-width:200px;padding:9px 14px 9px 36px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235A6A85' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 11px center;transition:border-color .2s}
+.search-input:focus{border-color:var(--blue-b)}
+.filter-select{padding:9px 30px 9px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;appearance:none;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A6A85' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;cursor:pointer}
+
+/* ══ FORM LAYOUT ══ */
 .form-layout{display:grid;grid-template-columns:1fr 380px;gap:20px;align-items:start}
 .preview-panel{position:sticky;top:0}
 .preview-card{background:var(--white);border:1px solid var(--border);border-radius:10px;overflow:hidden}
@@ -280,205 +233,61 @@ textarea.form-control{resize:vertical;min-height:80px}
 .preview-pos-row .pos-val{font-weight:600;color:var(--text);white-space:nowrap}
 .action-bar{display:flex;gap:8px;padding:14px 16px;border-top:1px solid var(--border)}
 
-/* ══ FILTER ══ */
-.filter-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
-.search-input{flex:1;min-width:200px;padding:9px 14px 9px 36px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235A6A85' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 11px center;transition:border-color .2s}
-.search-input:focus{border-color:var(--blue-b)}
-.filter-select{padding:9px 30px 9px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:'Outfit',sans-serif;outline:none;appearance:none;background:var(--white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235A6A85' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;cursor:pointer}
+/* ══ POSITIONS ══ */
+.type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.type-opt{border:2px solid var(--border);border-radius:8px;padding:13px 10px;cursor:pointer;transition:all .2s;text-align:center;background:var(--white)}
+.type-opt:hover{border-color:var(--blue-b);background:var(--blue-pale)}
+.type-opt.selected{border-color:var(--blue-b);background:var(--blue-pale);box-shadow:0 0 0 3px rgba(46,127,255,.1)}
+.type-opt-icon{font-size:20px;margin-bottom:5px}
+.type-opt-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--navy-2)}
+.type-opt-sub{font-size:10px;color:var(--muted);margin-top:2px}
+.pos-table{width:100%;border-collapse:collapse;margin-bottom:8px}
+.pos-table th{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:7px 8px;background:var(--off);border-bottom:1px solid var(--border);text-align:left}
+.pos-table td{padding:5px 5px;vertical-align:middle;border-bottom:1px solid var(--border)}
+.pos-table tr:last-child td{border-bottom:none}
+.pos-input{padding:7px 9px;border:1.5px solid var(--border);border-radius:5px;font-size:12px;font-family:'Outfit',sans-serif;width:100%;outline:none;transition:border-color .2s;background:var(--white);color:var(--text)}
+.pos-input:focus{border-color:var(--blue-b)}
+.pos-input.right{text-align:right}
+.btn-add-pos{font-size:12px;color:var(--blue-b);background:none;border:1px dashed var(--blue-pale);border-radius:6px;padding:8px;width:100%;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;transition:all .2s}
+.btn-add-pos:hover{background:var(--blue-pale);border-style:solid}
+.btn-remove-pos{background:none;border:none;color:var(--red);cursor:pointer;padding:3px 6px;border-radius:4px;font-size:14px;transition:background .2s}
+.btn-remove-pos:hover{background:var(--red-pale)}
 
-/* ══ USERS (Admin) ══ */
-.user-card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:20px;display:flex;align-items:center;gap:16px;transition:all .2s}
-.user-card:hover{border-color:var(--blue-b);box-shadow:0 4px 16px rgba(46,127,255,.1)}
-.user-avatar-lg{width:44px;height:44px;border-radius:50%;background:var(--navy-2);display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--blue-b);flex-shrink:0}
-.user-info{flex:1;min-width:0}
-.user-name{font-size:15px;font-weight:600;color:var(--text)}
-.user-email{font-size:12px;color:var(--muted);margin-top:2px}
-.user-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-
-/* ══ TOAST ══ */
-.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:2000;display:flex;flex-direction:column;gap:8px}
-.toast{background:var(--navy-2);color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;font-weight:500;box-shadow:0 8px 28px rgba(0,0,0,.25);display:flex;align-items:center;gap:10px;animation:slideIn .3s ease;max-width:300px}
-.toast.success{border-left:4px solid var(--green)}
-.toast.error{border-left:4px solid var(--red)}
-.toast.info{border-left:4px solid var(--blue-b)}
-@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
-
-/* ══ MODAL ══ */
-.modal-overlay{position:fixed;inset:0;background:rgba(6,15,30,.75);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-.modal-overlay.open{display:flex}
-.modal{background:var(--white);border-radius:12px;width:90%;max-width:480px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.3);animation:popIn .2s ease}
-@keyframes popIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
-.modal-header{background:var(--navy-2);padding:18px 22px;display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;color:#fff}
-.modal-close{background:none;border:none;color:#7A91B8;font-size:22px;cursor:pointer;padding:4px;line-height:1;transition:color .2s}
-.modal-close:hover{color:#fff}
-.modal-body{padding:22px}
-.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
-
-/* ══ EMPTY ══ */
-.empty-state{text-align:center;padding:60px 20px;color:var(--muted)}
-.empty-state-icon{font-size:44px;margin-bottom:12px;opacity:.35}
-.empty-state-title{font-family:'Rajdhani',sans-serif;font-size:21px;font-weight:700;color:var(--navy-2);margin-bottom:6px}
-.empty-state-sub{font-size:13px}
-
-/* ══ LOADING ══ */
-.loading{display:flex;align-items:center;justify-content:center;padding:60px;gap:12px;color:var(--muted);font-size:14px}
-.spinner{width:22px;height:22px;border:2.5px solid var(--border);border-top-color:var(--blue-b);border-radius:50%;animation:spin .7s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-
-/* ══ KALKULATOR ══ */
-.kalk-layout{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
-.result-hero{background:var(--navy-2);padding:22px 18px;text-align:center}
-.result-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#5E84B2;margin-bottom:6px}
-.result-price{font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;color:var(--blue-b);line-height:1}
-.result-sub{font-size:10px;color:#5E84B2;margin-top:5px}
-.breakdown{padding:14px 18px;display:flex;flex-direction:column;gap:0}
-.breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
-.breakdown-row:last-child{border-bottom:none}
-.breakdown-row .br-label{color:var(--muted)}
-.breakdown-row .br-val{font-weight:600;color:var(--text)}
-.breakdown-row.br-total{font-weight:700;font-size:14px;border-top:2px solid var(--blue-b);border-bottom:none;padding-top:10px;margin-top:4px}
-.breakdown-row.br-total .br-label{color:var(--navy-2)}
-.breakdown-row.br-total .br-val{color:var(--blue-b);font-size:16px}
-.breakdown-row.br-muted .br-label,.breakdown-row.br-muted .br-val{color:var(--muted);font-size:11px}
-.k-margin-bar{padding:10px 18px;background:var(--grey)}
-.k-margin-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:flex;justify-content:space-between}
-.k-margin-track{height:7px;background:var(--border);border-radius:4px;overflow:hidden}
-.k-margin-fill{height:100%;border-radius:4px;transition:width .5s ease,background .3s}
-.k-tag-row{display:flex;gap:7px;padding:10px 18px;flex-wrap:wrap}
-.k-tag{padding:3px 9px;border-radius:4px;font-size:10px;font-weight:600}
-.k-tag-green{background:var(--green-pale);color:var(--green)}
-.k-tag-gold{background:var(--gold-pale);color:var(--gold)}
-.k-tag-red{background:var(--red-pale);color:var(--red)}
-.k-tag-blue{background:var(--blue-pale);color:var(--blue)}
-.k-action-strip{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px}
-.k-tip{background:var(--blue-pale);border-left:3px solid var(--blue-b);border-radius:0 6px 6px 0;padding:9px 12px;margin-bottom:9px}
-.k-tip-title{font-size:10px;font-weight:700;color:var(--blue);margin-bottom:2px}
-.k-tip-text{font-size:11px;color:var(--muted);line-height:1.5}
-
-
-/* ══ MOBILE BOTTOM NAV ══ */
-.mobile-nav{
-  display:none;
-  position:fixed;bottom:0;left:0;right:0;
-  background:var(--navy);border-top:1px solid rgba(46,127,255,.2);
-  z-index:100;padding:0;
-  justify-content:space-around;align-items:stretch;
-}
-.mob-nav-item{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:4px;padding:10px 8px;flex:1;cursor:pointer;
-  background:none;border:none;color:#5A6A85;font-family:'Outfit',sans-serif;
-  font-size:10px;font-weight:500;letter-spacing:.3px;transition:color .2s;
-  text-decoration:none;
-}
+/* ══ MOBILE ══ */
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--navy);border-top:1px solid rgba(46,127,255,.2);z-index:100;justify-content:space-around;align-items:stretch}
+.mob-nav-item{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:10px 8px;flex:1;cursor:pointer;background:none;border:none;color:#5A6A85;font-family:'Outfit',sans-serif;font-size:10px;font-weight:500;transition:color .2s;text-decoration:none}
 .mob-nav-item.active{color:var(--blue-b)}
 .mob-nav-item svg{width:20px;height:20px;opacity:.7;transition:opacity .2s}
 .mob-nav-item.active svg{opacity:1}
+
 @media(max-width:700px){
-  .main{padding-bottom:62px}
-}
-
-/* ══ ADDRESS AUTOCOMPLETE ══ */
-.addr-wrap{position:relative;width:100%}
-.addr-dropdown{
-  position:absolute;top:calc(100% + 4px);left:0;right:0;
-  background:var(--white);border:1.5px solid var(--blue-b);border-radius:6px;
-  box-shadow:0 16px 40px rgba(0,0,0,.35);z-index:9999;max-height:220px;overflow-y:auto;
-  display:none;
-}
-.addr-wrap{position:relative;z-index:9999}
-.addr-dropdown.open{display:block}
-.addr-item{
-  padding:10px 14px;font-size:12px;cursor:pointer;
-  border-bottom:1px solid var(--border);color:var(--text);
-  transition:background .15s;display:flex;flex-direction:column;gap:2px;
-}
-.addr-item:last-child{border-bottom:none}
-.addr-item:hover{background:var(--blue-pale)}
-.addr-item-main{font-weight:600;font-size:13px}
-.addr-item-sub{color:var(--muted);font-size:11px}
-.addr-loading{padding:12px 14px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
-.addr-distance-badge{
-  background:var(--blue-pale);border:1px solid rgba(46,127,255,.2);
-  border-radius:6px;padding:8px 14px;margin-top:6px;
-  display:none;align-items:center;gap:8px;font-size:12px;
-}
-.addr-distance-badge.visible{display:flex}
-.addr-distance-km{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--blue-b)}
-
-@media print{body{display:none!important}}
-/* ══ TABLET ══ */
-@media(max-width:900px){
-  .sidebar{width:220px}
-  .stats-row{grid-template-columns:1fr 1fr}
-  .form-layout,.kalk-layout{grid-template-columns:1fr}
-  .content{padding:20px}
-  .type-selector{grid-template-columns:1fr 1fr 1fr}
-}
-
-/* ══ MOBILE ══ */
-@media(max-width:700px){
-  /* Auth */
-  .auth-card{width:95vw;padding:32px 24px}
-  .auth-brand{font-size:24px}
-
-  /* Layout: hide sidebar, show topbar nav */
   body{overflow:auto!important}
   #app-screen{flex-direction:column!important}
   .sidebar{display:none}
-  .main{height:auto;min-height:100vh}
+  .main{height:auto;min-height:100vh;padding-bottom:62px}
   .content{padding:14px;overflow-y:visible}
   .topbar{padding:0 16px;position:sticky;top:0;z-index:50}
   .topbar-date{display:none}
-
-  /* Bottom nav bar */
-  .mobile-nav{display:flex!important}
-
-  /* Stats */
+  .mobile-nav{display:flex}
   .stats-row{grid-template-columns:1fr 1fr;gap:10px}
-  .stat-card{padding:14px 12px}
-  .stat-value{font-size:30px}
-  .stat-icon{font-size:20px}
-
-  /* Form */
   .form-layout{grid-template-columns:1fr}
-  .form-grid,.form-grid-3{grid-template-columns:1fr}
   .preview-panel{display:none}
   .type-selector{grid-template-columns:1fr}
-  .type-opt{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 16px}
-  .type-opt-icon{font-size:22px;margin-bottom:0}
-  .form-card-header{padding:12px 16px}
-  .form-body{padding:14px 16px}
-
-  /* Table: horizontal scroll */
+  .form-grid,.form-grid-3{grid-template-columns:1fr}
   .card{overflow-x:auto}
   .data-table{min-width:540px}
   .filter-bar{flex-direction:column}
   .search-input,.filter-select{width:100%}
-
-  /* Kalkulation */
-  .kalk-layout{grid-template-columns:1fr}
-
-  /* Users */
   .user-grid{grid-template-columns:1fr}
-  .user-card{flex-wrap:wrap;gap:10px}
-
-  /* Modal */
-  .modal{width:95vw;margin:10px auto}
-  .modal-body{padding:16px}
-
-  /* Topbar */
-  .topbar-title{font-size:17px}
-  #topbar-role{display:none}
+}
+@media(max-width:900px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .form-layout{grid-template-columns:1fr}
+  .sidebar{width:220px}
 }
 
-/* ══ VERY SMALL ══ */
-@media(max-width:380px){
-  .auth-card{padding:24px 16px}
-  .stats-row{grid-template-columns:1fr}
-  .stat-value{font-size:36px}
-}
+@media print{body{display:none!important}}
+
 </style>
 </head>
 <body>
@@ -788,11 +597,8 @@ textarea.form-control{resize:vertical;min-height:80px}
       <!-- ── KALKULATION ── -->
       <div class="page" id="page-kalkulation">
         <div class="kalk-layout">
-
-          <!-- LEFT: Eingaben -->
           <div style="display:flex;flex-direction:column;gap:14px">
 
-            <!-- STRECKE -->
             <div class="card">
               <div class="form-card-header" style="background:var(--navy-2);padding:14px 20px;display:flex;align-items:center;gap:10px">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
@@ -803,8 +609,7 @@ textarea.form-control{resize:vertical;min-height:80px}
                   <div class="form-group">
                     <label class="form-label">Dein Standort (Heimatort)</label>
                     <div class="addr-wrap">
-                      <input class="form-control" id="c-standort" placeholder="z.B. Bad Urach" autocomplete="off"
-                        oninput="addrSearch('c-standort','dropdown-standort')" onkeydown="addrKey(event,'dropdown-standort')">
+                      <input class="form-control" id="c-standort" placeholder="z.B. Bad Urach" autocomplete="off" oninput="addrSearch('c-standort','dropdown-standort')" onkeydown="addrKey(event,'dropdown-standort')">
                       <div class="addr-dropdown" id="dropdown-standort"></div>
                     </div>
                     <span style="font-size:10px;color:var(--muted)">Wird gespeichert</span>
@@ -825,52 +630,40 @@ textarea.form-control{resize:vertical;min-height:80px}
                   <div class="form-group">
                     <label class="form-label">Abholort (Von) *</label>
                     <div class="addr-wrap">
-                      <input class="form-control" id="c-von" placeholder="z.B. Hamburg" autocomplete="off"
-                        oninput="addrSearch('c-von','dropdown-von')" onkeydown="addrKey(event,'dropdown-von')">
+                      <input class="form-control" id="c-von" placeholder="z.B. Hamburg" autocomplete="off" oninput="addrSearch('c-von','dropdown-von')" onkeydown="addrKey(event,'dropdown-von')">
                       <div class="addr-dropdown" id="dropdown-von"></div>
                     </div>
                   </div>
                   <div class="form-group">
                     <label class="form-label">Zielort (Nach) *</label>
                     <div class="addr-wrap">
-                      <input class="form-control" id="c-nach" placeholder="z.B. Barcelona" autocomplete="off"
-                        oninput="addrSearch('c-nach','dropdown-nach')" onkeydown="addrKey(event,'dropdown-nach')">
+                      <input class="form-control" id="c-nach" placeholder="z.B. Barcelona" autocomplete="off" oninput="addrSearch('c-nach','dropdown-nach')" onkeydown="addrKey(event,'dropdown-nach')">
                       <div class="addr-dropdown" id="dropdown-nach"></div>
                     </div>
                   </div>
                 </div>
-                <!-- Distance badges -->
+                <div class="form-group" style="margin-bottom:8px">
+                  <label class="form-label">Überführungsstrecke (km)</label>
+                  <input class="form-control" id="c-km" type="number" placeholder="Wird automatisch berechnet" min="0" oninput="smartCalc()">
+                </div>
                 <div id="route-overview" style="display:none;background:var(--off);border-radius:8px;padding:12px 14px;font-size:12px">
                   <div style="display:flex;flex-direction:column;gap:6px">
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                      <span style="color:var(--muted)">🚗 Anfahrt (dein Auto)</span>
-                      <span style="font-weight:600" id="ro-anfahrt">—</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                      <span style="color:var(--muted)">🔑 Überführung (Kundenfahrzeug)</span>
-                      <span style="font-weight:600;color:var(--blue-b)" id="ro-ueber">—</span>
-                    </div>
-                    <div style="display:flex;justify-content:space-between;align-items:center">
-                      <span style="color:var(--muted)">🚆 Heimfahrt (Öffis/Flug)</span>
-                      <span style="font-weight:600" id="ro-heim">—</span>
-                    </div>
-                    <div style="border-top:1px solid var(--border);padding-top:6px;display:flex;justify-content:space-between;align-items:center">
-                      <span style="color:var(--muted);font-size:11px">Gesamt</span>
-                      <span style="font-weight:700;font-family:'Rajdhani',sans-serif;font-size:16px;color:var(--text)" id="ro-gesamt">—</span>
-                    </div>
+                    <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">🚗 Anfahrt</span><span style="font-weight:600" id="ro-anfahrt">—</span></div>
+                    <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">🔑 Überführung</span><span style="font-weight:600;color:var(--blue-b)" id="ro-ueber">—</span></div>
+                    <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">🚆 Heimfahrt</span><span style="font-weight:600" id="ro-heim">—</span></div>
+                    <div style="border-top:1px solid var(--border);padding-top:6px;display:flex;justify-content:space-between"><span style="color:var(--muted);font-size:11px">Gesamt</span><span style="font-weight:700;font-family:'Rajdhani',sans-serif;font-size:16px" id="ro-gesamt">—</span></div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <!-- DEIN FAHRZEUG -->
             <div class="card">
               <div class="form-card-header" style="background:var(--navy-2);padding:14px 20px;display:flex;align-items:center;gap:10px">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v5"/><circle cx="16" cy="17" r="2"/><circle cx="9" cy="17" r="2"/></svg>
                 <h3 style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff">2. Dein Fahrzeug (Anfahrt)</h3>
               </div>
               <div class="form-body">
-                <div class="form-grid-3" style="margin-bottom:10px">
+                <div class="form-grid-3">
                   <div class="form-group">
                     <label class="form-label">Kraftstoffart</label>
                     <select class="form-control" id="c-kraftstoff" onchange="onKraftstoffChange()">
@@ -886,8 +679,8 @@ textarea.form-control{resize:vertical;min-height:80px}
                   <div class="form-group">
                     <label class="form-label">Spritpreis (€/L)</label>
                     <div style="position:relative">
-                      <input class="form-control" id="c-spritpreis" type="number" value="1.79" min="0.50" max="4.00" step="0.01" oninput="smartCalc()" style="padding-right:58px">
-                      <button onclick="fetchSpritpreis()" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);background:var(--blue-pale);border:1px solid rgba(46,127,255,.3);border-radius:4px;color:var(--blue-b);font-size:10px;font-weight:600;cursor:pointer;padding:3px 7px" id="sprit-refresh-btn">↻ Live</button>
+                      <input class="form-control" id="c-spritpreis" type="number" value="1.79" min="0.5" max="4" step="0.01" oninput="smartCalc()" style="padding-right:58px">
+                      <button onclick="fetchSpritpreis()" id="sprit-refresh-btn" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);background:var(--blue-pale);border:1px solid rgba(46,127,255,.3);border-radius:4px;color:var(--blue-b);font-size:10px;font-weight:600;cursor:pointer;padding:3px 7px">↻ Live</button>
                     </div>
                     <span style="font-size:10px;color:var(--muted)" id="sprit-source">Manuell</span>
                   </div>
@@ -895,80 +688,35 @@ textarea.form-control{resize:vertical;min-height:80px}
               </div>
             </div>
 
-            <!-- ZUSATZKOSTEN -->
             <div class="card">
               <div class="form-card-header" style="background:var(--navy-2);padding:14px 20px;display:flex;align-items:center;gap:10px">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-                <h3 style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff">3. Zusatzkosten (automatisch + manuell)</h3>
+                <h3 style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff">3. Zusatzkosten <span style="font-weight:400;font-size:13px;color:#5E84B2">(automatisch)</span></h3>
               </div>
               <div class="form-body">
-                <div style="background:var(--off);border-radius:8px;padding:12px 14px;margin-bottom:12px;font-size:12px;color:var(--muted)">
-                  ⚡ Wird automatisch berechnet — du kannst jeden Wert manuell überschreiben.
-                </div>
-                <div class="form-grid" style="margin-bottom:12px">
-                  <div class="form-group">
-                    <label class="form-label">Maut (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
-                    <input class="form-control" id="c-maut" type="number" value="0" min="0" step="1" oninput="smartCalc()">
-                    <span style="font-size:10px;color:var(--muted)" id="maut-hint">Wird berechnet wenn Route feststeht</span>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Heimfahrt / Öffis (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
-                    <input class="form-control" id="c-rueck" type="number" value="45" min="0" step="1" oninput="smartCalc()">
-                    <span style="font-size:10px;color:var(--muted)" id="heim-hint">Zug, Bus oder Flug</span>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Verpflegung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
-                    <input class="form-control" id="c-verpflegung" type="number" value="0" min="0" step="1" oninput="smartCalc()">
-                    <span style="font-size:10px;color:var(--muted)" id="verpf-hint">~15€ pro 4h Fahrzeit</span>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Übernachtung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
-                    <input class="form-control" id="c-uebernacht" type="number" value="0" min="0" step="1" oninput="smartCalc()">
-                    <span style="font-size:10px;color:var(--muted)" id="ueber-hint">~80€/Nacht ab 8h Fahrzeit</span>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">E-Auto Ladekosten (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label>
-                    <input class="form-control" id="c-laden" type="number" value="0" min="0" step="1" oninput="smartCalc()">
-                    <span style="font-size:10px;color:var(--muted)" id="laden-hint">Nur bei Elektrofahrzeug</span>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Sonstiges (€)</label>
-                    <input class="form-control" id="c-extra" type="number" value="0" min="0" step="1" oninput="smartCalc()">
-                    <span style="font-size:10px;color:var(--muted)">Parken, Fähre, etc.</span>
-                  </div>
+                <div style="background:var(--off);border-radius:6px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--muted)">⚡ Wird automatisch berechnet — du kannst jeden Wert überschreiben.</div>
+                <div class="form-grid">
+                  <div class="form-group"><label class="form-label">Maut (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-maut" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="maut-hint">Wird berechnet wenn Route feststeht</span></div>
+                  <div class="form-group"><label class="form-label">Heimfahrt / Öffis (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-rueck" type="number" value="45" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="heim-hint">Zug, Bus oder Flug</span></div>
+                  <div class="form-group"><label class="form-label">Verpflegung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-verpflegung" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="verpf-hint">~15€ pro 4h Fahrzeit</span></div>
+                  <div class="form-group"><label class="form-label">Übernachtung (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-uebernacht" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="ueber-hint">~80€/Nacht ab 8h Fahrzeit</span></div>
+                  <div class="form-group"><label class="form-label">E-Auto Laden (€) <span style="color:var(--blue-b);font-size:9px">AUTO</span></label><input class="form-control" id="c-laden" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)" id="laden-hint">Nur bei Elektrofahrzeug</span></div>
+                  <div class="form-group"><label class="form-label">Sonstiges (€)</label><input class="form-control" id="c-extra" type="number" value="0" min="0" oninput="smartCalc()"><span style="font-size:10px;color:var(--muted)">Parken, Fähre, etc.</span></div>
                 </div>
               </div>
             </div>
 
-            <!-- PREISGESTALTUNG -->
             <div class="card">
               <div class="form-card-header" style="background:var(--navy-2);padding:14px 20px;display:flex;align-items:center;gap:10px">
-                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="13" y2="14"/></svg>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2E7FFF" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/></svg>
                 <h3 style="font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:#fff">4. Preisgestaltung</h3>
               </div>
               <div class="form-body">
                 <div class="form-grid">
-                  <div class="form-group">
-                    <label class="form-label">Stundenansatz (€/Std.)</label>
-                    <input class="form-control" id="c-stdsatz" type="number" value="25" min="1" oninput="smartCalc()">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Aufschlag (%)</label>
-                    <input class="form-control" id="c-aufschlag" type="number" value="20" min="0" max="100" oninput="smartCalc()">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Rabatt (%)</label>
-                    <input class="form-control" id="c-rabatt" type="number" value="0" min="0" max="30" oninput="smartCalc()">
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Auftragstyp</label>
-                    <select class="form-control" id="c-auftyp" onchange="smartCalc()">
-                      <option value="1">Einzelauftrag</option>
-                      <option value="0.85">Rahmenvertrag (–15%)</option>
-                      <option value="1.2">Express (+20%)</option>
-                      <option value="1.1">Sonderauftrag</option>
-                    </select>
-                  </div>
+                  <div class="form-group"><label class="form-label">Stundenansatz (€/Std.)</label><input class="form-control" id="c-stdsatz" type="number" value="25" min="1" oninput="smartCalc()"></div>
+                  <div class="form-group"><label class="form-label">Aufschlag (%)</label><input class="form-control" id="c-aufschlag" type="number" value="20" min="0" max="100" oninput="smartCalc()"></div>
+                  <div class="form-group"><label class="form-label">Rabatt (%)</label><input class="form-control" id="c-rabatt" type="number" value="0" min="0" max="30" oninput="smartCalc()"></div>
+                  <div class="form-group"><label class="form-label">Auftragstyp</label><select class="form-control" id="c-auftyp" onchange="smartCalc()"><option value="1">Einzelauftrag</option><option value="0.85">Rahmenvertrag (–15%)</option><option value="1.2">Express (+20%)</option><option value="1.1">Sonderauftrag</option></select></div>
                 </div>
                 <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
                   <button class="btn btn-primary" onclick="kSaveCalc()">💾 Speichern</button>
@@ -978,14 +726,13 @@ textarea.form-control{resize:vertical;min-height:80px}
               </div>
             </div>
 
-            <!-- VERLAUF -->
             <div class="card">
               <div style="padding:12px 18px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Kalkulationsverlauf</div>
-              <div id="k-history-wrap"><div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">Noch keine Kalkulationen gespeichert</div></div>
+              <div id="k-history-wrap"><div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">Noch keine Kalkulationen</div></div>
             </div>
+
           </div>
 
-          <!-- RIGHT: Live Ergebnis -->
           <div style="position:sticky;top:0">
             <div class="card">
               <div class="result-hero">
@@ -993,31 +740,19 @@ textarea.form-control{resize:vertical;min-height:80px}
                 <div class="result-price" id="k-price">—</div>
                 <div class="result-sub" id="k-sub">Strecke eingeben zum Kalkulieren</div>
               </div>
-
-              <!-- Kostenaufschlüsselung -->
-              <div class="breakdown" id="k-breakdown">
-                <div style="padding:18px;text-align:center;color:var(--muted);font-size:12px">Fülle das Formular aus.</div>
-              </div>
-
-              <!-- Marge -->
-              <div class="k-margin-bar" id="k-margin-wrap" style="display:none">
-                <div class="k-margin-label"><span>Marge</span><span id="k-margin-pct">—</span></div>
-                <div class="k-margin-track"><div class="k-margin-fill" id="k-margin-bar" style="width:0%"></div></div>
-              </div>
-
-              <!-- Tags -->
+              <div class="breakdown" id="k-breakdown"><div style="padding:18px;text-align:center;color:var(--muted);font-size:12px">Fülle das Formular aus.</div></div>
+              <div class="k-margin-bar" id="k-margin-wrap" style="display:none"><div class="k-margin-label"><span>Marge</span><span id="k-margin-pct">—</span></div><div class="k-margin-track"><div class="k-margin-fill" id="k-margin-bar" style="width:0%"></div></div></div>
               <div class="k-tag-row" id="k-tags" style="display:none"></div>
-
               <div class="k-action-strip">
                 <button class="btn btn-primary" style="flex:1" onclick="kSaveCalc()">💾 Speichern</button>
                 <button class="btn btn-ghost" onclick="kCopyPrice()">📋 Kopieren</button>
               </div>
             </div>
           </div>
-
         </div>
       </div>
 
+      
       <!-- ── NUTZER (Admin only) ── -->
       <div class="page" id="page-nutzer">
         <div class="section-header">
@@ -1155,7 +890,18 @@ textarea.form-control{resize:vertical;min-height:80px}
   </div>
 </div>
 
+<div class="toast-wrap" id="toast-wrap"></div>
+
 <script>
+// ══ SUPABASE ══
+const SUPA_URL = 'https://qgbnsrnbrykcqovmltjq.supabase.co';
+const SUPA_KEY = 'sb_publishable_w8CSXHCPKFCy-75QxdOp6g_Ee_gfcPw';
+const { createClient } = supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+// NK Fahrzeugüberführung — Main App JS
+// Auth is handled by auth.js
+
 // ══════════════════════════════════════════════════
 // SUPABASE INIT
 // ══════════════════════════════════════════════════
@@ -1875,498 +1621,619 @@ ${type!=='rahmen'?`<div class="doc-section-title" style="margin-top:14px">Im Pre
   if (!win) { alert('Bitte Popups erlauben und nochmal klicken.'); return; }
   win.document.write(html); win.document.close();
 }
+</script>
 
-// ══════════════════════════════════════════════════
-// SMART KALKULATOR
-// ══════════════════════════════════════════════════
+<script>
+// ══ KALKULATOR ══
+// ═══════════════════════════════════════════
+// NK FAHRZEUGÜBERFÜHRUNG — KALKULATOR
+// ═══════════════════════════════════════════
 
-// ── Restore saved kalkulator state ──
-(function restoreKalkState() {
-  // Standort
-  const savedS = localStorage.getItem('nk_standort');
-  if (savedS) { try { const s = JSON.parse(savedS); standortCoords = s.coords; } catch(e){} }
+// ── State ──
 
-  // Route (Von/Nach)
-  const savedR = localStorage.getItem('nk_route');
-  if (savedR) {
-    try {
-      const r = JSON.parse(savedR);
-      if (r.von)  addrCoords.von  = r.von;
-      if (r.nach) addrCoords.nach = r.nach;
-    } catch(e){}
-  }
-
-  // Fahrzeug settings
-  const savedFz = localStorage.getItem('nk_fahrzeug');
-  if (savedFz) {
-    try {
-      const f = JSON.parse(savedFz);
-      document.addEventListener('DOMContentLoaded', () => {
-        const kEl = document.getElementById('c-kraftstoff');
-        const vEl = document.getElementById('c-verbrauch');
-        const pEl = document.getElementById('c-spritpreis');
-        if (kEl && f.kraftstoff) kEl.value = f.kraftstoff;
-        if (vEl && f.verbrauch)  vEl.value = f.verbrauch;
-        if (pEl && f.preis)      pEl.value = f.preis;
-      });
-    } catch(e){}
-  }
-})();
-
-// Maut-Schätzung nach Land (€ pro 100km)
+// ── Konstanten ──
 const MAUT_RATES = {
-  DE: 0,      // Deutschland: keine Maut PKW
-  FR: 9.0,    // Frankreich
-  ES: 4.5,    // Spanien
-  AT: 3.0,    // Österreich (Vignette ~10€ pauschal)
-  IT: 8.0,    // Italien
-  CH: 0,      // Schweiz (Vignette ~40€ pauschal)
-  BE: 0,      // Belgien
-  NL: 0,      // Niederlande
-  PL: 1.0,    // Polen
-  CZ: 1.5,    // Tschechien
-  HU: 2.0,    // Ungarn
+  DE:0, FR:9.0, ES:4.5, AT:3.0, IT:8.0,
+  CH:0, BE:0, NL:0, PL:1.0, CZ:1.5, HU:2.0,
 };
+const SPEED      = { DE:110, FR:110, ES:100, AT:100, IT:100, CH:100, default:100 };
+const EAUTO_KWH  = 20;
+const EAUTO_PREIS= 0.65;
+const HEIM_RATE  = 0.12;
 
-// Ø Geschwindigkeit pro Land (km/h) für Zeitberechnung
-const SPEED = {
-  DE: 110, FR: 110, ES: 100, AT: 100, IT: 100,
-  CH: 100, BE: 110, NL: 110, PL: 100, default: 100
-};
+// ── Hilfsfunktionen ──
+function kV(id)         { const el=document.getElementById(id); return el?el.value.trim():''; }
+function kNum(id,def=0) { const n=parseFloat(kV(id)); return isNaN(n)?def:n; }
+function kFmt(n)        { return n.toLocaleString('de-DE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
 
-// E-Auto Verbrauch kWh/100km + Schnellladepreis €/kWh
-const EAUTO_KWH = 20;        // Ø kWh/100km
-const EAUTO_PREIS = 0.65;    // Ø Schnellladepreis €/kWh
+function haversineKm(lat1,lon1,lat2,lon2) {
+  const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+  const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
 
-// Heimfahrt-Schätzung €/km (Zug/Bus/Flug-Richtwert)
-const HEIM_RATE = 0.12;
+function kmRoad(lat1,lon1,lat2,lon2) {
+  return Math.round(haversineKm(lat1,lon1,lat2,lon2)*1.28);
+}
 
-function kV(id)  { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
-function kNum(id, def=0) { const n = parseFloat(kV(id)); return isNaN(n) ? def : n; }
-function kFmt(n) { return n.toLocaleString('de-DE', {minimumFractionDigits:2, maximumFractionDigits:2}) + ' €'; }
-
-// Detected countries on route (from geocoding)
-let routeCountries = { anfahrt:['DE'], ueber:['DE'], heim:['DE'] };
-
-function getCountryCode(coords) {
-  // Rough bounding box detection
+function getCC(coords) {
   if (!coords) return 'DE';
-  const { lat, lon } = coords;
-  if (lat > 47.3 && lat < 55.1 && lon > 5.9  && lon < 15.0) return 'DE';
-  if (lat > 41.3 && lat < 51.1 && lon > -5.0 && lon < 9.6)  return 'FR';
-  if (lat > 35.9 && lat < 43.8 && lon > -9.3 && lon < 4.3)  return 'ES';
-  if (lat > 46.4 && lat < 49.0 && lon > 9.5  && lon < 17.2) return 'AT';
-  if (lat > 37.0 && lat < 47.1 && lon > 6.6  && lon < 18.5) return 'IT';
-  if (lat > 45.8 && lat < 47.8 && lon > 5.9  && lon < 10.5) return 'CH';
-  if (lat > 49.5 && lat < 53.6 && lon > 2.5  && lon < 6.4)  return 'NL';
-  if (lat > 49.5 && lat < 51.5 && lon > 2.4  && lon < 6.4)  return 'BE';
-  if (lat > 49.0 && lat < 54.9 && lon > 14.1 && lon < 24.2) return 'PL';
+  const {lat,lon} = coords;
+  if (lat>47.3&&lat<55.1&&lon>5.9&&lon<15.0)  return 'DE';
+  if (lat>41.3&&lat<51.1&&lon>-5.0&&lon<9.6)  return 'FR';
+  if (lat>35.9&&lat<43.8&&lon>-9.3&&lon<4.3)  return 'ES';
+  if (lat>46.4&&lat<49.0&&lon>9.5&&lon<17.2)  return 'AT';
+  if (lat>37.0&&lat<47.1&&lon>6.6&&lon<18.5)  return 'IT';
+  if (lat>45.8&&lat<47.8&&lon>5.9&&lon<10.5)  return 'CH';
+  if (lat>49.5&&lat<53.6&&lon>2.5&&lon<6.4)   return 'NL';
+  if (lat>49.5&&lat<51.5&&lon>2.4&&lon<6.4)   return 'BE';
+  if (lat>49.0&&lat<54.9&&lon>14.1&&lon<24.2) return 'PL';
   return 'DE';
 }
 
-function estimateMaut(km, fromCoords, toCoords) {
-  const countries = new Set();
-  if (fromCoords) countries.add(getCountryCode(fromCoords));
-  if (toCoords)   countries.add(getCountryCode(toCoords));
-  // Assume route passes through countries between start and end
-  let total = 0;
-  countries.forEach(cc => {
-    const rate = MAUT_RATES[cc] ?? 0;
-    total += (km / countries.size) * rate / 100;
-  });
-  // Special flat fees
-  if (countries.has('AT')) total = Math.max(total, 10);
-  if (countries.has('CH')) total += 40;
-  return Math.round(total);
-}
-
-function estimateTime(km, fromCoords, toCoords) {
-  const cc = toCoords ? getCountryCode(toCoords) : 'DE';
-  const speed = SPEED[cc] || SPEED.default;
-  return km / speed;
-}
-
-function smartCalc() {
-  const kmUeber   = parseInt(document.getElementById('c-km')?.value || 0);
-  const ftyp      = kV('c-ftyp');
-  const verbrauch = kNum('c-verbrauch', 7);
-  const sprit     = kNum('c-spritpreis', 1.79);
-  const stdsatz   = kNum('c-stdsatz', 25);
-  const aufschlag = kNum('c-aufschlag', 20) / 100;
-  const rabatt    = kNum('c-rabatt', 0) / 100;
-  const aufTypFak = parseFloat(kV('c-auftyp') || '1');
-
-  // ── Fahrzeugtyp-Faktoren ──
-  const ftypFak = { pkw:1, suv:1.1, transporter:1.15, elektro:1.2, luxus:1.25, tief:1.3 }[ftyp] || 1;
-
-  // ── Streckendaten ──
-  const kmAnfahrt = standortCoords && addrCoords.von ?
-    Math.round(haversineKm(standortCoords.lat, standortCoords.lon, addrCoords.von.lat, addrCoords.von.lon) * 1.28) : 0;
-  const kmHeim = standortCoords && addrCoords.nach ?
-    Math.round(haversineKm(addrCoords.nach.lat, addrCoords.nach.lon, standortCoords.lat, standortCoords.lon) * 1.28) : 0;
-
-  // If no coordinates but km is manually entered, use that
-  const manualKm = parseInt(document.getElementById('c-km')?.value || 0);
-  const effectiveKm = kmUeber > 0 ? kmUeber : manualKm;
-  if (effectiveKm <= 0 && kmAnfahrt <= 0) { kResetResult(); return; }
-  const kmUeberFinal = effectiveKm;
-
-  // ── Zeitberechnung ──
-  const stdUeber   = estimateTime(kmUeberFinal, addrCoords.von, addrCoords.nach);
-  const stdAnfahrt = estimateTime(kmAnfahrt, standortCoords, addrCoords.von);
-  const stdGesamt  = stdUeber + stdAnfahrt;
-
-  // ── KRAFTSTOFFKOSTEN ──
-  const spritAnfahrt = (kmAnfahrt * verbrauch / 100) * sprit;
-
-  // ── E-AUTO LADEKOSTEN (nur bei Elektro) ──
-  let ladenKosten = kNum('c-laden', 0);
-  if (ftyp === 'elektro' && kmUeberFinal > 0) {
-    const autoLaden = (kmUeberFinal * EAUTO_KWH / 100) * EAUTO_PREIS;
-    ladenKosten = Math.max(ladenKosten, autoLaden);
-    document.getElementById('c-laden').value = Math.round(autoLaden);
-    document.getElementById('laden-hint').textContent =
-      `${kmUeberFinal} km × ${EAUTO_KWH} kWh/100km × ${EAUTO_PREIS}€/kWh`;
-  } else if (ftyp !== 'elektro') {
-    document.getElementById('c-laden').value = 0;
-    document.getElementById('laden-hint').textContent = 'Nur bei Elektrofahrzeug';
-    ladenKosten = 0;
-  }
-
-  // ── MAUT (auto-berechnet) ──
-  let mautKosten = kNum('c-maut', 0);
-  const autoMaut = estimateMaut(kmUeberFinal, addrCoords.von, addrCoords.nach);
-  if (document.getElementById('c-maut')._autoSet !== false) {
-    document.getElementById('c-maut').value = autoMaut;
-    mautKosten = autoMaut;
-    const ccVon  = addrCoords.von  ? getCountryCode(addrCoords.von)  : 'DE';
-    const ccNach = addrCoords.nach ? getCountryCode(addrCoords.nach) : 'DE';
-    const countries = [...new Set([ccVon, ccNach])].join(', ');
-    document.getElementById('maut-hint').textContent = `Geschätzt für Route durch: ${countries}`;
-  }
-
-  // ── HEIMFAHRT (auto-berechnet) ──
-  let heimKosten = kNum('c-rueck', 45);
-  if (kmHeim > 0 && document.getElementById('c-rueck')._autoSet !== false) {
-    const autoHeim = Math.max(25, Math.round(kmHeim * HEIM_RATE));
-    document.getElementById('c-rueck').value = autoHeim;
-    heimKosten = autoHeim;
-    document.getElementById('heim-hint').textContent =
-      `${kmHeim} km Heimfahrt (${getCountryCode(addrCoords.nach)} → ${getCountryCode(standortCoords) || 'DE'})`;
-  }
-
-  // ── VERPFLEGUNG (auto) ──
-  let verpfKosten = kNum('c-verpflegung', 0);
-  const autoVerpf = Math.floor(stdGesamt / 4) * 15;
-  if (document.getElementById('c-verpflegung')._autoSet !== false) {
-    document.getElementById('c-verpflegung').value = autoVerpf;
-    verpfKosten = autoVerpf;
-    document.getElementById('verpf-hint').textContent =
-      `${stdGesamt.toFixed(0)}h Fahrzeit → ${Math.floor(stdGesamt/4)} Mahlzeiten à 15€`;
-  }
-
-  // ── ÜBERNACHTUNG (auto) ──
-  let uebernachtKosten = kNum('c-uebernacht', 0);
-  const naechte = stdGesamt > 8 ? Math.floor(stdGesamt / 10) : 0;
-  const autoUeber = naechte * 80;
-  if (document.getElementById('c-uebernacht')._autoSet !== false) {
-    document.getElementById('c-uebernacht').value = autoUeber;
-    uebernachtKosten = autoUeber;
-    document.getElementById('ueber-hint').textContent = naechte > 0
-      ? `${naechte} Übernachtung(en) à 80€ bei ${stdGesamt.toFixed(0)}h Gesamtfahrzeit`
-      : `Keine Übernachtung nötig (${stdGesamt.toFixed(0)}h Fahrzeit)`;
-  }
-
-  const extraKosten = kNum('c-extra', 0);
-
-  // ── ROUTE OVERVIEW ──
-  if (kmAnfahrt > 0 || kmUeberFinal > 0) {
-    document.getElementById('route-overview').style.display = 'block';
-    document.getElementById('ro-anfahrt').textContent = kmAnfahrt > 0 ? `${kmAnfahrt} km · ${kFmt(spritAnfahrt)}` : '— (Standort nicht gesetzt)';
-    document.getElementById('ro-ueber').textContent   = kmUeberFinal > 0   ? `${kmUeberFinal} km` : '—';
-    document.getElementById('ro-heim').textContent    = kmHeim > 0    ? `${kmHeim} km · ca. ${kFmt(heimKosten)}` : '—';
-    document.getElementById('ro-gesamt').textContent  = `${kmAnfahrt + kmUeberFinal + kmHeim} km`;
-  }
-
-  // ── GESAMTKOSTEN ──
-  const zeitKosten     = stdGesamt * stdsatz;
-  const gesamtKosten   = zeitKosten + spritAnfahrt + heimKosten + mautKosten + verpfKosten + uebernachtKosten + ladenKosten + extraKosten;
-
-  // ── PREIS BERECHNUNG ──
-  const basisPreis = gesamtKosten * (1 + aufschlag) * ftypFak * aufTypFak;
-  const nettoPreis = Math.max(basisPreis * (1 - rabatt), gesamtKosten * 1.05);
-  const suggested  = Math.ceil(nettoPreis / 5) * 5;
-  const marge      = gesamtKosten > 0 ? ((suggested - gesamtKosten) / suggested) * 100 : 0;
-
-  // ── UPDATE RESULT PANEL ──
-  document.getElementById('k-price').textContent = kFmt(suggested);
-  document.getElementById('k-sub').textContent   =
-    `= ${kFmt(suggested * 1.19)} brutto · ${kmUeberFinal > 0 ? (suggested/kmUeberFinal).toFixed(2).replace('.',',') + ' €/km' : ''}`;
-
-  document.getElementById('k-breakdown').innerHTML = `
-    <div style="padding:10px 0;border-bottom:2px solid var(--blue-pale);margin-bottom:4px">
-      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue-b);margin-bottom:8px">DEINE KOSTEN</div>
-      ${spritAnfahrt > 0 ? `<div class="breakdown-row br-muted"><span class="br-label">⛽ Anfahrtssprit (${kmAnfahrt} km)</span><span class="br-val">${kFmt(spritAnfahrt)}</span></div>` : ''}
-      <div class="breakdown-row"><span class="br-label">⏱ Zeitaufwand (${stdGesamt.toFixed(1).replace('.',',')} Std.)</span><span class="br-val">${kFmt(zeitKosten)}</span></div>
-      ${heimKosten > 0 ? `<div class="breakdown-row"><span class="br-label">🚆 Heimfahrt (${kmHeim} km)</span><span class="br-val">${kFmt(heimKosten)}</span></div>` : ''}
-      ${mautKosten > 0 ? `<div class="breakdown-row"><span class="br-label">🛣 Maut</span><span class="br-val">${kFmt(mautKosten)}</span></div>` : ''}
-      ${verpfKosten > 0 ? `<div class="breakdown-row"><span class="br-label">🍔 Verpflegung</span><span class="br-val">${kFmt(verpfKosten)}</span></div>` : ''}
-      ${uebernachtKosten > 0 ? `<div class="breakdown-row"><span class="br-label">🏨 Übernachtung (${naechte}×)</span><span class="br-val">${kFmt(uebernachtKosten)}</span></div>` : ''}
-      ${ladenKosten > 0 ? `<div class="breakdown-row"><span class="br-label">⚡ E-Auto Laden</span><span class="br-val">${kFmt(ladenKosten)}</span></div>` : ''}
-      ${extraKosten > 0 ? `<div class="breakdown-row"><span class="br-label">📌 Sonstiges</span><span class="br-val">${kFmt(extraKosten)}</span></div>` : ''}
-    </div>
-    <div class="breakdown-row" style="font-weight:600"><span class="br-label">Gesamtkosten</span><span class="br-val">${kFmt(gesamtKosten)}</span></div>
-    <div class="breakdown-row br-muted"><span class="br-label">+ Aufschlag (${(aufschlag*100).toFixed(0)}%) × Typ (${ftypFak}×)</span><span class="br-val">+ ${kFmt(gesamtKosten * aufschlag * ftypFak)}</span></div>
-    ${rabatt > 0 ? `<div class="breakdown-row br-muted"><span class="br-label">− Rabatt (${(rabatt*100).toFixed(0)}%)</span><span class="br-val">− ${kFmt(nettoPreis * rabatt)}</span></div>` : ''}
-    <div class="breakdown-row"><span class="br-label">Nettopreis</span><span class="br-val">${kFmt(suggested)}</span></div>
-    <div class="breakdown-row br-muted"><span class="br-label">zzgl. 19% MwSt.</span><span class="br-val">+ ${kFmt(suggested * .19)}</span></div>
-    <div class="breakdown-row br-total"><span class="br-label">Bruttopreis</span><span class="br-val">${kFmt(suggested * 1.19)}</span></div>
-    <div class="breakdown-row" style="padding-top:8px"><span class="br-label" style="color:var(--green);font-weight:600">Dein Gewinn</span><span class="br-val" style="color:var(--green);font-weight:700">${kFmt(suggested - gesamtKosten)}</span></div>
-  `;
-
-  // Marge
-  document.getElementById('k-margin-wrap').style.display = 'block';
-  const pct = Math.min(Math.max(marge, 0), 100);
-  const col = marge >= 40 ? '#16a34a' : marge >= 25 ? '#C89B2A' : '#dc2626';
-  document.getElementById('k-margin-bar').style.width = pct + '%';
-  document.getElementById('k-margin-bar').style.background = col;
-  document.getElementById('k-margin-pct').textContent = marge.toFixed(1).replace('.',',') + ' %';
-  document.getElementById('k-margin-pct').style.color = col;
-
-  // Tags
-  const tagsEl = document.getElementById('k-tags');
-  tagsEl.style.display = 'flex';
-  const tags = [];
-  if (marge >= 40) tags.push(['✅ Gute Marge', 'k-tag-green']);
-  else if (marge >= 25) tags.push(['⚠️ Niedrige Marge', 'k-tag-gold']);
-  else tags.push(['❌ Unwirtschaftlich', 'k-tag-red']);
-  if (kmUeberFinal > 400) tags.push(['🛣 Langstrecke', 'k-tag-blue']);
-  if (ftyp === 'elektro') tags.push(['⚡ Elektro', 'k-tag-blue']);
-  if (ftyp === 'tief') tags.push(['🏎 Tieferlegung +Aufpreis', 'k-tag-gold']);
-  if (naechte > 0) tags.push([`🏨 ${naechte}× Übernachtung`, 'k-tag-gold']);
-  const ausland = addrCoords.nach ? getCountryCode(addrCoords.nach) : 'DE';
-  if (ausland !== 'DE') tags.push([`🌍 Auslandsfahrt (${ausland})`, 'k-tag-gold']);
-  tagsEl.innerHTML = tags.map(([t,cls]) => `<span class="k-tag ${cls}">${t}</span>`).join('');
-}
-
-function kResetResult() {
-  document.getElementById('k-price').textContent = '—';
-  document.getElementById('k-sub').textContent   = 'Strecke eingeben zum Kalkulieren';
-  document.getElementById('k-breakdown').innerHTML = '<div style="padding:18px;text-align:center;color:var(--muted);font-size:12px">Fülle das Formular aus.</div>';
-  document.getElementById('k-margin-wrap').style.display = 'none';
-  document.getElementById('k-tags').style.display        = 'none';
-  document.getElementById('route-overview').style.display = 'none';
-}
-
-function kResetCalc() {
-  addrCoords = { von: null, nach: null };
-  standortCoords = null;
-  ['c-von','c-nach'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  ['c-maut','c-rueck','c-verpflegung','c-uebernacht','c-laden','c-extra'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) { el.value = 0; delete el._autoSet; }
-  });
-  document.getElementById('c-stdsatz').value  = 25;
-  document.getElementById('c-aufschlag').value = 20;
-  document.getElementById('c-rabatt').value    = 0;
-  document.getElementById('c-km') && (document.getElementById('c-km').value = '');
-  kResetResult();
-}
-
-function kSaveCalc() {
-  const price = document.getElementById('k-price').textContent;
-  if (price === '—') { toast('Erst Strecke eingeben', '⚠️'); return; }
-  const von  = kV('c-von')  || '?';
-  const nach = kV('c-nach') || '?';
-  kHistory.unshift({
-    id: Date.now(),
-    date: new Date().toLocaleDateString('de-DE'),
-    desc: `${von.split(',')[0]} → ${nach.split(',')[0]}`,
-    km: document.getElementById('c-km')?.value || '—',
-    price,
-    typ: document.getElementById('c-auftyp')?.options[document.getElementById('c-auftyp')?.selectedIndex]?.text || ''
-  });
-  localStorage.setItem('nk_kalk_v2', JSON.stringify(kHistory));
-  kRenderHistory();
-  toast('Kalkulation gespeichert', '✅', 'success');
-}
-
-function kCopyPrice() {
-  const price = document.getElementById('k-price').textContent;
-  if (price === '—') { toast('Erst kalkulieren', '⚠️'); return; }
-  navigator.clipboard.writeText(price).then(() => toast('Preis kopiert: ' + price, '📋', 'info'));
-}
-
-function kRenderHistory() {
-  const wrap = document.getElementById('k-history-wrap');
-  if (!wrap) return;
-  if (!kHistory.length) {
-    wrap.innerHTML = '<div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">Noch keine Kalkulationen</div>';
-    return;
-  }
-  wrap.innerHTML = `<table class="data-table"><thead><tr><th>Datum</th><th>Strecke</th><th>km</th><th>Typ</th><th>Netto</th><th></th></tr></thead><tbody>
-    ${kHistory.map(e => `<tr>
-      <td style="color:var(--muted)">${e.date}</td>
-      <td style="font-weight:500">${e.desc}</td>
-      <td style="color:var(--muted)">${e.km}</td>
-      <td style="font-size:11px;color:var(--muted)">${e.typ}</td>
-      <td style="font-weight:700;color:var(--blue-b)">${e.price}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="kDelete(${e.id})">×</button></td>
-    </tr>`).join('')}
-  </tbody></table>`;
-}
-
-function kDelete(id) {
-  kHistory = kHistory.filter(e => e.id !== id);
-  localStorage.setItem('nk_kalk_v2', JSON.stringify(kHistory));
-  kRenderHistory();
-}
-
-// Mark auto-set fields so manual input takes priority
-['c-maut','c-rueck','c-verpflegung','c-uebernacht','c-laden'].forEach(id => {
-  document.addEventListener('DOMContentLoaded', () => {
-    const el = document.getElementById(id);
-    if (el) el.addEventListener('input', () => { el._autoSet = false; });
-  });
-});
-
-// ══════════════════════════════════════════════════
-// ADRESS-AUTOCOMPLETE (OpenStreetMap Nominatim)
-// ══════════════════════════════════════════════════
-
+// ── Address Search ──
 async function addrSearch(inputId, dropdownId) {
-  const input = document.getElementById(inputId);
+  const input    = document.getElementById(inputId);
   const dropdown = document.getElementById(dropdownId);
-  const val = input.value.trim();
-  if (inputId === 'c-standort') { document.getElementById(dropdownId).classList.remove('open'); return; }
-  const field = inputId === 'c-von' ? 'von' : 'nach';
-
-  addrSelected[field] = false;
-
-  if (val.length < 2) {
-    dropdown.classList.remove('open');
-    return;
-  }
-
-  // Debounce 400ms
+  const val      = input.value.trim();
+  if (val.length < 2) { dropdown.classList.remove('open'); return; }
   clearTimeout(addrTimers[inputId]);
   addrTimers[inputId] = setTimeout(async () => {
     dropdown.innerHTML = '<div class="addr-loading"><div class="spinner" style="width:14px;height:14px;border-width:2px"></div> Suche...</div>';
     dropdown.classList.add('open');
-
     try {
-      const url = `https://nominatim.openstreetmap.org/search?` +
-        `q=${encodeURIComponent(val)}&` +
-        `format=json&addressdetails=1&limit=8&` +
-        `accept-language=de`;
-
-      const res = await fetch(url, {
-        headers: { 'User-Agent': 'NK-Fahrzeugueberfuehrung/1.0' }
-      });
+      const res  = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=7&accept-language=de`, { headers:{'User-Agent':'NK-App/1.0'} });
       const data = await res.json();
-
-      if (!data.length) {
-        dropdown.innerHTML = '<div class="addr-loading">Keine Ergebnisse gefunden</div>';
-        return;
-      }
-
-      dropdown.innerHTML = data.map((place, i) => {
+      if (!data.length) { dropdown.innerHTML='<div class="addr-loading">Keine Ergebnisse</div>'; return; }
+      dropdown.innerHTML = data.map(place => {
         const addr = place.address;
-        const main = addr.city || addr.town || addr.village || addr.municipality || place.display_name.split(',')[0];
-        const parts = [addr.road, addr.house_number, addr.postcode, addr.city || addr.town || addr.village, addr.state].filter(Boolean);
-        const sub = parts.slice(0, 4).join(', ');
-        const country = addr.country || '';
-        const countryCode = (addr.country_code || '').toUpperCase();
-        const flag = countryCode ? String.fromCodePoint(...[...countryCode].map(c => 0x1F1E6 + c.charCodeAt(0) - 65)) : '';
-        const isAbroad = countryCode && !['DE','AT','CH'].includes(countryCode);
-        return `<div class="addr-item" onclick="addrSelect('${inputId}','${dropdownId}',${place.lat},${place.lon},'${main.replace(/'/g,"\'")}','${sub.replace(/'/g,"\'")}')">
-          <span class="addr-item-main">${flag ? flag + ' ' : ''}${main}${isAbroad ? ' <span style="font-size:10px;color:var(--gold);font-weight:600">' + country + '</span>' : ''}</span>
+        const main = addr.city||addr.town||addr.village||addr.municipality||place.display_name.split(',')[0];
+        const sub  = [addr.road,addr.postcode,addr.city||addr.town||addr.village,addr.state].filter(Boolean).slice(0,3).join(', ');
+        const cc   = (addr.country_code||'').toUpperCase();
+        const flag = cc ? String.fromCodePoint(...[...cc].map(c=>0x1F1E6+c.charCodeAt(0)-65)) : '';
+        const abroad = cc && !['DE','AT','CH'].includes(cc);
+        return `<div class="addr-item" onclick="addrSelect('${inputId}','${dropdownId}',${place.lat},${place.lon},'${main.replace(/'/g,"\\'")}','${sub.replace(/'/g,"\\'")}')">
+          <span class="addr-item-main">${flag} ${main}${abroad?` <span style="color:var(--gold);font-size:10px">${addr.country||cc}</span>`:''}</span>
           <span class="addr-item-sub">${sub}</span>
         </div>`;
       }).join('');
-
-    } catch(e) {
-      dropdown.innerHTML = '<div class="addr-loading">Fehler bei der Suche</div>';
-    }
+    } catch(e) { dropdown.innerHTML='<div class="addr-loading">Fehler bei der Suche</div>'; }
   }, 400);
 }
 
 function addrSelect(inputId, dropdownId, lat, lon, main, sub) {
-  if (inputId === 'c-standort') { document.getElementById(dropdownId).classList.remove('open'); return; }
-  const field = inputId === 'c-von' ? 'von' : 'nach';
-  document.getElementById(inputId).value = main + (sub ? ', ' + sub.split(',')[0] : '');
+  const label = main + (sub ? ', '+sub.split(',')[0] : '');
+  document.getElementById(inputId).value = label;
   document.getElementById(dropdownId).classList.remove('open');
-  addrCoords[field] = { lat: parseFloat(lat), lon: parseFloat(lon) };
-  addrSelected[field] = true;
 
-  // Update labels
-  document.getElementById('addr-' + field + '-label').textContent = main;
+  if (inputId === 'c-standort') {
+    standortCoords = { lat:parseFloat(lat), lon:parseFloat(lon) };
+    localStorage.setItem('nk_standort', JSON.stringify({ coords:standortCoords, label }));
+    smartCalc();
+    return;
+  }
 
-  // Calculate distance if both selected
+  const field = inputId==='c-von' ? 'von' : 'nach';
+  addrCoords[field] = { lat:parseFloat(lat), lon:parseFloat(lon) };
+
+  // Calculate Von→Nach distance
   if (addrCoords.von && addrCoords.nach) {
-    const km = haversineKm(addrCoords.von.lat, addrCoords.von.lon, addrCoords.nach.lat, addrCoords.nach.lon);
-    const roadKm = Math.round(km * 1.28); // ~28% longer than straight line for road
-    document.getElementById('addr-km-display').textContent = roadKm;
-    document.getElementById('addr-distance-badge').classList.add('visible');
-    // Auto-fill km field
-    document.getElementById('c-km').value = roadKm;
-    kCalc();
+    const km = kmRoad(addrCoords.von.lat,addrCoords.von.lon,addrCoords.nach.lat,addrCoords.nach.lon);
+    const kmEl = document.getElementById('c-km');
+    if (kmEl) kmEl.value = km;
+    // Save route
+    localStorage.setItem('nk_route', JSON.stringify({
+      von:addrCoords.von, nach:addrCoords.nach,
+      vonLabel:document.getElementById('c-von')?.value||'',
+      nachLabel:document.getElementById('c-nach')?.value||'',
+      km
+    }));
   }
-}
-
-function haversineKm(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-}
-
-function useCalculatedDistance() {
-  const km = document.getElementById('addr-km-display').textContent;
-  if (km && km !== '—') {
-    document.getElementById('c-km').value = km;
-    kCalc();
-    toast('Distanz übernommen: ' + km + ' km', '📍', 'info');
-  }
+  smartCalc();
 }
 
 function addrKey(event, dropdownId) {
   const dropdown = document.getElementById(dropdownId);
-  const items = dropdown.querySelectorAll('.addr-item');
-  const active = dropdown.querySelector('.addr-item.selected');
+  const items    = dropdown.querySelectorAll('.addr-item');
+  const active   = dropdown.querySelector('.addr-item.selected');
   let idx = Array.from(items).indexOf(active);
-
-  if (event.key === 'ArrowDown') {
-    event.preventDefault();
-    if (active) active.classList.remove('selected');
-    idx = Math.min(idx + 1, items.length - 1);
-    items[idx]?.classList.add('selected');
-    items[idx]?.scrollIntoView({ block: 'nearest' });
-  } else if (event.key === 'ArrowUp') {
-    event.preventDefault();
-    if (active) active.classList.remove('selected');
-    idx = Math.max(idx - 1, 0);
-    items[idx]?.classList.add('selected');
-    items[idx]?.scrollIntoView({ block: 'nearest' });
-  } else if (event.key === 'Enter') {
-    event.preventDefault();
-    if (active) active.click();
-    else if (items[0]) items[0].click();
-  } else if (event.key === 'Escape') {
-    dropdown.classList.remove('open');
-  }
+  if (event.key==='ArrowDown')  { event.preventDefault(); if(active) active.classList.remove('selected'); idx=Math.min(idx+1,items.length-1); items[idx]?.classList.add('selected'); items[idx]?.scrollIntoView({block:'nearest'}); }
+  else if (event.key==='ArrowUp')   { event.preventDefault(); if(active) active.classList.remove('selected'); idx=Math.max(idx-1,0); items[idx]?.classList.add('selected'); items[idx]?.scrollIntoView({block:'nearest'}); }
+  else if (event.key==='Enter')     { event.preventDefault(); if(active) active.click(); else items[0]?.click(); }
+  else if (event.key==='Escape')    { dropdown.classList.remove('open'); }
 }
 
-// Close dropdowns on outside click
 document.addEventListener('click', e => {
-  if (!e.target.closest('.addr-wrap')) {
+  if (!e.target.closest('.addr-wrap'))
     document.querySelectorAll('.addr-dropdown').forEach(d => d.classList.remove('open'));
+});
+
+// ── Smart Calculation ──
+function smartCalc() {
+  const kmManual  = parseInt(document.getElementById('c-km')?.value||0);
+  const ftyp      = kV('c-ftyp');
+  const verbrauch = kNum('c-verbrauch',7);
+  const sprit     = kNum('c-spritpreis',1.79);
+  const stdsatz   = kNum('c-stdsatz',25);
+  const aufschlag = kNum('c-aufschlag',20)/100;
+  const rabatt    = kNum('c-rabatt',0)/100;
+  const aufTypFak = parseFloat(kV('c-auftyp')||'1');
+  const ftypFak   = {pkw:1,suv:1.1,transporter:1.15,elektro:1.2,luxus:1.25,tief:1.3}[ftyp]||1;
+
+  // Distances
+  const kmAnfahrt = standortCoords&&addrCoords.von
+    ? kmRoad(standortCoords.lat,standortCoords.lon,addrCoords.von.lat,addrCoords.von.lon) : 0;
+  const kmUeber   = addrCoords.von&&addrCoords.nach
+    ? kmRoad(addrCoords.von.lat,addrCoords.von.lon,addrCoords.nach.lat,addrCoords.nach.lon)
+    : kmManual;
+  const kmHeim    = standortCoords&&addrCoords.nach
+    ? kmRoad(addrCoords.nach.lat,addrCoords.nach.lon,standortCoords.lat,standortCoords.lon) : 0;
+
+  if (kmUeber<=0 && kmAnfahrt<=0) { resetResult(); return; }
+
+  // Update km field if calculated
+  if (kmUeber>0 && addrCoords.von && addrCoords.nach) {
+    const kmEl = document.getElementById('c-km');
+    if (kmEl) kmEl.value = kmUeber;
+  }
+
+  // Time
+  const cc       = getCC(addrCoords.nach)||'DE';
+  const speed    = SPEED[cc]||SPEED.default;
+  const stdUeber = kmUeber/speed;
+  const stdAnf   = kmAnfahrt/110;
+  const stdGes   = stdUeber+stdAnf;
+
+  // Fuel costs (own car: only anfahrt)
+  const spritAnfahrt = (kmAnfahrt*verbrauch/100)*sprit;
+
+  // E-Auto Laden
+  let ladenK = kNum('c-laden',0);
+  if (ftyp==='elektro'&&kmUeber>0) {
+    const auto = Math.round((kmUeber*EAUTO_KWH/100)*EAUTO_PREIS);
+    if (!document.getElementById('c-laden')._manual) {
+      document.getElementById('c-laden').value=auto; ladenK=auto;
+      document.getElementById('laden-hint').textContent=`${kmUeber}km × ${EAUTO_KWH}kWh × ${EAUTO_PREIS}€`;
+    }
+  } else if (ftyp!=='elektro') {
+    if (!document.getElementById('c-laden')._manual) { document.getElementById('c-laden').value=0; ladenK=0; }
+  }
+
+  // Maut
+  let mautK = kNum('c-maut',0);
+  if (!document.getElementById('c-maut')._manual) {
+    const ccVon=getCC(addrCoords.von), ccNach=getCC(addrCoords.nach);
+    const countries=[...new Set([ccVon,ccNach])];
+    let m=0; countries.forEach(c2=>{ m+=(kmUeber/countries.length)*(MAUT_RATES[c2]||0)/100; });
+    if (countries.includes('AT')) m=Math.max(m,10);
+    if (countries.includes('CH')) m+=40;
+    mautK=Math.round(m);
+    document.getElementById('c-maut').value=mautK;
+    document.getElementById('maut-hint').textContent=`Route: ${countries.join(' + ')}`;
+  }
+
+  // Heimfahrt
+  let heimK = kNum('c-rueck',45);
+  if (!document.getElementById('c-rueck')._manual && kmHeim>0) {
+    heimK=Math.max(25,Math.round(kmHeim*HEIM_RATE));
+    document.getElementById('c-rueck').value=heimK;
+    document.getElementById('heim-hint').textContent=`${kmHeim}km Heimfahrt`;
+  }
+
+  // Verpflegung
+  let verpfK = kNum('c-verpflegung',0);
+  if (!document.getElementById('c-verpflegung')._manual) {
+    verpfK=Math.floor(stdGes/4)*15;
+    document.getElementById('c-verpflegung').value=verpfK;
+    document.getElementById('verpf-hint').textContent=`${stdGes.toFixed(0)}h → ${Math.floor(stdGes/4)}× 15€`;
+  }
+
+  // Übernachtung
+  let uebernK = kNum('c-uebernacht',0);
+  const naechte = stdGes>8?Math.floor(stdGes/10):0;
+  if (!document.getElementById('c-uebernacht')._manual) {
+    uebernK=naechte*80;
+    document.getElementById('c-uebernacht').value=uebernK;
+    document.getElementById('ueber-hint').textContent=naechte>0?`${naechte}× Übernachtung à 80€`:`Keine nötig (${stdGes.toFixed(0)}h)`;
+  }
+
+  const extraK = kNum('c-extra',0);
+
+  // Route overview
+  const roEl = document.getElementById('route-overview');
+  if (roEl) {
+    roEl.style.display='block';
+    document.getElementById('ro-anfahrt').textContent = kmAnfahrt>0?`${kmAnfahrt} km · ${kFmt(spritAnfahrt)}`:'— (Standort nicht gesetzt)';
+    document.getElementById('ro-ueber').textContent   = `${kmUeber} km`;
+    document.getElementById('ro-heim').textContent    = kmHeim>0?`${kmHeim} km · ca. ${kFmt(heimK)}`:'—';
+    document.getElementById('ro-gesamt').textContent  = `${kmAnfahrt+kmUeber+kmHeim} km`;
+  }
+
+  // Totals
+  const zeitK    = stdGes*stdsatz;
+  const gesamtK  = zeitK+spritAnfahrt+heimK+mautK+verpfK+uebernK+ladenK+extraK;
+  const basis    = gesamtK*(1+aufschlag)*ftypFak*aufTypFak;
+  const netto    = Math.max(basis*(1-rabatt),gesamtK*1.05);
+  const suggested= Math.ceil(netto/5)*5;
+  const marge    = gesamtK>0?((suggested-gesamtK)/suggested)*100:0;
+
+  // Update result panel
+  document.getElementById('k-price').textContent = kFmt(suggested);
+  document.getElementById('k-sub').textContent   =
+    `= ${kFmt(suggested*1.19)} brutto${kmUeber>0?' · '+(suggested/kmUeber).toFixed(2).replace('.',',')+'€/km':''}`;
+
+  const ausland = cc!=='DE' ? `<span class="k-tag k-tag-gold">🌍 Auslandsfahrt (${cc})</span>` : '';
+
+  document.getElementById('k-breakdown').innerHTML = `
+    <div style="padding:10px 0 8px;border-bottom:2px solid var(--blue-pale);margin-bottom:4px">
+      <div style="font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--blue-b);margin-bottom:8px">DEINE KOSTEN</div>
+      ${spritAnfahrt>0?`<div class="breakdown-row br-muted"><span class="br-label">⛽ Anfahrt (${kmAnfahrt}km)</span><span class="br-val">${kFmt(spritAnfahrt)}</span></div>`:''}
+      <div class="breakdown-row"><span class="br-label">⏱ Zeit (${stdGes.toFixed(1).replace('.',',')} Std. × ${stdsatz}€)</span><span class="br-val">${kFmt(zeitK)}</span></div>
+      ${heimK>0?`<div class="breakdown-row"><span class="br-label">🚆 Heimfahrt (${kmHeim}km)</span><span class="br-val">${kFmt(heimK)}</span></div>`:''}
+      ${mautK>0?`<div class="breakdown-row"><span class="br-label">🛣 Maut</span><span class="br-val">${kFmt(mautK)}</span></div>`:''}
+      ${verpfK>0?`<div class="breakdown-row"><span class="br-label">🍔 Verpflegung</span><span class="br-val">${kFmt(verpfK)}</span></div>`:''}
+      ${uebernK>0?`<div class="breakdown-row"><span class="br-label">🏨 Übernachtung (${naechte}×)</span><span class="br-val">${kFmt(uebernK)}</span></div>`:''}
+      ${ladenK>0?`<div class="breakdown-row"><span class="br-label">⚡ E-Auto Laden</span><span class="br-val">${kFmt(ladenK)}</span></div>`:''}
+      ${extraK>0?`<div class="breakdown-row"><span class="br-label">📌 Sonstiges</span><span class="br-val">${kFmt(extraK)}</span></div>`:''}
+    </div>
+    <div class="breakdown-row" style="font-weight:600"><span class="br-label">Gesamtkosten</span><span class="br-val">${kFmt(gesamtK)}</span></div>
+    <div class="breakdown-row br-muted"><span class="br-label">+ Aufschlag (${(aufschlag*100).toFixed(0)}%) × Typ (${ftypFak}×)</span><span class="br-val">+${kFmt(gesamtK*aufschlag*ftypFak)}</span></div>
+    ${rabatt>0?`<div class="breakdown-row br-muted"><span class="br-label">− Rabatt (${(rabatt*100).toFixed(0)}%)</span><span class="br-val">−${kFmt(netto*rabatt)}</span></div>`:''}
+    <div class="breakdown-row"><span class="br-label">Nettopreis</span><span class="br-val">${kFmt(suggested)}</span></div>
+    <div class="breakdown-row br-muted"><span class="br-label">zzgl. 19% MwSt.</span><span class="br-val">+${kFmt(suggested*.19)}</span></div>
+    <div class="breakdown-row br-total"><span class="br-label">Bruttopreis</span><span class="br-val">${kFmt(suggested*1.19)}</span></div>
+    <div class="breakdown-row" style="padding-top:8px"><span class="br-label" style="color:var(--green);font-weight:600">Dein Gewinn</span><span class="br-val" style="color:var(--green);font-weight:700">${kFmt(suggested-gesamtK)}</span></div>
+  `;
+
+  // Margin bar
+  document.getElementById('k-margin-wrap').style.display='block';
+  const pct=Math.min(Math.max(marge,0),100);
+  const col=marge>=40?'#16a34a':marge>=25?'#C89B2A':'#dc2626';
+  document.getElementById('k-margin-bar').style.cssText=`width:${pct}%;background:${col}`;
+  document.getElementById('k-margin-pct').textContent=marge.toFixed(1).replace('.',',')+' %';
+  document.getElementById('k-margin-pct').style.color=col;
+
+  // Tags
+  const tagsEl=document.getElementById('k-tags');
+  tagsEl.style.display='flex';
+  const tags=[];
+  if (marge>=40) tags.push(['✅ Gute Marge','k-tag-green']);
+  else if (marge>=25) tags.push(['⚠️ Niedrige Marge','k-tag-gold']);
+  else tags.push(['❌ Unwirtschaftlich','k-tag-red']);
+  if (kmUeber>400) tags.push(['🛣 Langstrecke','k-tag-blue']);
+  if (ftyp==='elektro') tags.push(['⚡ Elektro','k-tag-blue']);
+  if (ftyp==='tief') tags.push(['🏎 Tieferlegung','k-tag-gold']);
+  if (naechte>0) tags.push([`🏨 ${naechte}× Übernachtung`,'k-tag-gold']);
+  if (cc!=='DE') tags.push([`🌍 Ausland (${cc})`,'k-tag-gold']);
+  tagsEl.innerHTML=tags.map(([t,cls])=>`<span class="k-tag ${cls}">${t}</span>`).join('');
+}
+
+function resetResult() {
+  document.getElementById('k-price').textContent='—';
+  document.getElementById('k-sub').textContent='Strecke eingeben zum Kalkulieren';
+  document.getElementById('k-breakdown').innerHTML='<div style="padding:18px;text-align:center;color:var(--muted);font-size:12px">Fülle das Formular aus.</div>';
+  document.getElementById('k-margin-wrap').style.display='none';
+  document.getElementById('k-tags').style.display='none';
+  const ro=document.getElementById('route-overview'); if(ro) ro.style.display='none';
+}
+
+// ── Spritpreis Live ──
+function onKraftstoffChange() {
+  saveFahrzeugSettings();
+  const defaults={benzin:1.79,diesel:1.65,e5:1.89};
+  const kfz=document.getElementById('c-kraftstoff')?.value;
+  if (kfz&&defaults[kfz]&&!document.getElementById('c-spritpreis')._livePrice) {
+    document.getElementById('c-spritpreis').value=defaults[kfz];
+  }
+  smartCalc();
+}
+
+function saveFahrzeugSettings() {
+  localStorage.setItem('nk_fahrzeug',JSON.stringify({
+    kraftstoff:document.getElementById('c-kraftstoff')?.value,
+    verbrauch:document.getElementById('c-verbrauch')?.value,
+    preis:document.getElementById('c-spritpreis')?.value,
+  }));
+}
+
+async function fetchSpritpreis() {
+  const btn=document.getElementById('sprit-refresh-btn');
+  const src=document.getElementById('sprit-source');
+  const kraftstoff=document.getElementById('c-kraftstoff')?.value||'benzin';
+  const fuelMap={benzin:'e10',diesel:'diesel',e5:'e5'};
+  const tkField=fuelMap[kraftstoff]||'e10';
+  btn.textContent='...'; btn.disabled=true;
+  if(src) src.textContent='Standort wird ermittelt...';
+  try {
+    const coords = await new Promise((resolve,reject)=>{
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          pos=>resolve({lat:pos.coords.latitude,lng:pos.coords.longitude}),
+          ()=>standortCoords?resolve({lat:standortCoords.lat,lng:standortCoords.lon}):reject(new Error('no loc')),
+          {timeout:6000}
+        );
+      } else if (standortCoords) resolve({lat:standortCoords.lat,lng:standortCoords.lon});
+      else reject(new Error('no loc'));
+    });
+    if(src) src.textContent='Suche Tankstellen...';
+    const url=`https://creativecommons.tankerkoenig.de/json/list.php?lat=${coords.lat}&lng=${coords.lng}&rad=10&sort=price&type=${tkField==='e10'?'e10':tkField}&apikey=00000000-0000-0000-0000-000000000002`;
+    const res=await fetch(url);
+    const data=await res.json();
+    if (!data.ok||!data.stations?.length) throw new Error('no stations');
+    const stations=data.stations.filter(s=>s[tkField]>0);
+    if (!stations.length) throw new Error('no prices');
+    const best=stations[0];
+    const preis=best[tkField];
+    document.getElementById('c-spritpreis').value=preis.toFixed(3);
+    document.getElementById('c-spritpreis')._livePrice=true;
+    if(src) src.textContent=`⛽ ${best.name||'Tankstelle'} · ${preis.toFixed(3)} €/L · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr`;
+    if(typeof toast==='function') toast(`${['benzin':'E10','diesel':'Diesel','e5':'E5'][kraftstoff]||kraftstoff}: ${preis.toFixed(3)} €/L`,'⛽','success');
+  } catch(e) {
+    const avg={benzin:1.759,diesel:1.649,e5:1.819};
+    document.getElementById('c-spritpreis').value=(avg[kraftstoff]||1.759).toFixed(3);
+    if(src) src.textContent='Ø Deutschland · Standort nicht verfügbar';
+    if(typeof toast==='function') toast('Durchschnittspreis geladen','⚠️','info');
+  }
+  saveFahrzeugSettings(); smartCalc();
+  btn.textContent='↻ Live'; btn.disabled=false;
+}
+
+// ── Save/Reset/Copy ──
+function kSaveCalc() {
+  const price=document.getElementById('k-price').textContent;
+  if(price==='—') { if(typeof toast==='function') toast('Erst Strecke eingeben','⚠️'); return; }
+  kHistory.unshift({
+    id:Date.now(),
+    date:new Date().toLocaleDateString('de-DE'),
+    desc:`${kV('c-von').split(',')[0]||'?'} → ${kV('c-nach').split(',')[0]||'?'}`,
+    km:document.getElementById('c-km')?.value||'—',
+    price,
+    typ:document.getElementById('c-auftyp')?.options[document.getElementById('c-auftyp')?.selectedIndex]?.text||''
+  });
+  localStorage.setItem('nk_kalk_v2',JSON.stringify(kHistory));
+  kRenderHistory();
+  if(typeof toast==='function') toast('Kalkulation gespeichert','✅','success');
+}
+
+function kResetCalc() {
+  addrCoords={von:null,nach:null};
+  ['c-von','c-nach','c-km'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['c-maut','c-rueck','c-verpflegung','c-uebernacht','c-laden','c-extra'].forEach(id=>{
+    const el=document.getElementById(id);if(el){el.value=0;delete el._manual;}
+  });
+  document.getElementById('c-stdsatz').value=25;
+  document.getElementById('c-aufschlag').value=20;
+  document.getElementById('c-rabatt').value=0;
+  localStorage.removeItem('nk_route');
+  resetResult();
+}
+
+function kCopyPrice() {
+  const price=document.getElementById('k-price').textContent;
+  if(price==='—') { if(typeof toast==='function') toast('Erst kalkulieren','⚠️'); return; }
+  navigator.clipboard.writeText(price).then(()=>{ if(typeof toast==='function') toast('Preis kopiert: '+price,'📋','info'); });
+}
+
+function kRenderHistory() {
+  const wrap=document.getElementById('k-history-wrap'); if(!wrap)return;
+  if(!kHistory.length){wrap.innerHTML='<div style="padding:28px;text-align:center;color:var(--muted);font-size:13px">Noch keine Kalkulationen</div>';return;}
+  wrap.innerHTML=`<table class="data-table"><thead><tr><th>Datum</th><th>Strecke</th><th>km</th><th>Typ</th><th>Netto</th><th></th></tr></thead><tbody>
+    ${kHistory.map(e=>`<tr><td style="color:var(--muted)">${e.date}</td><td style="font-weight:500">${e.desc}</td><td style="color:var(--muted)">${e.km}</td><td style="font-size:11px;color:var(--muted)">${e.typ}</td><td style="font-weight:700;color:var(--blue-b)">${e.price}</td><td><button class="btn btn-danger btn-sm" onclick="kDelete(${e.id})">×</button></td></tr>`).join('')}
+  </tbody></table>`;
+}
+
+function kDelete(id) {
+  kHistory=kHistory.filter(e=>e.id!==id);
+  localStorage.setItem('nk_kalk_v2',JSON.stringify(kHistory));
+  kRenderHistory();
+}
+
+// ── Restore saved state ──
+function restoreKalkState() {
+  const savedS=localStorage.getItem('nk_standort');
+  if(savedS){try{const s=JSON.parse(savedS);standortCoords=s.coords;const el=document.getElementById('c-standort');if(el)el.value=s.label||'';}catch(e){}}
+  const savedR=localStorage.getItem('nk_route');
+  if(savedR){try{
+    const r=JSON.parse(savedR);
+    if(r.von)  addrCoords.von=r.von;
+    if(r.nach) addrCoords.nach=r.nach;
+    const vonEl=document.getElementById('c-von');   if(vonEl&&r.vonLabel)   vonEl.value=r.vonLabel;
+    const nachEl=document.getElementById('c-nach');  if(nachEl&&r.nachLabel) nachEl.value=r.nachLabel;
+    const kmEl=document.getElementById('c-km');      if(kmEl&&r.km)          kmEl.value=r.km;
+  }catch(e){}}
+  const savedFz=localStorage.getItem('nk_fahrzeug');
+  if(savedFz){try{
+    const f=JSON.parse(savedFz);
+    const kEl=document.getElementById('c-kraftstoff'); if(kEl&&f.kraftstoff) kEl.value=f.kraftstoff;
+    const vEl=document.getElementById('c-verbrauch');  if(vEl&&f.verbrauch)  vEl.value=f.verbrauch;
+    const pEl=document.getElementById('c-spritpreis'); if(pEl&&f.preis)      pEl.value=f.preis;
+  }catch(e){}}
+  // Mark auto-fields as not manually set
+  ['c-maut','c-rueck','c-verpflegung','c-uebernacht','c-laden'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.addEventListener('input',()=>{el._manual=true;},{ once:false });
+  });
+  setTimeout(()=>smartCalc(),50);
+}
+
+// CSS for breakdown rows (injected if not in stylesheet)
+const kalkCSS = `
+.kalk-layout{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
+.result-hero{background:var(--navy-2);padding:22px 18px;text-align:center}
+.result-label{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:#5E84B2;margin-bottom:6px}
+.result-price{font-family:'Rajdhani',sans-serif;font-size:48px;font-weight:700;color:var(--blue-b);line-height:1}
+.result-sub{font-size:10px;color:#5E84B2;margin-top:5px}
+.breakdown{padding:14px 18px;display:flex;flex-direction:column}
+.breakdown-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px}
+.breakdown-row:last-child{border-bottom:none}
+.breakdown-row .br-label{color:var(--muted)}
+.breakdown-row .br-val{font-weight:600;color:var(--text)}
+.breakdown-row.br-total{font-weight:700;font-size:14px;border-top:2px solid var(--blue-b);border-bottom:none;padding-top:10px;margin-top:4px}
+.breakdown-row.br-total .br-label{color:var(--navy-2)}
+.breakdown-row.br-total .br-val{color:var(--blue-b);font-size:16px}
+.breakdown-row.br-muted .br-label,.breakdown-row.br-muted .br-val{color:var(--muted);font-size:11px}
+.k-margin-bar{padding:10px 18px;background:var(--grey)}
+.k-margin-label{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:flex;justify-content:space-between}
+.k-margin-track{height:7px;background:var(--border);border-radius:4px;overflow:hidden}
+.k-margin-fill{height:100%;border-radius:4px;transition:width .5s ease,background .3s}
+.k-tag-row{display:flex;gap:7px;padding:10px 18px;flex-wrap:wrap}
+.k-tag{padding:3px 9px;border-radius:4px;font-size:10px;font-weight:600}
+.k-tag-green{background:var(--green-pale);color:var(--green)}
+.k-tag-gold{background:var(--gold-pale);color:var(--gold)}
+.k-tag-red{background:var(--red-pale);color:var(--red)}
+.k-tag-blue{background:var(--blue-pale);color:var(--blue)}
+.k-action-strip{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px}
+.addr-wrap{position:relative;z-index:100}
+.addr-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--white);border:1.5px solid var(--blue-b);border-radius:6px;box-shadow:0 16px 40px rgba(0,0,0,.25);z-index:9999;max-height:220px;overflow-y:auto;display:none}
+.addr-dropdown.open{display:block}
+.addr-item{padding:10px 14px;font-size:12px;cursor:pointer;border-bottom:1px solid var(--border);transition:background .15s;display:flex;flex-direction:column;gap:2px}
+.addr-item:last-child{border-bottom:none}
+.addr-item:hover,.addr-item.selected{background:var(--blue-pale)}
+.addr-item-main{font-weight:600;font-size:13px}
+.addr-item-sub{color:var(--muted);font-size:11px}
+.addr-loading{padding:12px 14px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+@media(max-width:900px){.kalk-layout{grid-template-columns:1fr}}
+`;
+(function injectCSS(){const s=document.createElement('style');s.textContent=kalkCSS;document.head.appendChild(s);})();
+
+
+// Called by auth.js after login
+function onKalkReady() {
+  kRenderHistory();
+  restoreKalkState();
+}
+</script>
+
+<script>
+// ══ AUTH ══
+// ═══════════════════════════════════════════
+// NK FAHRZEUGÜBERFÜHRUNG — SHARED AUTH MODULE
+// ═══════════════════════════════════════════
+
+const SUPA_URL = 'https://qgbnsrnbrykcqovmltjq.supabase.co';
+const SUPA_KEY = 'sb_publishable_w8CSXHCPKFCy-75QxdOp6g_Ee_gfcPw';
+const { createClient } = supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+// ── Shared state ──
+
+
+const roleLabels = {
+  admin:'Administrator', fahrer:'Fahrer',
+  disponent:'Disponent', buchhaltung:'Buchhaltung'
+};
+
+// ── Toast ──
+function toast(msg, icon='✅', type='success') {
+  let wrap = document.getElementById('toast-wrap');
+  if (!wrap) { wrap = document.createElement('div'); wrap.id='toast-wrap'; wrap.className='toast-wrap'; document.body.appendChild(wrap); }
+  const el = document.createElement('div');
+  el.className = `toast ${type}`;
+  el.innerHTML = `<span>${icon}</span> ${msg}`;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
+// ── Auth functions ──
+function switchAuthTab(tab, btn) {
+  document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('auth-login-form').style.display    = tab==='login'    ? 'flex':'none';
+  document.getElementById('auth-register-form').style.display = tab==='register' ? 'flex':'none';
+  hideAuthError();
+}
+function showAuthError(msg) { const el=document.getElementById('auth-error'); el.textContent=msg; el.style.display='block'; }
+function hideAuthError()    { document.getElementById('auth-error').style.display='none'; }
+
+async function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pw    = document.getElementById('login-pw').value;
+  if (!email||!pw) { showAuthError('Bitte E-Mail und Passwort eingeben.'); return; }
+  const btn = document.getElementById('login-btn');
+  btn.disabled=true; btn.textContent='Anmelden...'; hideAuthError();
+  const { data, error } = await sb.auth.signInWithPassword({ email, password:pw });
+  btn.disabled=false; btn.textContent='Anmelden';
+  if (error) { showAuthError('E-Mail oder Passwort falsch.'); return; }
+  await initApp(data.user);
+}
+
+async function doRegister() {
+  const name  = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const pw    = document.getElementById('reg-pw').value;
+  if (!name||!email||!pw) { showAuthError('Alle Felder ausfüllen.'); return; }
+  if (pw.length<6) { showAuthError('Passwort mindestens 6 Zeichen.'); return; }
+  const btn = document.getElementById('register-btn');
+  btn.disabled=true; btn.textContent='Registrieren...'; hideAuthError();
+  const { data, error } = await sb.auth.signUp({ email, password:pw, options:{ data:{ name, role:'fahrer' } } });
+  btn.disabled=false; btn.textContent='Account erstellen';
+  if (error) { showAuthError(error.message); return; }
+  if (data.user) await initApp(data.user);
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  currentUser=null; currentProfile=null;
+  document.getElementById('app-screen').classList.remove('visible');
+  document.getElementById('auth-screen').style.display='flex';
+  document.getElementById('login-email').value='';
+  document.getElementById('login-pw').value='';
+}
+
+// ── Init ──
+async function initApp(user) {
+  currentUser = user;
+  const { data: profile } = await sb.from('profiles').select('*').eq('id', user.id).single();
+  currentProfile = profile;
+  const name = profile?.name || user.email.split('@')[0];
+  const role = profile?.role || 'fahrer';
+  document.getElementById('chip-avatar').textContent = name.substring(0,2).toUpperCase();
+  document.getElementById('chip-name').textContent   = name;
+  document.getElementById('chip-role').textContent   = roleLabels[role] || role;
+  document.getElementById('chip-role').className     = `user-chip-role ${role}`;
+  document.getElementById('topbar-role').textContent = roleLabels[role] || role;
+  document.getElementById('topbar-role').className   = `role-badge ${role}`;
+  document.getElementById('current-date').textContent =
+    new Date().toLocaleDateString('de-DE',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  if (isAdmin()) document.getElementById('admin-nav').style.display='block';
+  if (isDisponent()) {
+    document.getElementById('admin-nav').style.display='block';
+    const es=document.getElementById('nav-einstellungen'); if(es) es.style.display='none';
+  }
+  if (isBuchhaltung()) {
+    const na=document.getElementById('nav-neuer-auftrag'); if(na) na.style.display='none';
+  }
+  document.getElementById('auth-screen').style.display='none';
+  document.getElementById('app-screen').classList.add('visible');
+  // Restore kalkulator state after login
+  const savedS2 = localStorage.getItem('nk_standort');
+  if (savedS2) {{ try {{ const s=JSON.parse(savedS2); standortCoords=s.coords; const el=document.getElementById('c-standort'); if(el) el.value=s.label||''; }} catch(e){{}} }}
+  const savedR2 = localStorage.getItem('nk_route');
+  if (savedR2) {{ try {{ const r=JSON.parse(savedR2); if(r.von) addrCoords.von=r.von; if(r.nach) addrCoords.nach=r.nach; const vonEl=document.getElementById('c-von'); if(vonEl&&r.vonLabel) vonEl.value=r.vonLabel; const nachEl=document.getElementById('c-nach'); if(nachEl&&r.nachLabel) nachEl.value=r.nachLabel; const kmEl=document.getElementById('c-km'); if(kmEl&&r.km) kmEl.value=r.km; }} catch(e){{}} }}
+  if (typeof onAppReady === 'function') await onAppReady();
+}
+
+// ── Auto session check ──
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session?.user) await initApp(session.user);
+  sb.auth.onAuthStateChange(async (event) => {
+    if (event==='SIGNED_OUT') {
+      document.getElementById('app-screen').classList.remove('visible');
+      document.getElementById('auth-screen').style.display='flex';
+    }
+  });
+})();
+
+// ── Enter key on auth ──
+document.addEventListener('keydown', e => {
+  if (e.key==='Enter' && document.getElementById('auth-screen')?.style.display!=='none') {
+    const loginVisible = document.getElementById('auth-login-form')?.style.display!=='none';
+    if (loginVisible) doLogin(); else doRegister();
   }
 });
 
 </script>
+
 </body>
 </html>
