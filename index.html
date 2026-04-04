@@ -1972,7 +1972,7 @@ async function fetchSpritpreis() {
       else reject(new Error('no loc'));
     });
     if(src) src.textContent='Suche Tankstellen...';
-    const url=`https://creativecommons.tankerkoenig.de/json/list.php?lat=${coords.lat}&lng=${coords.lng}&rad=10&sort=price&type=${tkField==='e10'?'e10':tkField}&apikey=00000000-0000-0000-0000-000000000002`;
+    const url=`https://creativecommons.tankerkoenig.de/json/list.php?lat=${coords.lat}&lng=${coords.lng}&rad=10&sort=price&type=${tkField==='e10'?'e10':tkField}&apikey=e8e20d88-2345-4edc-a58c-b3476dbcd31c`;
     const res=await fetch(url);
     const data=await res.json();
     if (!data.ok||!data.stations?.length) throw new Error('no stations');
