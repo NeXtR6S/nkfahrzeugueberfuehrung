@@ -1961,15 +1961,24 @@ async function fetchSpritpreis() {
   btn.textContent='...'; btn.disabled=true;
   if(src) src.textContent='Standort wird ermittelt...';
   try {
-    const coords = await new Promise((resolve,reject)=>{
+    // Use saved standort coords directly if available — faster and more reliable
+    const coords = await new Promise((resolve, reject) => {
+      // First try: saved standort (instant, no GPS needed)
+      if (standortCoords) {
+        resolve({ lat: standortCoords.lat, lng: standortCoords.lon });
+        return;
+      }
+      // Second try: GPS with short timeout
       if (navigator.geolocation) {
+        const timer = setTimeout(() => reject(new Error('timeout')), 5000);
         navigator.geolocation.getCurrentPosition(
-          pos=>resolve({lat:pos.coords.latitude,lng:pos.coords.longitude}),
-          ()=>standortCoords?resolve({lat:standortCoords.lat,lng:standortCoords.lon}):reject(new Error('no loc')),
-          {timeout:6000}
+          pos => { clearTimeout(timer); resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }); },
+          err => { clearTimeout(timer); reject(err); },
+          { timeout: 5000, maximumAge: 300000, enableHighAccuracy: false }
         );
-      } else if (standortCoords) resolve({lat:standortCoords.lat,lng:standortCoords.lon});
-      else reject(new Error('no loc'));
+      } else {
+        reject(new Error('no geolocation'));
+      }
     });
     if(src) src.textContent='Suche Tankstellen...';
     const url=`https://creativecommons.tankerkoenig.de/json/list.php?lat=${coords.lat}&lng=${coords.lng}&rad=10&sort=price&type=${tkField==='e10'?'e10':tkField}&apikey=e8e20d88-2345-4edc-a58c-b3476dbcd31c`;
