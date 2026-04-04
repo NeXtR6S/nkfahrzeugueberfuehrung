@@ -1953,54 +1953,84 @@ function saveFahrzeugSettings() {
 }
 
 async function fetchSpritpreis() {
-  const btn=document.getElementById('sprit-refresh-btn');
-  const src=document.getElementById('sprit-source');
-  const kraftstoff=document.getElementById('c-kraftstoff')?.value||'benzin';
-  const fuelMap={benzin:'e10',diesel:'diesel',e5:'e5'};
-  const tkField=fuelMap[kraftstoff]||'e10';
-  btn.textContent='...'; btn.disabled=true;
-  if(src) src.textContent='Standort wird ermittelt...';
+  const btn        = document.getElementById('sprit-refresh-btn');
+  const src        = document.getElementById('sprit-source');
+  const kraftstoff = document.getElementById('c-kraftstoff')?.value || 'benzin';
+  const fuelMap    = { benzin:'e10', diesel:'diesel', e5:'e5' };
+  const tkField    = fuelMap[kraftstoff] || 'e10';
+
+  btn.textContent = '...';
+  btn.disabled    = true;
+  if (src) src.textContent = 'Suche Spritpreise...';
+
   try {
-    // Use saved standort coords directly if available — faster and more reliable
-    const coords = await new Promise((resolve, reject) => {
-      // First try: saved standort (instant, no GPS needed)
-      if (standortCoords) {
-        resolve({ lat: standortCoords.lat, lng: standortCoords.lon });
-        return;
-      }
-      // Second try: GPS with short timeout
-      if (navigator.geolocation) {
-        const timer = setTimeout(() => reject(new Error('timeout')), 5000);
-        navigator.geolocation.getCurrentPosition(
-          pos => { clearTimeout(timer); resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }); },
-          err => { clearTimeout(timer); reject(err); },
-          { timeout: 5000, maximumAge: 300000, enableHighAccuracy: false }
-        );
-      } else {
-        reject(new Error('no geolocation'));
-      }
-    });
-    if(src) src.textContent='Suche Tankstellen...';
-    const url=`https://creativecommons.tankerkoenig.de/json/list.php?lat=${coords.lat}&lng=${coords.lng}&rad=10&sort=price&type=${tkField==='e10'?'e10':tkField}&apikey=e8e20d88-2345-4edc-a58c-b3476dbcd31c`;
-    const res=await fetch(url);
-    const data=await res.json();
-    if (!data.ok||!data.stations?.length) throw new Error('no stations');
-    const stations=data.stations.filter(s=>s[tkField]>0);
-    if (!stations.length) throw new Error('no prices');
-    const best=stations[0];
-    const preis=best[tkField];
-    document.getElementById('c-spritpreis').value=preis.toFixed(3);
-    document.getElementById('c-spritpreis')._livePrice=true;
-    if(src) src.textContent=`⛽ ${best.name||'Tankstelle'} · ${preis.toFixed(3)} €/L · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr`;
-    if(typeof toast==='function') toast(`${({benzin:'E10',diesel:'Diesel',e5:'E5'})[kraftstoff]||kraftstoff}: ${preis.toFixed(3)} €/L`,'⛽','success');
+    // Schritt 1: PLZ aus Standort-Feld oder gespeichertem Label holen
+    const standortLabel = document.getElementById('c-standort')?.value || '';
+    const plzMatch = standortLabel.match(/(\d{5})/);
+    let coords = null;
+
+    if (plzMatch) {
+      // PLZ gefunden → via Nominatim in Koordinaten umwandeln
+      const plz = plzMatch[1];
+      if (src) src.textContent = `Suche Tankstellen bei PLZ ${plz}...`;
+      const geoRes  = await fetch(`https://nominatim.openstreetmap.org/search?postalcode=${plz}&country=de&format=json&limit=1`, { headers:{'User-Agent':'NK-App/1.0'} });
+      const geoData = await geoRes.json();
+      if (geoData.length) coords = { lat: parseFloat(geoData[0].lat), lng: parseFloat(geoData[0].lon) };
+    }
+
+    // Fallback: gespeicherte Standort-Koordinaten
+    if (!coords && standortCoords) {
+      coords = { lat: standortCoords.lat, lng: standortCoords.lon };
+      if (src) src.textContent = 'Suche Tankstellen am gespeicherten Standort...';
+    }
+
+    // Fallback 2: Stadtname aus Standort-Feld via Nominatim
+    if (!coords && standortLabel.length > 2) {
+      const stadtLabel = standortLabel.split(',')[0].trim();
+      if (src) src.textContent = `Suche Koordinaten für ${stadtLabel}...`;
+      const geoRes2  = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(stadtLabel)}&country=de&format=json&limit=1`, { headers:{'User-Agent':'NK-App/1.0'} });
+      const geoData2 = await geoRes2.json();
+      if (geoData2.length) coords = { lat: parseFloat(geoData2[0].lat), lng: parseFloat(geoData2[0].lon) };
+    }
+
+    if (!coords) throw new Error('Kein Standort verfügbar');
+
+    // Schritt 2: Tankerkönig API mit gefundenen Koordinaten
+    const tkType = tkField === 'e10' ? 'e10' : tkField;
+    const url    = `https://creativecommons.tankerkoenig.de/json/list.php?lat=${coords.lat}&lng=${coords.lng}&rad=10&sort=price&type=${tkType}&apikey=e8e20d88-2345-4edc-a58c-b3476dbcd31c`;
+    const res    = await fetch(url);
+    const data   = await res.json();
+
+    if (!data.ok || !data.stations?.length) throw new Error('Keine Tankstellen gefunden');
+
+    const stations = data.stations.filter(s => s[tkField] > 0);
+    if (!stations.length) throw new Error('Keine Preise verfügbar');
+
+    const best  = stations[0];
+    const preis = best[tkField];
+    const name  = best.name   || 'Tankstelle';
+    const dist  = best.dist?.toFixed(1);
+    const ort   = best.place  || '';
+
+    document.getElementById('c-spritpreis').value       = preis.toFixed(3);
+    document.getElementById('c-spritpreis')._livePrice  = true;
+
+    const kraftLabel = { benzin:'E10', diesel:'Diesel', e5:'Super E5' };
+    if (src) src.textContent = `⛽ ${name}${ort?' · '+ort:''} · ${dist?dist+'km · ':''}${preis.toFixed(3)} €/L · ${new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})} Uhr`;
+    if (typeof toast === 'function') toast(`${kraftLabel[kraftstoff]}: ${preis.toFixed(3)} €/L — ${name}`, '⛽', 'success');
+
   } catch(e) {
-    const avg={benzin:1.759,diesel:1.649,e5:1.819};
-    document.getElementById('c-spritpreis').value=(avg[kraftstoff]||1.759).toFixed(3);
-    if(src) src.textContent='Ø Deutschland · Standort nicht verfügbar';
-    if(typeof toast==='function') toast('Durchschnittspreis geladen','⚠️','info');
+    console.warn('Tankerkönig:', e.message);
+    const avg = { benzin:1.759, diesel:1.649, e5:1.819 };
+    document.getElementById('c-spritpreis').value = (avg[kraftstoff]||1.759).toFixed(3);
+    if (src) src.textContent = `Ø Deutschland · ${e.message} · ${new Date().toLocaleDateString('de-DE')}`;
+    if (typeof toast === 'function') toast('Tipp: Standort mit PLZ eingeben (z.B. "Bad Urach, 72574")', '📍', 'info');
   }
-  saveFahrzeugSettings(); smartCalc();
-  btn.textContent='↻ Live'; btn.disabled=false;
+
+  saveFahrzeugSettings();
+  smartCalc();
+  btn.textContent = '↻ Live';
+  btn.disabled    = false;
 }
 
 // ── Save/Reset/Copy ──
