@@ -2040,6 +2040,23 @@ async function generateRechnung(auftragId) {
   toast('Rechnung geöffnet — Drucken als PDF speichern', '🧾', 'success');
 }
 
+
+// ── Modal helpers ──
+function closeModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('open');
+}
+function openModal(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.add('open');
+}
+// Close on overlay click
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('modal-overlay')) {
+    e.target.classList.remove('open');
+  }
+});
+
 </script>
 
 <script>
