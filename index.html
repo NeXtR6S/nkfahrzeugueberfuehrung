@@ -1680,7 +1680,7 @@ ${type!=='rahmen'?`<div class="doc-section-title" style="margin-top:14px">Im Pre
 let allAnfragen = [];
 
 async function loadAnfragen() {
-  const wrap = document.getElementById('anfragen-list');
+  const wrap = document.getElementById('anfragen-list') || document.getElementById('anfragen-card');
   if (!wrap) return;
   wrap.innerHTML = '<div class="loading"><div class="spinner"></div> Lade Anfragen...</div>';
   const { data, error } = await sb.from('anfragen').select('*').order('created_at', { ascending: false });
@@ -1691,7 +1691,7 @@ async function loadAnfragen() {
 }
 
 function renderAnfragen(list) {
-  const wrap = document.getElementById('anfragen-list');
+  const wrap = document.getElementById('anfragen-list') || document.getElementById('anfragen-card');
   if (!wrap) return;
   if (!list.length) {
     wrap.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Keine Anfragen vorhanden</div>';
@@ -1823,6 +1823,19 @@ function renderKunden(list) {
     </tr>`).join('')}
     </tbody>
   </table>`;
+}
+
+
+function filterAnfragen(q) {
+  const filtered = allAnfragen.filter(a =>
+    [a.vorname, a.nachname, a.email, a.unternehmen].join(' ').toLowerCase().includes(q.toLowerCase())
+  );
+  renderAnfragen(filtered);
+}
+
+function filterAnfragenStatus(status) {
+  const filtered = status ? allAnfragen.filter(a => a.status === status) : allAnfragen;
+  renderAnfragen(filtered);
 }
 
 function filterKunden(q) {
