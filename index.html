@@ -412,6 +412,14 @@ textarea.form-control{resize:vertical;min-height:80px}
         Nutzer
         <span class="nav-badge admin-only" id="badge-users">0</span>
       </button>
+      <button class="nav-item" onclick="navigate('kunden',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Kunden
+      </button>
+      <button class="nav-item" onclick="navigate('fahrtenbuch',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+        Fahrtenbuch
+      </button>
       <button class="nav-item" id="nav-einstellungen" onclick="navigate('einstellungen',this)">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         Einstellungen
@@ -753,6 +761,51 @@ textarea.form-control{resize:vertical;min-height:80px}
       </div>
 
       
+      
+      <!-- ── KUNDEN ── -->
+      <div class="page" id="page-kunden">
+        <div class="section-header">
+          <div class="section-title">Kundendatenbank</div>
+          <button class="btn btn-primary" onclick="openKundeModal()">+ Neuer Kunde</button>
+        </div>
+        <div class="filter-bar">
+          <input class="search-input" type="text" placeholder="Kunde suchen..." oninput="filterKunden(this.value)">
+        </div>
+        <div class="card">
+          <div id="kunden-list"><div class="loading"><div class="spinner"></div>Lade Kunden...</div></div>
+        </div>
+      </div>
+      <!-- ── FAHRTENBUCH ── -->
+      <div class="page" id="page-fahrtenbuch">
+        <div class="section-header">
+          <div class="section-title">Fahrtenbuch</div>
+          <button class="btn btn-primary" onclick="exportFahrtenbuch()">📥 Export CSV</button>
+        </div>
+        <div class="card" style="margin-bottom:14px">
+          <div style="padding:16px 20px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Von Datum</label>
+              <input type="date" class="form-control" id="fb-von" style="width:160px">
+            </div>
+            <div class="form-group" style="margin:0">
+              <label class="form-label">Bis Datum</label>
+              <input type="date" class="form-control" id="fb-bis" style="width:160px">
+            </div>
+            <button class="btn btn-ghost" onclick="loadFahrtenbuch()" style="margin-top:14px">Anzeigen</button>
+          </div>
+        </div>
+        <div class="card">
+          <div id="fahrtenbuch-table"><div class="loading"><div class="spinner"></div>Zeitraum wählen...</div></div>
+        </div>
+        <div class="card" style="margin-top:14px;padding:16px 20px">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center">
+            <div><div class="stat-label">Gesamt km</div><div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--blue-b)" id="fb-km">—</div></div>
+            <div><div class="stat-label">Fahrten</div><div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--blue-b)" id="fb-count">—</div></div>
+            <div><div class="stat-label">Umsatz (netto)</div><div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--green)" id="fb-umsatz">—</div></div>
+            <div><div class="stat-label">Ø pro Fahrt</div><div style="font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--muted)" id="fb-avg">—</div></div>
+          </div>
+        </div>
+      </div>
       <!-- ── NUTZER (Admin only) ── -->
       <div class="page" id="page-nutzer">
         <div class="section-header">
@@ -1084,6 +1137,7 @@ function navigate(pageId, btn) {
   if (pageId === 'nutzer')      renderUsers();
   if (pageId === 'anfragen')    loadAnfragen();
   if (pageId === 'kalkulation') { kRenderHistory(); setTimeout(() => smartCalc(), 50); }
+  onNavigateTo(pageId);
   if (pageId === 'einstellungen') loadSettingsForm();
 }
 
@@ -1618,6 +1672,344 @@ ${type!=='rahmen'?`<div class="doc-section-title" style="margin-top:14px">Im Pre
   if (!win) { alert('Bitte Popups erlauben und nochmal klicken.'); return; }
   win.document.write(html); win.document.close();
 }
+
+
+// ══════════════════════════════════════════════════
+// ANFRAGEN
+// ══════════════════════════════════════════════════
+let allAnfragen = [];
+
+async function loadAnfragen() {
+  const wrap = document.getElementById('anfragen-list');
+  if (!wrap) return;
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div> Lade Anfragen...</div>';
+  const { data, error } = await sb.from('anfragen').select('*').order('created_at', { ascending: false });
+  if (error) { wrap.innerHTML = '<div style="padding:20px;color:var(--red)">Fehler: ' + error.message + '</div>'; return; }
+  allAnfragen = data || [];
+  renderAnfragen(allAnfragen);
+  loadAnfragenCount();
+}
+
+function renderAnfragen(list) {
+  const wrap = document.getElementById('anfragen-list');
+  if (!wrap) return;
+  if (!list.length) {
+    wrap.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Keine Anfragen vorhanden</div>';
+    return;
+  }
+  const statusColors = { neu:'badge-blue', in_bearbeitung:'badge-gold', angenommen:'badge-green', abgelehnt:'badge-red' };
+  const statusLabels = { neu:'Neu', in_bearbeitung:'In Bearbeitung', angenommen:'Angenommen', abgelehnt:'Abgelehnt' };
+  wrap.innerHTML = `<table class="data-table">
+    <thead><tr><th>Datum</th><th>Name</th><th>E-Mail</th><th>Von → Nach</th><th>Art</th><th>Status</th><th></th></tr></thead>
+    <tbody>${list.map(a => `<tr>
+      <td style="color:var(--muted)">${new Date(a.created_at).toLocaleDateString('de-DE')}</td>
+      <td style="font-weight:600">${[a.vorname,a.nachname].filter(Boolean).join(' ')||'—'}</td>
+      <td><a href="mailto:${a.email||''}" style="color:var(--blue-b);text-decoration:none">${a.email||'—'}</a></td>
+      <td style="font-size:12px;color:var(--muted)">${a.von||'—'} → ${a.nach||'—'}</td>
+      <td style="font-size:12px">${a.art||'—'}</td>
+      <td><span class="badge ${statusColors[a.status]||'badge-grey'}">${statusLabels[a.status]||a.status}</span></td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="openAnfrage(${a.id})">Öffnen</button>
+      </td>
+    </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+async function loadAnfragenCount() {
+  const { count } = await sb.from('anfragen').select('*', { count:'exact', head:true }).eq('status','neu');
+  const badge = document.getElementById('anfragen-badge');
+  if (badge) { badge.textContent = count||0; badge.style.display = count > 0 ? 'inline' : 'none'; }
+  const mobBadge = document.getElementById('mob-badge-anfragen');
+  if (mobBadge) { mobBadge.textContent = count||0; mobBadge.style.display = count > 0 ? 'inline' : 'none'; }
+}
+
+function openAnfrage(id) {
+  const a = allAnfragen.find(x => x.id === id);
+  if (!a) return;
+  const statusLabels = { neu:'Neu', in_bearbeitung:'In Bearbeitung', angenommen:'Angenommen', abgelehnt:'Abgelehnt' };
+  document.getElementById('anfrage-modal-body').innerHTML = `
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="form-grid">
+        <div><div class="form-label">Name</div><div style="font-weight:600">${[a.vorname,a.nachname].filter(Boolean).join(' ')||'—'}</div></div>
+        <div><div class="form-label">E-Mail</div><a href="mailto:${a.email}" style="color:var(--blue-b)">${a.email||'—'}</a></div>
+        <div><div class="form-label">Von</div><div>${a.von||'—'}</div></div>
+        <div><div class="form-label">Nach</div><div>${a.nach||'—'}</div></div>
+        <div><div class="form-label">Art</div><div>${a.art||'—'}</div></div>
+        <div><div class="form-label">Status</div><div>${statusLabels[a.status]||a.status}</div></div>
+      </div>
+      ${a.nachricht ? `<div><div class="form-label">Nachricht</div><div style="background:var(--off);border-radius:6px;padding:12px;font-size:13px;line-height:1.7;white-space:pre-wrap">${a.nachricht}</div></div>` : ''}
+      <div><div class="form-label">Antwort / Notiz</div>
+      <textarea class="form-control" id="anfrage-antwort" rows="3" placeholder="Interne Notiz oder Antwort an Kunden...">${a.antwort||''}</textarea></div>
+    </div>`;
+  document.getElementById('anfrage-modal-id').value = id;
+  document.getElementById('anfrage-modal').classList.add('open');
+}
+
+async function updateAnfrageStatus(id, status) {
+  const antwort = document.getElementById('anfrage-antwort')?.value || '';
+  const { error } = await sb.from('anfragen').update({
+    status, antwort: antwort || null, bearbeitet_von: currentUser.id
+  }).eq('id', id);
+  if (error) { toast('Fehler: ' + error.message, '❌', 'error'); return; }
+
+  // Send email notification via Edge Function
+  const anfrage = allAnfragen.find(a => a.id === id);
+  if (anfrage?.email) {
+    try {
+      await fetch(SUPA_URL + '/functions/v1/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPA_KEY },
+        body: JSON.stringify({
+          to: anfrage.email,
+          status,
+          name: [anfrage.vorname, anfrage.nachname].filter(Boolean).join(' '),
+          art: anfrage.art,
+          antwort
+        })
+      });
+      toast('E-Mail an ' + anfrage.email + ' gesendet', '📧', 'success');
+    } catch(e) { console.warn('Mail error:', e); }
+  }
+
+  const labels = { neu:'Neu', in_bearbeitung:'In Bearbeitung', angenommen:'Angenommen', abgelehnt:'Abgelehnt' };
+  toast('Status: ' + (labels[status]||status), '✅', 'success');
+  closeModal('anfrage-modal');
+  await loadAnfragen();
+}
+
+// ══════════════════════════════════════════════════
+// KUNDENDATENBANK
+// ══════════════════════════════════════════════════
+let allKunden = [];
+
+async function loadKunden() {
+  const { data, error } = await sb.from('anfragen')
+    .select('*')
+    .not('email','is',null)
+    .order('created_at', { ascending: false });
+  if (error) return;
+
+  // Deduplicate by email
+  const seen = new Set();
+  allKunden = (data || []).filter(k => {
+    if (seen.has(k.email)) return false;
+    seen.add(k.email);
+    return true;
+  });
+  renderKunden(allKunden);
+}
+
+function renderKunden(list) {
+  const wrap = document.getElementById('kunden-list');
+  if (!wrap) return;
+  if (!list.length) {
+    wrap.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Noch keine Kunden</div>';
+    return;
+  }
+  wrap.innerHTML = `<table class="data-table">
+    <thead><tr>
+      <th>Name</th><th>E-Mail</th><th>Unternehmen</th><th>Letzte Anfrage</th><th>Anfragen</th><th></th>
+    </tr></thead>
+    <tbody>${list.map(k => `<tr>
+      <td style="font-weight:600">${[k.vorname,k.nachname].filter(Boolean).join(' ')||'—'}</td>
+      <td><a href="mailto:${k.email}" style="color:var(--blue-b);text-decoration:none">${k.email}</a></td>
+      <td style="color:var(--muted)">${k.unternehmen||'Privat'}</td>
+      <td style="color:var(--muted)">${new Date(k.created_at).toLocaleDateString('de-DE')}</td>
+      <td><span class="badge badge-blue">${list.filter(x=>x.email===k.email).length}</span></td>
+      <td>
+        <button class="btn btn-ghost btn-sm" onclick="neuerAuftragFuerKunde('${k.vorname||''}','${k.nachname||''}','${k.email}')">+ Auftrag</button>
+      </td>
+    </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function filterKunden(q) {
+  const filtered = allKunden.filter(k =>
+    [k.vorname,k.nachname,k.email,k.unternehmen].join(' ').toLowerCase().includes(q.toLowerCase())
+  );
+  renderKunden(filtered);
+}
+
+function neuerAuftragFuerKunde(vorname, nachname, email) {
+  navigate('neuer-auftrag', document.querySelector('.nav-item[onclick*="neuer-auftrag"]'));
+  setTimeout(() => {
+    const el = document.getElementById('auf-kunde');
+    if (el) el.value = vorname + ' ' + nachname + ' <' + email + '>';
+  }, 200);
+}
+
+function openKundeModal() {
+  toast('Kunden kommen automatisch aus den Anfragen', 'ℹ️', 'info');
+}
+
+// ══════════════════════════════════════════════════
+// FAHRTENBUCH
+// ══════════════════════════════════════════════════
+async function loadFahrtenbuch() {
+  const vonEl = document.getElementById('fb-von');
+  const bisEl = document.getElementById('fb-bis');
+  const wrap  = document.getElementById('fahrtenbuch-table');
+  if (!vonEl?.value || !bisEl?.value) {
+    toast('Bitte Zeitraum wählen', '⚠️', 'info');
+    return;
+  }
+  wrap.innerHTML = '<div class="loading"><div class="spinner"></div> Lade...</div>';
+  const { data, error } = await sb.from('auftraege')
+    .select('*')
+    .gte('created_at', vonEl.value)
+    .lte('created_at', bisEl.value + 'T23:59:59')
+    .order('created_at', { ascending: true });
+  if (error || !data?.length) {
+    wrap.innerHTML = '<div style="padding:40px;text-align:center;color:var(--muted)">Keine Aufträge im gewählten Zeitraum</div>';
+    return;
+  }
+  const totalKm    = data.reduce((s,a) => s + (parseInt(a.km)||0), 0);
+  const totalUmsatz= data.reduce((s,a) => s + (parseFloat(a.preis_netto)||0), 0);
+  document.getElementById('fb-km').textContent    = totalKm.toLocaleString('de-DE') + ' km';
+  document.getElementById('fb-count').textContent  = data.length;
+  document.getElementById('fb-umsatz').textContent = totalUmsatz.toLocaleString('de-DE', {minimumFractionDigits:2}) + ' €';
+  document.getElementById('fb-avg').textContent    = data.length ? (totalUmsatz/data.length).toLocaleString('de-DE',{minimumFractionDigits:2}) + ' €' : '—';
+  wrap.innerHTML = `<table class="data-table">
+    <thead><tr><th>Datum</th><th>Auftrag</th><th>Von</th><th>Nach</th><th>km</th><th>Netto</th><th>Status</th></tr></thead>
+    <tbody>${data.map(a => `<tr>
+      <td style="color:var(--muted)">${new Date(a.created_at).toLocaleDateString('de-DE')}</td>
+      <td style="font-weight:600">${a.auftrag_nr||'—'}</td>
+      <td>${a.abholort||'—'}</td>
+      <td>${a.zielort||'—'}</td>
+      <td>${a.km||'—'}</td>
+      <td style="color:var(--green);font-weight:600">${a.preis_netto ? a.preis_netto.toLocaleString('de-DE',{minimumFractionDigits:2})+' €' : '—'}</td>
+      <td><span class="badge badge-${a.status==='abgeschlossen'?'green':a.status==='in_bearbeitung'?'gold':'grey'}">${a.status||'—'}</span></td>
+    </tr>`).join('')}
+    </tbody>
+  </table>`;
+}
+
+function exportFahrtenbuch() {
+  const rows = document.querySelectorAll('#fahrtenbuch-table tbody tr');
+  if (!rows.length) { toast('Erst Zeitraum laden', '⚠️'); return; }
+  let csv = 'Datum,Auftrag,Von,Nach,km,Netto,Status\n';
+  rows.forEach(r => {
+    const cells = Array.from(r.querySelectorAll('td')).map(td => '"' + td.textContent.trim() + '"');
+    csv += cells.join(',') + '\n';
+  });
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'NK_Fahrtenbuch_' + new Date().toISOString().split('T')[0] + '.csv';
+  a.click();
+  toast('CSV exportiert', '📥', 'success');
+}
+
+// ══════════════════════════════════════════════════
+// AUFTRAGS TIMELINE
+// ══════════════════════════════════════════════════
+function renderTimeline(auftrag) {
+  const el = document.getElementById('timeline-entries');
+  if (!el) return;
+  const events = [];
+  if (auftrag.created_at) events.push({ date: auftrag.created_at, label: 'Auftrag angelegt', color: 'var(--blue-b)' });
+  if (auftrag.status === 'in_bearbeitung') events.push({ date: auftrag.updated_at||auftrag.created_at, label: 'In Bearbeitung', color: 'var(--gold)' });
+  if (auftrag.status === 'abgeschlossen') events.push({ date: auftrag.updated_at||auftrag.created_at, label: 'Abgeschlossen', color: 'var(--green)' });
+  el.innerHTML = events.map(e => `
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:8px;height:8px;border-radius:50%;background:${e.color};flex-shrink:0"></div>
+      <span style="color:var(--muted)">${new Date(e.date).toLocaleDateString('de-DE')}</span>
+      <span style="color:var(--text)">${e.label}</span>
+    </div>`).join('');
+}
+
+// Hook into navigate for new pages
+// Navigation hook for new pages
+function onNavigateTo(pageId) {
+  if (pageId === 'kunden')      { loadKunden(); }
+  else if (pageId === 'fahrtenbuch') {
+    const today = new Date().toISOString().split('T')[0];
+    const firstDay = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0];
+    const vonEl = document.getElementById('fb-von');
+    const bisEl = document.getElementById('fb-bis');
+    if (vonEl && !vonEl.value) vonEl.value = firstDay;
+    if (bisEl && !bisEl.value) bisEl.value = today;
+  }
+}
+
+
+// ══════════════════════════════════════════════════
+// PDF RECHNUNG (verbessert)
+// ══════════════════════════════════════════════════
+async function generateRechnung(auftragId) {
+  const { data: a, error } = await sb.from('auftraege').select('*').eq('id', auftragId).single();
+  if (error || !a) { toast('Auftrag nicht gefunden', '❌', 'error'); return; }
+  const { data: s } = await sb.from('einstellungen').select('*').eq('user_id', currentUser.id).single();
+  const firma   = s?.firma_name || 'N & K Fahrzeugüberführung GbR';
+  const iban    = s?.iban || '—';
+  const bank    = s?.bank || '—';
+  const datum   = new Date().toLocaleDateString('de-DE');
+  const netto   = parseFloat(a.preis_netto)||0;
+  const mwst    = netto * 0.19;
+  const brutto  = netto + mwst;
+
+  const html = `<!DOCTYPE html><html lang="de"><head><meta charset="UTF-8">
+  <title>Rechnung ${a.auftrag_nr||''}</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:Arial,sans-serif;font-size:13px;color:#1a1a1a;padding:48px}
+    .header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px;padding-bottom:24px;border-bottom:2px solid #2E7FFF}
+    .logo{font-size:22px;font-weight:900;letter-spacing:2px;color:#2E7FFF}
+    .logo span{color:#1a1a1a}
+    .firm-sub{font-size:9px;letter-spacing:3px;color:#999;margin-top:2px}
+    .doc-type{text-align:right}
+    .doc-type h1{font-size:28px;font-weight:700;color:#1a1a1a}
+    .doc-type .nr{font-size:13px;color:#666;margin-top:4px}
+    .addresses{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-bottom:40px}
+    .addr-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#2E7FFF;margin-bottom:8px}
+    .addr-content{font-size:13px;line-height:1.8;color:#333}
+    table{width:100%;border-collapse:collapse;margin-bottom:32px}
+    th{background:#f5f7fa;padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#666;border-bottom:1px solid #e5e7eb}
+    td{padding:12px 14px;border-bottom:1px solid #f3f4f6;font-size:13px}
+    .total-section{display:flex;justify-content:flex-end}
+    .total-box{width:280px}
+    .total-row{display:flex;justify-content:space-between;padding:8px 0;font-size:13px;border-bottom:1px solid #f3f4f6;color:#333}
+    .total-row.final{border-bottom:2px solid #2E7FFF;border-top:2px solid #2E7FFF;margin-top:4px;font-weight:700;font-size:15px;color:#1a1a1a;padding:12px 0}
+    .footer{margin-top:60px;padding-top:20px;border-top:1px solid #e5e7eb;display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:11px;color:#888;line-height:1.7}
+  </style>
+  </head><body>
+  <div class="header">
+    <div><div class="logo">N <span>&</span> K</div><div class="firm-sub">FAHRZEUGÜBERFÜHRUNG</div>
+    <div style="margin-top:12px;font-size:12px;color:#555;line-height:1.8">${firma}<br>n.knappitsch@gmail.com</div></div>
+    <div class="doc-type"><h1>RECHNUNG</h1><div class="nr">Nr. ${a.rechnungs_nr||a.auftrag_nr||'—'}</div>
+    <div class="nr" style="margin-top:8px">Datum: ${datum}</div>
+    <div class="nr">Fällig: ${new Date(Date.now()+14*86400000).toLocaleDateString('de-DE')}</div></div>
+  </div>
+  <div class="addresses">
+    <div><div class="addr-label">Rechnungsempfänger</div>
+    <div class="addr-content">${a.kunde_name||'—'}<br>${a.kunde_email||''}<br>${a.kunde_adresse||''}</div></div>
+    <div><div class="addr-label">Auftragsdaten</div>
+    <div class="addr-content">Auftrag: ${a.auftrag_nr||'—'}<br>Von: ${a.abholort||'—'}<br>Nach: ${a.zielort||'—'}<br>Strecke: ${a.km||'—'} km</div></div>
+  </div>
+  <table><thead><tr><th>Pos.</th><th>Leistung</th><th>Menge</th><th>Einzelpreis</th><th>Gesamt</th></tr></thead>
+  <tbody>
+    <tr><td>1</td><td>Fahrzeugüberführung ${a.abholort||''} → ${a.zielort||''}<br><span style="font-size:11px;color:#888">Fahrzeugtyp: ${a.fahrzeug_typ||'PKW'} · ${a.km||'—'} km</span></td><td>1</td><td>${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</td><td>${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</td></tr>
+  </tbody></table>
+  <div class="total-section"><div class="total-box">
+    <div class="total-row"><span>Nettobetrag</span><span>${netto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+    <div class="total-row"><span>MwSt. 19%</span><span>${mwst.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+    <div class="total-row final"><span>Gesamtbetrag</span><span>${brutto.toLocaleString('de-DE',{minimumFractionDigits:2})} €</span></div>
+  </div></div>
+  <div class="footer">
+    <div><strong style="color:#333">Bankverbindung</strong><br>${firma}<br>IBAN: ${iban}<br>Bank: ${bank}</div>
+    <div><strong style="color:#333">Zahlungsbedingungen</strong><br>Zahlbar innerhalb von 14 Tagen ohne Abzug.<br><br>Gemäß § 19 UStG wird keine Umsatzsteuer berechnet.<br><em style="font-size:10px">*(Kleinunternehmerregelung – ggf. anpassen)</em></div>
+  </div>
+  </body></html>`;
+
+  const win = window.open('', '_blank', 'width=900,height=1100');
+  if (!win) { toast('Bitte Popups erlauben', '⚠️'); return; }
+  win.document.write(html);
+  win.document.close();
+  setTimeout(() => win.print(), 600);
+  toast('Rechnung geöffnet — Drucken als PDF speichern', '🧾', 'success');
+}
+
 </script>
 
 <script>
