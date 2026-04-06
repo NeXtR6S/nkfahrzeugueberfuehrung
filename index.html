@@ -1134,7 +1134,7 @@ function navigate(pageId, btn) {
   document.getElementById('page-title').textContent = titles[pageId] || pageId;
   if (pageId === 'auftraege')   renderOrderList();
   if (pageId === 'dashboard')   refreshDashboard();
-  if (pageId === 'nutzer')      renderUsers();
+  if (pageId === 'nutzer')      loadUsers();
   if (pageId === 'anfragen')    loadAnfragen();
   if (pageId === 'kalkulation') { kRenderHistory(); setTimeout(() => smartCalc(), 50); }
   onNavigateTo(pageId);
@@ -1324,10 +1324,12 @@ function confirmDelete(id) {
 // ══════════════════════════════════════════════════
 // USERS (Admin)
 // ══════════════════════════════════════════════════
-async function loadUsers() {
+async async function loadUsers() {
   const { data } = await sb.from('profiles').select('*').order('created_at');
   allUsers = data || [];
-  document.getElementById('badge-users').textContent = allUsers.length;
+  const badge = document.getElementById('badge-users');
+  if (badge) badge.textContent = allUsers.length;
+  renderUsers();
 }
 
 function renderUsers() {
