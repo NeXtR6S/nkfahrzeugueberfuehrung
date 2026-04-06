@@ -1324,7 +1324,7 @@ function confirmDelete(id) {
 // ══════════════════════════════════════════════════
 // USERS (Admin)
 // ══════════════════════════════════════════════════
-async async function loadUsers() {
+async function loadUsers() {
   const { data } = await sb.from('profiles').select('*').order('created_at');
   allUsers = data || [];
   const badge = document.getElementById('badge-users');
