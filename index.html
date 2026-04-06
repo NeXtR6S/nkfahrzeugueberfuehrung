@@ -1728,21 +1728,38 @@ function openAnfrage(id) {
   const a = allAnfragen.find(x => x.id === id);
   if (!a) return;
   const statusLabels = { neu:'Neu', in_bearbeitung:'In Bearbeitung', angenommen:'Angenommen', abgelehnt:'Abgelehnt' };
-  document.getElementById('anfrage-modal-body').innerHTML = `
+  const statusColors = { neu:'badge-blue', in_bearbeitung:'badge-gold', angenommen:'badge-green', abgelehnt:'badge-red' };
+
+  // Use anfrage-detail (actual ID in HTML)
+  const detailEl = document.getElementById('anfrage-detail');
+  if (detailEl) detailEl.innerHTML = `
     <div style="display:flex;flex-direction:column;gap:14px">
       <div class="form-grid">
         <div><div class="form-label">Name</div><div style="font-weight:600">${[a.vorname,a.nachname].filter(Boolean).join(' ')||'—'}</div></div>
-        <div><div class="form-label">E-Mail</div><a href="mailto:${a.email}" style="color:var(--blue-b)">${a.email||'—'}</a></div>
+        <div><div class="form-label">E-Mail</div><a href="mailto:${a.email||''}" style="color:var(--blue-b)">${a.email||'—'}</a></div>
         <div><div class="form-label">Von</div><div>${a.von||'—'}</div></div>
         <div><div class="form-label">Nach</div><div>${a.nach||'—'}</div></div>
         <div><div class="form-label">Art</div><div>${a.art||'—'}</div></div>
-        <div><div class="form-label">Status</div><div>${statusLabels[a.status]||a.status}</div></div>
+        <div><div class="form-label">Status</div><span class="badge ${statusColors[a.status]||'badge-grey'}">${statusLabels[a.status]||a.status}</span></div>
       </div>
       ${a.nachricht ? `<div><div class="form-label">Nachricht</div><div style="background:var(--off);border-radius:6px;padding:12px;font-size:13px;line-height:1.7;white-space:pre-wrap">${a.nachricht}</div></div>` : ''}
-      <div><div class="form-label">Antwort / Notiz</div>
-      <textarea class="form-control" id="anfrage-antwort" rows="3" placeholder="Interne Notiz oder Antwort an Kunden...">${a.antwort||''}</textarea></div>
+      <div><div class="form-label">Antwort / Notiz an Kunden</div>
+      <textarea class="form-control" id="anfrage-antwort" rows="3" placeholder="Nachricht an den Kunden...">${a.antwort||''}</textarea></div>
     </div>`;
-  document.getElementById('anfrage-modal-id').value = id;
+
+  // Footer buttons
+  const footerEl = document.getElementById('anfrage-modal-footer');
+  if (footerEl) footerEl.innerHTML = `
+    <button class="btn btn-secondary" onclick="closeModal('anfrage-modal')">Schließen</button>
+    <button class="btn btn-ghost" onclick="updateAnfrageStatus(${id},'in_bearbeitung')" style="color:var(--gold);border-color:var(--gold)">🟡 In Bearbeitung</button>
+    <button class="btn btn-primary" onclick="updateAnfrageStatus(${id},'angenommen')" style="background:var(--green)">✅ Annehmen</button>
+    <button class="btn btn-danger" onclick="updateAnfrageStatus(${id},'abgelehnt')">✕ Ablehnen</button>
+  `;
+
+  // Update modal title
+  const titleEl = document.getElementById('anfrage-modal-title');
+  if (titleEl) titleEl.textContent = 'Anfrage — ' + ([a.vorname,a.nachname].filter(Boolean).join(' ')||a.email||'—');
+
   document.getElementById('anfrage-modal').classList.add('open');
 }
 
